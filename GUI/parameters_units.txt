@@ -1,0 +1,6 @@
+onset threshold (g) <- needs to be lower cased to differ from G constant
+decay threshold (g)
+mintime (s)
+maxtime (s)
+mintimebetweenmvts (s)
+maxtimebetweenmvts (s)
