@@ -3702,7 +3702,8 @@ public:
   
 signals:
   void mouseDoubleClick(QMouseEvent *event);
-  void mousePress(QMouseEvent *event);
+  void leftMousePress(QMouseEvent *event);
+  void rightMousePress(QMouseEvent *event);
   void mouseMove(QMouseEvent *event);
   void mouseRelease(QMouseEvent *event);
   void mouseWheel(QWheelEvent *event);

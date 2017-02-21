@@ -36,7 +36,9 @@ public slots:
 
     void labelfc(QStringList);
 
-    void  mousePress();
+    void leftMousePress();
+
+    void rightMousePress();
 
     void mouseWheel();
 
@@ -60,11 +62,15 @@ private slots:
 
     void on_toolButton_3_clicked();
 
+    void ShowContextMenu(const QPoint& pos);
+
     void on_actionLogin_triggered();
 
     void on_actionParameter_triggered();
 
     void on_actionExit_triggered();
+
+    void on_customPlot_windowIconChanged(const QIcon &icon);
 
 signals:
     void EnterIsPressed();
@@ -74,6 +80,8 @@ signals:
     void MarkerNameInfo(QString);
 
     void LabelNameInfo(QString);
+
+    void customContextMenuRequested(const QPoint &pos);
 
     void toolbutton_trig();
 

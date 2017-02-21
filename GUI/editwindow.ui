@@ -256,9 +256,9 @@ background-color: rgb(14, 30, 255);
     <widget class="QLabel" name="label_8">
      <property name="geometry">
       <rect>
-       <x>170</x>
-       <y>20</y>
-       <width>231</width>
+       <x>180</x>
+       <y>30</y>
+       <width>151</width>
        <height>31</height>
       </rect>
      </property>
@@ -268,7 +268,7 @@ background-color: rgb(14, 30, 255);
       </font>
      </property>
      <property name="text">
-      <string>Welcome to PLM Analyser</string>
+      <string>The PLM Analyser</string>
      </property>
      <property name="textFormat">
       <enum>Qt::AutoText</enum>

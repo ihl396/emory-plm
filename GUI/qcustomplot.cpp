@@ -14541,7 +14541,14 @@ void QCustomPlot::mouseDoubleClickEvent(QMouseEvent *event)
 */
 void QCustomPlot::mousePressEvent(QMouseEvent *event)
 {
-  emit mousePress(event);
+  if (event->buttons() == Qt::LeftButton)
+  {
+    emit leftMousePress(event);
+  }
+  else if (event->buttons() == Qt::RightButton)
+  {
+      emit rightMousePress(event);
+  }
   // save some state to tell in releaseEvent whether it was a click:
   mMouseHasMoved = false;
   mMousePressPos = event->pos();

@@ -18,11 +18,14 @@
 #include <QDir>
 #include <QFile>
 #include <QDebug>
+#include <QMouseEvent> /// added mouse event
+#include <QCursor> /// added cursor
 
 
 #include <iostream>
 #include <iomanip>
 
+const int COLUMN_NUM = 7; /// use 4 if no gyroscope data
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -47,7 +50,8 @@ MainWindow::MainWindow(QWidget *parent) :
     double now = QDateTime::currentDateTime().toTime_t();
     srand(8); // set the random seed, so we always get the same random data
 
-    QString filePath = QCoreApplication::applicationDirPath() + "/testdata/test_data.csv";
+    /// need to allow user to correctly store to filepath when using "Open"
+    QString filePath = QCoreApplication::applicationDirPath() + "/A0E6F8B70300_raw_data.csv";
 
     QFile file(filePath); // this needs to be changed to be a more mobile handle
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -63,19 +67,26 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     }
-    int cct = 0;
+    /// NEED RAW DATA FILE (check if first datavalue is "newline char"
+    int cct = 1; /// if headers use "cct = 7;", "cct = 0" if newline char, and may be reduced to only accelerometer data (4 columns)
     int ind = 0;
-    float arr[5][450];
+    int dataNum = ((datavalue.length() - cct) / 7) - 1; /// computes how many total data values
+    float arr[COLUMN_NUM][dataNum];
+    /// float arr[5][450]; /// 5 parameters? 450 hard coded rows of data
     QString minussign = "-";
     foreach (QString i, datavalue) //loops through the stringlist, converts each string to a float, and adds it into 2D array
     {
-        if (cct%7== 2) //row 2 data, most likely accelerometer mag
+        if (cct%7== 1)
         {
-            if (i.left(1) == minussign){
+            arr[0][ind] = i.toFloat(); /// figure out how to store timestamps
+        }
+        else if (cct%7== 2) //row 2 data, most likely accelerometer mag
+        {
+            if (i.left(1) == minussign){ /// goes through each field and removes negative sign to get magnitude
                 i.remove(0,1);
             }
             i.remove(7,5);
-            arr[0][ind] = i.toFloat();
+            arr[1][ind] = i.toFloat(); /// also removes anything past 5 decimal places (why remove E-##?)
         }
         else if (cct%7== 3) // row 3, etc...
         {
@@ -83,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 i.remove(0,1);
             }
             i.remove(7,5);
-            arr[1][ind] = i.toFloat();
+            arr[2][ind] = i.toFloat();
         }
         else if (cct%7== 4)
         {
@@ -92,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
             }
             i.remove(7,5);
-            arr[2][ind] = i.toFloat();
+            arr[3][ind] = i.toFloat();
         }
         else if (cct%7== 5)
         {
@@ -101,7 +112,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
             }
             i.remove(7,5);
-            arr[3][ind] = i.toFloat();
+            arr[4][ind] = i.toFloat();
         }
         else if (cct%7 == 6)
         {
@@ -110,11 +121,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
             }
             i.remove(7,5);
-            arr[4][ind] = i.toFloat();
-            ind++;
+            arr[5][ind] = i.toFloat();
+        }
+        else if ((cct > 0) && (cct%7 == 0))
+        {
+            if (i.left(1) == minussign){
+                i.remove(0,1);
+
+            }
+            i.remove(7,5);
+            arr[6][ind] = i.toFloat();
+            ind++; /// increment for last column check
         }
         cct++;
-
     }
 
     file.close();
@@ -129,29 +148,29 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // create multiple graphs:
-    for (int gi=0; gi<5; ++gi)
+    for (int gi=0; gi<COLUMN_NUM; ++gi)
     {
-      ui->customPlot->addGraph();
-      QColor color(20+200/4.0*gi,70*(1.6-gi/4.0), 150, 150);
-      ui->customPlot->graph()->setLineStyle(QCPGraph::lsLine);
-      ui->customPlot->graph()->setPen(QPen(color.lighter(200)));
-      ui->customPlot->graph()->setBrush(QBrush(color));
+
+        ui->customPlot->addGraph();
+        QColor color(10+40*gi,250-40*gi, 150, 150);
+        /// QColor color(10+200/4.0*gi,70*(1.6-gi/4.0), 150, 150);
+        ui->customPlot->graph()->setLineStyle(QCPGraph::lsLine);
+        ui->customPlot->graph()->setPen(QPen(color.lighter(200)));
+        ui->customPlot->graph()->setBrush(QBrush(color));
+
+        /// need to use actual data with real time values
+        // generate random walk data:
+        QVector<QCPGraphData> timeData(450); /// hard coded with test_data.csv size, need to compute row length dynamically
+
+        for (int i=0; i<450; ++i)
+        {
+          timeData[i].key = i;
 
 
-      // generate random walk data:
-      QVector<QCPGraphData> timeData(450);
+          timeData[i].value = arr[2][i]; /// changed to [2] from [1]
 
-      for (int i=0; i<450; ++i)
-      {
-        timeData[i].key = i;
-
-
-        timeData[i].value = arr[1][i];
-
-      }
-      ui->customPlot->graph()->data()->set(timeData);
-
-
+        }
+        ui->customPlot->graph()->data()->set(timeData);
     }
 
 
@@ -188,10 +207,10 @@ MainWindow::MainWindow(QWidget *parent) :
       timeData2[i].key = i; timeData3[i].key = i; timeData4[i].key = i; timeData5[i].key = i;
 
 
-      timeData2[i].value = arr[1][i];
-      timeData3[i].value = arr[2][i];
-      timeData4[i].value = arr[3][i];
-      timeData5[i].value = arr[4][i];
+      timeData2[i].value = arr[2][i]; /// changed to [2]...[5] from [1]...[4]
+      timeData3[i].value = arr[3][i];
+      timeData4[i].value = arr[4][i];
+      timeData5[i].value = arr[5][i];
     }
     ui->customPlot_2->graph()->data()->set(timeData2);
     ui->customPlot_3->graph(0)->data()->set(timeData3);
@@ -231,7 +250,7 @@ MainWindow::MainWindow(QWidget *parent) :
     phaseTracer->setStyle(QCPItemTracer::tsCircle);
     phaseTracer->setPen(QPen(Qt::red));
     phaseTracer->setBrush(Qt::red);
-    phaseTracer->setSize(4);
+    phaseTracer->setSize(10);
     // add label for phase tracer:
     QCPItemText *phaseTracerText = new QCPItemText(ui->customPlot_3);
     phaseTracerText->position->setType(QCPItemPosition::ptPlotCoords);
@@ -245,13 +264,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //Axis Formatting Code
+    /// need to put all of this into a function called FormatAxis(params);
     // configure bottom axis to show date instead of number:
     QSharedPointer<QCPAxisTickerTime> dateTicker(new  QCPAxisTickerTime);
     dateTicker->setTimeFormat("day %d\n%h:%m:%s"); //this sets by day # & not by date
     ui->customPlot->xAxis->setTicker(dateTicker);
     // configure left axis text labels:
     QSharedPointer<QCPAxisTickerText> textTicker(new QCPAxisTickerText);
-    textTicker->addTick(2, "a bit\nlow");
+    textTicker->addTick(2, "a bit\nlow"); /// hard coded labels
     textTicker->addTick(8, "quite\nhigh");
     ui->customPlot->yAxis->setTicker(textTicker);
     // set a more compact font size for bottom and left axis tick labels:
@@ -268,7 +288,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customPlot->xAxis2->setTickLabels(false);
     ui->customPlot->yAxis2->setTickLabels(false);
     // set axis ranges to show all data:
-    ui->customPlot->xAxis->setRange(0, 449);
+    ui->customPlot->xAxis->setRange(0, 600); /// Need Dynamic Code for ranges
     ui->customPlot->yAxis->setRange(0, 10);
 
     ui->customPlot_2->xAxis->setRange(0, 199);
@@ -287,13 +307,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
                                       QCP::iSelectLegend | QCP::iSelectPlottables | QCP::iMultiSelect);
 
-
-
     ui->customPlot_2->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
                                       QCP::iSelectLegend | QCP::iSelectPlottables);
     // connect slots that takes care that when an axis is selected, only that direction can be dragged and zoomed:
-    connect(ui->customPlot_2, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(mousePress()));
-    connect(ui->customPlot_2, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
+    connect(ui->customPlot, SIGNAL(leftMousePress(QMouseEvent*)), this, SLOT(leftMousePress()));
+    connect(ui->customPlot, SIGNAL(mouseWheel(QWheelEvent*)), this, SLOT(mouseWheel()));
 
     markerPopup = new MarkerPopup(this);
     labelPopup = new LabelPopup(this);
@@ -304,12 +322,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect (timer, SIGNAL(timeout()), this, SLOT(myfunction())); //connected here
     timer -> start(100); //100ms watchdog
 
+    /// disables the paint tool
     connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_clicked()));//this clicks the button to disable functions when another toolbutton is being pressed
     connect(this, SIGNAL(toolbutton3_trig()), this, SLOT(on_toolButton_clicked()));
-
+    /// disables the marker tool
     connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_2_clicked()));
     connect(this, SIGNAL(toolbutton3_trig()), this, SLOT(on_toolButton_2_clicked()));
-
+    /// disables the hand tool
     connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_3_clicked()));
     connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_3_clicked()));
 
@@ -426,17 +445,62 @@ void MainWindow::on_pushButton_2_clicked() // reset pushbutton
     ui->lcdNumber->display(num);
 }
 
-void MainWindow::mousePress()
+/*void plotspace::ShowContextMenu(const QPoint &pos)
+{
+   QMenu contextMenu(tr("Context menu"), this);
+
+   QAction action1("Remove Data Point", this);
+   connect(&action1, SIGNAL(triggered()), this, SLOT(removeDataPoint()));
+   contextMenu.addAction(&action1);
+
+   contextMenu.exec(mapToGlobal(pos));
+}*/
+
+void MainWindow::ShowContextMenu(const QPoint& pos) // this is a slot
+{
+    // for most widgets
+    QPoint globalPos = ui->customPlot->mapToGlobal(pos);
+    // for QAbstractScrollArea and derived classes you would use:
+    // QPoint globalPos = myWidget->viewport()->mapToGlobal(pos);
+
+    QMenu myMenu;
+    myMenu.addAction("View Selection");
+    myMenu.addAction("Undo View Selected");
+    myMenu.addAction("Cancel");
+    // ...
+
+    QAction* selectedItem = myMenu.exec(globalPos);
+    if (selectedItem == "View Selection")
+    {
+        // something was chosen, do stuff
+        //ui->customPlot->setSelectionRectMode(QCP::srmZoom);
+        //ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
+    }
+    else
+    {
+        // nothing was chosen
+    }
+}
+
+void MainWindow::rightMousePress()
+{
+    const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
+    emit ShowContextMenu(cursorLoc);
+}
+
+void MainWindow::leftMousePress()
 {
   // if an axis is selected, only allow the direction of that axis to be dragged
   // if no axis is selected, both directions may be dragged
 
-  if (ui->customPlot->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-    ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
-  else if (ui->customPlot->yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-    ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation()); //ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->yAxis->orientation());
-  else
-    ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal); //ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal|Qt::Vertical);
+    /// Default range drag to be only horizontal
+    if (ui->customPlot->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
+    else if (ui->customPlot->yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
+        ///ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->yAxis->orientation());
+    else
+        ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal);
 
 }
 
@@ -484,6 +548,11 @@ void MainWindow::on_toolButton_clicked() //MARKER TOOL
         connect(this, SIGNAL(MarkerNameInfo(QString)), markerPopup, SLOT(setTagName(QString)));
         emit MarkerNameInfo("12345");
         connect(markerPopup, SIGNAL(markerDataSend(QStringList)), this, SLOT(markerfc(QStringList)));
+        /// added connect for mouse press to be able to handle right mouse click
+        connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress()));
+        ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu);
+
+        connect(this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
 
 
 
@@ -525,6 +594,9 @@ void MainWindow::on_toolButton_clicked() //MARKER TOOL
         disconnect(this, SIGNAL(EnterIsPressed()), markerPopup, SLOT(exec()));
         disconnect(this, SIGNAL(MarkerNameInfo(QString)), markerPopup, SLOT(setTagName(QString)));
         disconnect(markerPopup, SIGNAL(markerDataSend(QStringList)), this, SLOT(markerfc(QStringList)));
+        /// added disconnect for mouse press to be able to handle right mouse click
+        disconnect(ui->customPlot, SIGNAL(rightMousePress()), this, SLOT(rightMousePress()));
+        disconnect(this, SIGNAL(customContextMenuRequested(const QPoint &)), this, SLOT(ShowContextMenu(const QPoint &)));
 
 
     }

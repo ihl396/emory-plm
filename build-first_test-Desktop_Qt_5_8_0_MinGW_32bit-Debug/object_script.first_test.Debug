@@ -1,0 +1,16 @@
+INPUT(
+./debug\main.o
+./debug\qcustomplot.o
+./debug\mainwindow.o
+./debug\markerpopup.o
+./debug\labelpopup.o
+./debug\editwindow.o
+./debug\parameters.o
+./debug\qrc_myresources.o
+./debug\moc_mainwindow.o
+./debug\moc_qcustomplot.o
+./debug\moc_markerpopup.o
+./debug\moc_labelpopup.o
+./debug\moc_editwindow.o
+./debug\moc_parameters.o
+);
