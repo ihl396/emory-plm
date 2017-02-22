@@ -288,7 +288,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customPlot->xAxis2->setTickLabels(false);
     ui->customPlot->yAxis2->setTickLabels(false);
     // set axis ranges to show all data:
-    ui->customPlot->xAxis->setRange(0, 600); /// Need Dynamic Code for ranges
+    ui->customPlot->xAxis->setRange(0, 450); /// Need Dynamic Code for ranges
     ui->customPlot->yAxis->setRange(0, 10);
 
     ui->customPlot_2->xAxis->setRange(0, 199);
@@ -331,7 +331,7 @@ MainWindow::MainWindow(QWidget *parent) :
     /// disables the hand tool
     connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_3_clicked()));
     connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_3_clicked()));
-
+    emit toolbutton3_trig();
 
 
     //connect(ui->customPlot_5, SIGNAL(mouseRelease(QMouseEvent*)), this, SLOT(mouseRelease()));
@@ -466,15 +466,57 @@ void MainWindow::ShowContextMenu(const QPoint& pos) // this is a slot
     QMenu myMenu;
     myMenu.addAction("View Selection");
     myMenu.addAction("Undo View Selected");
+    myMenu.addAction("Rescale View");
     myMenu.addAction("Cancel");
     // ...
 
     QAction* selectedItem = myMenu.exec(globalPos);
-    if (selectedItem == "View Selection")
+    if (selectedItem)
     {
-        // something was chosen, do stuff
-        //ui->customPlot->setSelectionRectMode(QCP::srmZoom);
-        //ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
+        if (selectedItem->text().contains("View Selection"))
+        {
+            // something was chosen, do stuff
+            //ui->customPlot->setSelectionRectMode(QCP::srmZoom);
+            //ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
+
+            QCPDataSelection selection = ui->customPlot->graph(0)->selection();
+            QVector<QCPGraphData> selectedData(selection.dataPointCount()); /// creates an empty QVector<QCPGraphData> array with the size of the data selection points
+            qDebug() << selection.dataRanges();
+            QCPGraphDataContainer::const_iterator begin;QCPGraphDataContainer::const_iterator end;
+            foreach (QCPDataRange dataRange, selection.dataRanges())
+            {
+                qDebug() << "Data was selected";
+                QCPGraphDataContainer::const_iterator beginloop = ui->customPlot->graph()->data()->at(dataRange.begin()); // get range begin iterator from index
+                QCPGraphDataContainer::const_iterator endloop = ui->customPlot->graph()->data()->at(dataRange.end()); // get range end iterator from index
+                begin = beginloop;
+                end = endloop;
+                int j =0;
+                for (QCPGraphDataContainer::const_iterator it=begin; it!=end; ++it)
+                {
+                    // iterator "it" will go through all selected data points
+                    qDebug() << it->key;
+                    selectedData[j].key = it->key;
+                    selectedData[j].value = it->value;
+                    j++;
+
+                }
+                //QCPGraphData lowerBound = selectedData[0].value;
+                //QCPGraphData upperBound = selectedData[selectedData.length()].value;
+                ui->customPlot->graph()->data()->set(selectedData);
+                ui->customPlot->xAxis->setRange(100, 200);
+                ui->customPlot->yAxis->setRange(0, 10);
+                //ui->customPlot->rescaleAxes();
+                ui->customPlot->replot();
+            }
+        }
+        else if (selectedItem->text().contains("Undo View Selected"))
+        {
+            ui->customPlot->rescaleAxes(false);
+        }
+        else if (selectedItem->text().contains("Rescale View"))
+        {
+            ui->customPlot->rescaleAxes(true);
+        }
     }
     else
     {
@@ -490,17 +532,7 @@ void MainWindow::rightMousePress()
 
 void MainWindow::leftMousePress()
 {
-  // if an axis is selected, only allow the direction of that axis to be dragged
-  // if no axis is selected, both directions may be dragged
 
-    /// Default range drag to be only horizontal
-    if (ui->customPlot->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
-        ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
-    else if (ui->customPlot->yAxis->selectedParts().testFlag(QCPAxis::spAxis))
-        ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
-        ///ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->yAxis->orientation());
-    else
-        ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal);
 
 }
 
@@ -509,12 +541,13 @@ void MainWindow::mouseWheel()
   // if an axis is selected, only allow the direction of that axis to be zoomed
   // if no axis is selected, both directions may be zoomed
 
-  if (ui->customPlot->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+  /*if (ui->customPlot->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
     ui->customPlot->axisRect()->setRangeZoom(ui->customPlot->xAxis->orientation());
   else if (ui->customPlot->yAxis->selectedParts().testFlag(QCPAxis::spAxis))
     ui->customPlot->axisRect()->setRangeZoom(ui->customPlot->yAxis->orientation());
   else
-    ui->customPlot->axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);
+    ui->customPlot->axisRect()->setRangeZoom(Qt::Horizontal|Qt::Vertical);*/
+    ui->customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
 }
 
 
@@ -693,6 +726,17 @@ void MainWindow::on_toolButton_3_clicked() //HAND TOOL
 {
     if (ui->toolButton_3->isChecked() == true){
         emit toolbutton3_trig();
+        // if an axis is selected, only allow the direction of that axis to be dragged
+        // if no axis is selected, both directions may be dragged
+
+        /// Default range drag to be only horizontal
+        ///if (ui->customPlot->xAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        ///    ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
+        ///else if (ui->customPlot->yAxis->selectedParts().testFlag(QCPAxis::spAxis))
+        ///    ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->xAxis->orientation());
+            ///ui->customPlot->axisRect()->setRangeDrag(ui->customPlot->yAxis->orientation());
+        ///else
+        ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal);
     }
     else{
 

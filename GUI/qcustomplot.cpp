@@ -14543,37 +14543,38 @@ void QCustomPlot::mousePressEvent(QMouseEvent *event)
 {
   if (event->buttons() == Qt::LeftButton)
   {
-    emit leftMousePress(event);
+      emit leftMousePress(event);
+      // save some state to tell in releaseEvent whether it was a click:
+      mMouseHasMoved = false;
+      mMousePressPos = event->pos();
+
+      if (mSelectionRect && mSelectionRectMode != QCP::srmNone)
+      {
+        if (mSelectionRectMode != QCP::srmZoom || qobject_cast<QCPAxisRect*>(axisRectAt(mMousePressPos))) // in zoom mode only activate selection rect if on an axis rect
+          mSelectionRect->startSelection(event);
+      } else
+      {
+        // no selection rect interaction, so forward event to layerable under the cursor:
+        QList<QVariant> details;
+        QList<QCPLayerable*> candidates = layerableListAt(mMousePressPos, false, &details);
+        for (int i=0; i<candidates.size(); ++i)
+        {
+          event->accept(); // default impl of QCPLayerable's mouse events ignore the event, in that case propagate to next candidate in list
+          candidates.at(i)->mousePressEvent(event, details.at(i));
+          if (event->isAccepted())
+          {
+            mMouseEventLayerable = candidates.at(i);
+            mMouseEventLayerableDetails = details.at(i);
+            break;
+          }
+        }
+      }
   }
   else if (event->buttons() == Qt::RightButton)
   {
       emit rightMousePress(event);
   }
-  // save some state to tell in releaseEvent whether it was a click:
-  mMouseHasMoved = false;
-  mMousePressPos = event->pos();
-  
-  if (mSelectionRect && mSelectionRectMode != QCP::srmNone)
-  {
-    if (mSelectionRectMode != QCP::srmZoom || qobject_cast<QCPAxisRect*>(axisRectAt(mMousePressPos))) // in zoom mode only activate selection rect if on an axis rect
-      mSelectionRect->startSelection(event);
-  } else
-  {
-    // no selection rect interaction, so forward event to layerable under the cursor:
-    QList<QVariant> details;
-    QList<QCPLayerable*> candidates = layerableListAt(mMousePressPos, false, &details);
-    for (int i=0; i<candidates.size(); ++i)
-    {
-      event->accept(); // default impl of QCPLayerable's mouse events ignore the event, in that case propagate to next candidate in list
-      candidates.at(i)->mousePressEvent(event, details.at(i));
-      if (event->isAccepted())
-      {
-        mMouseEventLayerable = candidates.at(i);
-        mMouseEventLayerableDetails = details.at(i);
-        break;
-      }
-    }
-  }
+
   
   event->accept(); // in case QCPLayerable reimplementation manipulates event accepted state. In QWidget event system, QCustomPlot wants to accept the event.
 }
