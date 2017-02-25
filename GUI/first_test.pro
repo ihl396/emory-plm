@@ -18,14 +18,18 @@ SOURCES += main.cpp\
     markerpopup.cpp \
     labelpopup.cpp \
     editwindow.cpp \
-    parameters.cpp
+    parameters.cpp \
+    markup.cpp \
+    graph.cpp
 
 HEADERS  += mainwindow.h \
             qcustomplot.h \
     markerpopup.h \
     labelpopup.h \
     editwindow.h \
-    parameters.h
+    parameters.h \
+    markup.h \
+    graph.h
 
 FORMS    += mainwindow.ui \
     markerpopup.ui \
