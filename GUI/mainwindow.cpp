@@ -4,23 +4,10 @@
 #include "csvreader.h"
 #include "graphviewer.h"
 
-#include <QLCDNumber>
-#include <QObject>
-#include <QTimer>
-
-#include <QMessageBox>
-#include <QTextStream>
-#include <QList>
-#include <QStringList>
 #include <QDir>
-#include <Qstring>
 #include <QFileDialog>
 
-#include <QKeyEvent>
-#include <QList>
 #include <QString>
-#include <QDir>
-#include <QFile>
 #include <QDebug>
 
 
