@@ -8,6 +8,7 @@
 #include <QTableView>
 #include <vector>
 #include <QMainWindow>
+#include "graphviewer.h"
 using namespace std;
 
 namespace Ui {
@@ -27,17 +28,13 @@ private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
-    void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>, bool);
 
 
 private:
     Ui::MainWindow *ui;
-    QString csvFile;
-    QList<QStringList> csv;
     QStandardItemModel *model;
-    QList<QStandardItem*> standardItemList;
-    QVector<QVector<double>> dataArray;
     bool firstRun;
+    GraphViewer graphViewer(Ui::MainWindow);
 };
 
 #endif // MAINWINDOW_h
