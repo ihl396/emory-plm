@@ -15,13 +15,15 @@ TEMPLATE = app
 SOURCES += main.cpp\
     qcustomplot.cpp \
     mainwindow.cpp \
-    csvreader.cpp
+    csvreader.cpp \
+    graphviewer.cpp
 
 HEADERS  += \
     qcustomplot.h \
     mainwindow.h \
     csvreader.h \
-    datastructure.h
+    datastructure.h \
+    graphviewer.h
 
 FORMS    += \
     mainwindow.ui
