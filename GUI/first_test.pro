@@ -30,3 +30,6 @@ FORMS    += \
 
 RESOURCES += \
     myresources.qrc
+
+DISTFILES += \
+    plm_analyzer_model.qmodel
