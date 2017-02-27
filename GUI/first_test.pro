@@ -13,25 +13,18 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        qcustomplot.cpp \
+    qcustomplot.cpp \
     mainwindow.cpp \
-    markerpopup.cpp \
-    labelpopup.cpp \
-    editwindow.cpp \
-    parameters.cpp
+    csvreader.cpp
 
-HEADERS  += mainwindow.h \
-            qcustomplot.h \
-    markerpopup.h \
-    labelpopup.h \
-    editwindow.h \
-    parameters.h
+HEADERS  += \
+    qcustomplot.h \
+    mainwindow.h \
+    csvreader.h \
+    datastructure.h
 
-FORMS    += mainwindow.ui \
-    markerpopup.ui \
-    labelpopup.ui \
-    editwindow.ui \
-    parameters.ui
+FORMS    += \
+    mainwindow.ui
 
 RESOURCES += \
     myresources.qrc
