@@ -15,26 +15,28 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QDialog
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QString getCSVFile();
 
 private slots:
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
-    void on_pushButton_3_clicked();
+    void open();
 
+protected:
 
 private:
+    GraphViewer graphViewer(Ui::MainWindow);
+    void createActions();
+    void createMenus();
     Ui::MainWindow *ui;
     QStandardItemModel *model;
     bool firstRun;
-    GraphViewer graphViewer(Ui::MainWindow);
+    QMenu *fileMenu;
+    QAction *openAct;
 };
 
 #endif // MAINWINDOW_h

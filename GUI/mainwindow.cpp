@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
 #include "datastructure.h"
 #include "csvreader.h"
 #include "graphviewer.h"
@@ -16,11 +15,15 @@
 
 
 MainWindow::MainWindow(QWidget *parent) :
-    QDialog(parent),
+    QMainWindow(parent),
     ui(new Ui::MainWindow)
-{
+{   
     ui->setupUi(this);
     firstRun = true;
+
+    createActions();
+    createMenus();
+    setWindowTitle(tr("PLM Analyser"));
 }
 
 
@@ -29,17 +32,19 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    QString filename = QFileDialog::getOpenFileName(this,tr("Open File"),"C://","all files (*.*)");
+void MainWindow::createActions() {
+    openAct = new QAction(tr("&Open Raw Data File"), this);
+    openAct->setShortcuts(QKeySequence::Open);
+    openAct->setStatusTip(tr("Open a file"));
+    connect(openAct, &QAction::triggered, this, &MainWindow::open);
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-    QString filename2 = QFileDialog::getOpenFileName(this,tr("Open File"),"C://","Octave/MATLAB scripts (*.m);;all files (*.*)");
+void MainWindow::createMenus() {
+    fileMenu = menuBar()->addMenu(tr("&File"));
+    fileMenu->addAction(openAct);
 }
 
-void MainWindow::on_pushButton_3_clicked()
+void MainWindow::open()
 {
     model = new QStandardItemModel(this);
     ui->tableView->setModel(model);
