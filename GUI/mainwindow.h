@@ -1,18 +1,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "markerpopup.h"
-#include "labelpopup.h"
-#include "qcustomplot.h"
-#include "editwindow.h"
-#include "parameters.h"
-
+#include <QDialog>
+#include <QString>
+#include <QDebug>
+#include <QStandardItemModel>
+#include <QTableView>
+#include <vector>
 #include <QMainWindow>
-#include <QTimer>
-#include <QShortcut>
-#include <QtMath>
-#include <QPen>
-#include <QBrush>
+#include "graphviewer.h"
+using namespace std;
 
 namespace Ui {
 class MainWindow;
@@ -24,76 +21,22 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-
     ~MainWindow();
 
-    void getRawData(QString);
-
-public slots:
-    void myfunction();
-
-    void markerfc(QStringList);
-
-    void labelfc(QStringList);
-
-    void  mousePress();
-
-    void mouseWheel();
-
-    void keyPressEvent(QKeyEvent *event);
-
-    void mouseRelease();
-
-    void addLabelSelection();
-
-
-
 private slots:
+    void open();
 
-    void on_lcdNumber_overflow();
-
-    void on_pushButton_2_clicked();
-
-    void on_toolButton_clicked();
-
-    void on_toolButton_2_clicked();
-
-    void on_toolButton_3_clicked();
-
-    void on_actionLogin_triggered();
-
-    void on_actionParameter_triggered();
-
-    void on_actionExit_triggered();
-
-signals:
-    void EnterIsPressed();
-
-    void MouseIsReleased();
-
-    void MarkerNameInfo(QString);
-
-    void LabelNameInfo(QString);
-
-    void toolbutton_trig();
-
-    void toolbutton2_trig();
-
-    void toolbutton3_trig();
-
-//    void rawDataSig(int);
-
+protected:
 
 private:
+    GraphViewer graphViewer(Ui::MainWindow);
+    void createActions();
+    void createMenus();
     Ui::MainWindow *ui;
-    QTimer *timer;
-    QShortcut * shortcut;
-    MarkerPopup *markerPopup;
-    LabelPopup *labelPopup;
-    QCPItemTracer *labelTracerTemp;
-    editwindow *editwindowpt;
-    Parameters *parampt;
-
+    QStandardItemModel *model;
+    bool firstRun;
+    QMenu *fileMenu;
+    QAction *openAct;
 };
 
-#endif // MAINWINDOW_H
+#endif // MAINWINDOW_h
