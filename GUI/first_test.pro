@@ -16,14 +16,18 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     mainwindow.cpp \
     csvreader.cpp \
-    graphviewer.cpp
+    graphviewer.cpp \
+    graph.cpp \
+    markup.cpp
 
 HEADERS  += \
     qcustomplot.h \
     mainwindow.h \
     csvreader.h \
     datastructure.h \
-    graphviewer.h
+    graphviewer.h \
+    graph.h \
+    markup.h
 
 FORMS    += \
     mainwindow.ui
