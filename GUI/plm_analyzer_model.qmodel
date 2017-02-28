@@ -50,7 +50,7 @@
                          <object>{7636ea99-26c1-41af-9029-2929abf4ff91}</object>
                          <context>GUI</context>
                          <name>Main</name>
-                         <pos>x:395;y:90</pos>
+                         <pos>x:395;y:45</pos>
                          <rect>x:-45;y:-30;w:90;h:60</rect>
                          <auto-sized>false</auto-sized>
                          <visual-role>0</visual-role>
@@ -72,8 +72,8 @@
                          <object>{fb436286-816f-4787-aa19-4775e3b1096e}</object>
                          <context>GUI</context>
                          <name>MainWindow</name>
-                         <pos>x:395;y:240</pos>
-                         <rect>x:-115;y:-85;w:230;h:170</rect>
+                         <pos>x:395;y:210</pos>
+                         <rect>x:-115;y:-95;w:230;h:190</rect>
                          <visual-role>0</visual-role>
                         </DObject>
                        </base-DObject>
@@ -94,7 +94,7 @@
                          <object>{7fbcfaef-c475-4e98-8dad-6e45f07334d0}</object>
                          <context>GUI</context>
                          <name>CsvReader</name>
-                         <pos>x:175;y:520</pos>
+                         <pos>x:170;y:450</pos>
                          <rect>x:-145;y:-75;w:290;h:150</rect>
                          <visual-role>0</visual-role>
                         </DObject>
@@ -116,7 +116,7 @@
                          <object>{1206ce48-f096-492f-a03c-3133b5aee681}</object>
                          <context>GUI</context>
                          <name>GraphViewer</name>
-                         <pos>x:575;y:520</pos>
+                         <pos>x:570;y:450</pos>
                          <rect>x:-245;y:-75;w:490;h:150</rect>
                          <auto-sized>false</auto-sized>
                          <visual-role>0</visual-role>
@@ -178,7 +178,7 @@
                          </base-DElement>
                          <object>{ef85b33f-3d48-4ad6-8d4b-9fdd44eae024}</object>
                          <name>Open Raw Data File (.csv File)</name>
-                         <pos>x:430;y:495</pos>
+                         <pos>x:425;y:425</pos>
                          <rect>x:-410;y:-115;w:820;h:230</rect>
                          <auto-sized>false</auto-sized>
                          <visual-role>0</visual-role>
@@ -235,34 +235,11 @@
                     </item>
                    </qlist>
                   </elements>
-                  <last-modified>1488178266976</last-modified>
+                  <last-modified>1488256685708</last-modified>
                   <toolbarid>Components</toolbarid>
                  </MDiagram>
                 </base-MDiagram>
                </MCanvasDiagram>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{4ebd4c8a-0b6f-4364-be06-59560533c389}</uid>
-             <target>
-              <instance type="MItem">
-               <MItem>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{4ebd4c8a-0b6f-4364-be06-59560533c389}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>Clinician</name>
-                 </MObject>
-                </base-MObject>
-                <variety-editable>false</variety-editable>
-                <variety>actor</variety>
-               </MItem>
               </instance>
              </target>
             </handle>
@@ -553,51 +530,65 @@
                             <qlist>
                              <item>
                               <MClassMember>
-                               <uid>{ce26abcd-8127-4121-8f80-d6a2519e5a56}</uid>
+                               <uid>{0d0e9a34-a56f-4add-aa4b-ec836e794eb8}</uid>
                                <type>2</type>
-                               <declaration>void on_pushButton_clicked()</declaration>
+                               <declaration>GraphViewer graphViewer(Ui::MainWindow)</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{63088e17-8ead-40c6-ba33-5cf4ddbee7bd}</uid>
+                               <uid>{55205709-08b2-4292-b58e-03c60cd8f1cc}</uid>
                                <type>2</type>
-                               <declaration>void on_pushButton_2_clicked()</declaration>
+                               <declaration>void createActions()</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{648e00b6-018c-4081-b952-f757f0524acf}</uid>
+                               <uid>{18cf1807-bbd9-4f44-801b-42712598264d}</uid>
                                <type>2</type>
-                               <declaration>void on_pushButton_3_clicked()</declaration>
+                               <declaration>void createMenus()</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{f2db5b0a-30b2-4fba-9d02-2fc5f51609d2}</uid>
+                               <uid>{07577114-6054-4af3-ac2b-559332bf59cc}</uid>
                                <type>1</type>
                                <declaration>Ui::MainWindow *ui</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{6b1fa07c-f20e-4fff-8bff-a2b9db537abd}</uid>
+                               <uid>{54dfbf44-b571-4171-b6b6-237de19e3134}</uid>
                                <type>1</type>
                                <declaration>QStandardItemModel *model</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{0d34c937-5e59-443d-870d-3d5e8a9ef649}</uid>
+                               <uid>{378ad660-566b-4a7a-a922-9e5b55f5b454}</uid>
                                <type>1</type>
                                <declaration>bool firstRun</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{1be2ced5-1f05-4971-96be-cb331655a9e1}</uid>
+                               <uid>{d4cd7981-c0fd-40ca-9010-365ac853a9d6}</uid>
+                               <type>1</type>
+                               <declaration>QMenu *fileMenu</declaration>
+                              </MClassMember>
+                             </item>
+                             <item>
+                              <MClassMember>
+                               <uid>{193049fb-6f04-4eb5-bef1-97ce663f8927}</uid>
+                               <type>1</type>
+                               <declaration>QAction *openAct</declaration>
+                              </MClassMember>
+                             </item>
+                             <item>
+                              <MClassMember>
+                               <uid>{1bae8f6a-4c95-43e8-8850-593c53c12fa8}</uid>
                                <type>2</type>
-                               <declaration>GraphViewer graphViewer(Ui::MainWindow)</declaration>
+                               <declaration>void open()</declaration>
                               </MClassMember>
                              </item>
                             </qlist>
@@ -628,42 +619,42 @@
                             <qlist>
                              <item>
                               <MClassMember>
-                               <uid>{49fecc6d-7fdf-44e2-878a-3ea42220b624}</uid>
+                               <uid>{1eb16cf9-a212-4e66-b63e-98a8172489f7}</uid>
                                <type>1</type>
                                <declaration>QVector&lt;QVector&lt;double&gt;&gt; dataArray</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{0e823666-3f0e-4847-8134-4cf96646b23c}</uid>
+                               <uid>{a28d8f68-8d06-4076-a4ce-b447e7b6cf1c}</uid>
                                <type>1</type>
                                <declaration>QList&lt;QStandardItem*&gt; standardItemList</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{0411216c-5007-41c8-aadc-083f321416fe}</uid>
+                               <uid>{d9265041-a3f0-494c-80c6-ae45516b7a1e}</uid>
                                <type>1</type>
                                <declaration>QStandardItemModel *model</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{896d5f6e-9d90-4b16-9827-3dbb8b6178ca}</uid>
+                               <uid>{a599c5d1-aa55-42db-af1b-7f69010f9f3f}</uid>
                                <type>2</type>
                                <declaration>void checkString (QString &amp;temp, QChar character = 0)</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{db72b3d1-8eaa-462d-bda2-b907af7f976a}</uid>
+                               <uid>{a5be44ec-110a-44ee-ad77-afbee3f5b499}</uid>
                                <type>2</type>
                                <declaration>void importCSV(QString)</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{7e8e717c-e8fa-4eca-b723-80825832ef54}</uid>
+                               <uid>{c276fc90-20ea-41a8-acce-95f99477b288}</uid>
                                <type>2</type>
                                <declaration>DataStructure exportData (DataStructure)</declaration>
                               </MClassMember>
@@ -696,35 +687,35 @@
                             <qlist>
                              <item>
                               <MClassMember>
-                               <uid>{5cd2ac22-a47c-400a-a1e7-f98557df0544}</uid>
+                               <uid>{319e8208-7e4c-4c33-8a61-feb3459e8027}</uid>
                                <type>1</type>
                                <declaration>Ui::MainWindow *main_window_ui</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{0cfa64a3-11b6-4666-b1a8-144b785c94fa}</uid>
+                               <uid>{d2de76ec-ec72-43d0-959b-96e903132538}</uid>
                                <type>1</type>
                                <declaration>bool first_time</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{11fc8584-1878-410c-a946-549b6898fce8}</uid>
+                               <uid>{3558c756-1a32-40a2-8008-2f949c8d7330}</uid>
                                <type>2</type>
                                <declaration>GraphViewer(Ui::MainWindow *ui)</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{706a712a-6012-4506-857b-b7d264149746}</uid>
+                               <uid>{0990c006-ee8e-457c-9d29-ac6ce4258703}</uid>
                                <type>2</type>
                                <declaration>void createGraph(QVector&lt;double&gt;, QVector&lt;double&gt;, QVector&lt;double&gt;, QVector&lt;double&gt;)</declaration>
                               </MClassMember>
                              </item>
                              <item>
                               <MClassMember>
-                               <uid>{d70b1a15-056f-43e5-ad0a-19ace4518a36}</uid>
+                               <uid>{10fee082-4c91-40b1-ab16-58ce4b64e643}</uid>
                                <type>2</type>
                                <declaration>void setFirstTime(bool)</declaration>
                               </MClassMember>
@@ -819,52 +810,6 @@
                  </MObject>
                 </base-MObject>
                </MPackage>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{ba806fa1-abb8-4578-8430-d1424a73c1c5}</uid>
-             <target>
-              <instance type="MItem">
-               <MItem>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{ba806fa1-abb8-4578-8430-d1424a73c1c5}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>Clinician</name>
-                 </MObject>
-                </base-MObject>
-                <variety-editable>false</variety-editable>
-                <variety>actor</variety>
-               </MItem>
-              </instance>
-             </target>
-            </handle>
-           </item>
-           <item>
-            <handle>
-             <uid>{0cd22939-f422-4c84-ad7f-ae36c9a586e1}</uid>
-             <target>
-              <instance type="MItem">
-               <MItem>
-                <base-MObject>
-                 <MObject>
-                  <base-MElement>
-                   <MElement>
-                    <uid>{0cd22939-f422-4c84-ad7f-ae36c9a586e1}</uid>
-                   </MElement>
-                  </base-MElement>
-                  <name>New UseCase</name>
-                 </MObject>
-                </base-MObject>
-                <variety-editable>false</variety-editable>
-                <variety>usecase</variety>
-               </MItem>
               </instance>
              </target>
             </handle>
