@@ -1,6 +1,6 @@
 #include "graph.h"
 
-Graph::Graph()
+/*Graph::Graph()
 {
 }
 
@@ -32,4 +32,4 @@ void Markup::write(QJSonObject &json) const
 void annotate(const Markup markup)
 {
     //Code which annotates the graph
-}
+}*/

@@ -14,6 +14,11 @@ public:
     GraphViewer(Ui::MainWindow *ui);
     void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>);
     void setFirstTime(bool);
+private slots:
+    void on_toolButton_triggered(QAction *arg1);
+    void on_toolButton_2_triggered(QAction *arg1);
+    void on_toolButton_clicked();
+    void on_toolButton_2_clicked();
 };
 
 #endif // GRAPHVIEWER_H

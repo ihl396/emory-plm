@@ -37,6 +37,22 @@ private:
     bool firstRun;
     QMenu *fileMenu;
     QAction *openAct;
+
+    // Michael's Added private variables
+    QToolBar *toolMenu;
+    void showRightClickMenu(const QPoint& pos);
+    //void rightMousePress();
+    QMenu *rightClickMenu;
+    QAction *viewSelectionAction;
+    QAction *undoViewSelectedAction;
+    QAction *rescaleViewAction;
+    QAction *cancelAction;
+    QCPDataSelection selection;
+    QAction *selectedItem;
+
+private slots:
+    void rightMousePress();
+
 };
 
 #endif // MAINWINDOW_h

@@ -742,6 +742,7 @@ protected:
   // low-level mouse events:
   virtual void mousePressEvent(QMouseEvent *event, const QVariant &details);
   virtual void mouseMoveEvent(QMouseEvent *event, const QPointF &startPos);
+  //virtual void rightMousePress(QMouseEvent *event);
   virtual void mouseReleaseEvent(QMouseEvent *event, const QPointF &startPos);
   virtual void mouseDoubleClickEvent(QMouseEvent *event, const QVariant &details);
   virtual void wheelEvent(QWheelEvent *event);
@@ -3706,6 +3707,7 @@ signals:
   void mouseMove(QMouseEvent *event);
   void mouseRelease(QMouseEvent *event);
   void mouseWheel(QWheelEvent *event);
+  void rightMousePress(QMouseEvent *event);
   
   void plottableClick(QCPAbstractPlottable *plottable, int dataIndex, QMouseEvent *event);
   void plottableDoubleClick(QCPAbstractPlottable *plottable, int dataIndex, QMouseEvent *event);

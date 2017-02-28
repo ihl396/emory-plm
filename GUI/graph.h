@@ -9,7 +9,7 @@
 
 class Graph
 {
-public:
+/*public:
     Graph();
     QList<Markup> Markups;
     void annotate(const Markup &markup);
@@ -17,6 +17,7 @@ public:
     void write(QJsonObject &json) const;
 private:
     QList<Markup> p_markups;
+    QJsonObject *json;*/
 };
 
 #endif // GRAPH_H
