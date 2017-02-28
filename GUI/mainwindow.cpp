@@ -148,15 +148,16 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // create multiple graphs:
-    for (int gi=0; gi<COLUMN_NUM; ++gi)
-    {
+    //for (int gi=0; gi<COLUMN_NUM; ++gi)
+    //{
 
         ui->customPlot->addGraph();
-        QColor color(10+40*gi,250-40*gi, 150, 150);
+        QColor color(220,0,0, 200);
+        //QColor color(10+40*gi,250-40*gi, 150, 150);
         /// QColor color(10+200/4.0*gi,70*(1.6-gi/4.0), 150, 150);
         ui->customPlot->graph()->setLineStyle(QCPGraph::lsLine);
-        ui->customPlot->graph()->setPen(QPen(color.lighter(200)));
-        ui->customPlot->graph()->setBrush(QBrush(color));
+        ui->customPlot->graph()->setPen(QPen(color.lighter(100)));
+        ///ui->customPlot->graph()->setBrush(QBrush(color));
 
         /// need to use actual data with real time values
         // generate random walk data:
@@ -171,12 +172,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
         }
         ui->customPlot->graph()->data()->set(timeData);
-    }
+    //}
 
 
     //Tab2-5 code,
     //this is for the new tabs. Need to find a way on how to change the pointers via a variable. For now, Im doing this manually
-    ui->customPlot_2->addGraph();
+    /*ui->customPlot_2->addGraph();
     QColor color2(55,180, 150, 150);
     ui->customPlot_2->graph()->setLineStyle(QCPGraph::lsLine);
     ui->customPlot_2->graph()->setPen(QPen(color2.lighter(200)));
@@ -259,7 +260,7 @@ MainWindow::MainWindow(QWidget *parent) :
     phaseTracerText->setText(dummytext);
     phaseTracerText->setTextAlignment(Qt::AlignLeft);
     phaseTracerText->setFont(QFont(font().family(), 9));
-    phaseTracerText->setPadding(QMargins(8, 0, 0, 0));
+    phaseTracerText->setPadding(QMargins(8, 0, 0, 0));*/
 
 
 
@@ -291,14 +292,14 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->customPlot->xAxis->setRange(0, 450); /// Need Dynamic Code for ranges
     ui->customPlot->yAxis->setRange(0, 10);
 
-    ui->customPlot_2->xAxis->setRange(0, 199);
+    /*ui->customPlot_2->xAxis->setRange(0, 199);
     ui->customPlot_2->yAxis->setRange(0, 10);
     ui->customPlot_3->xAxis->setRange(0, 449);
     ui->customPlot_3->yAxis->setRange(0, 10);
     ui->customPlot_4->xAxis->setRange(0, 449);
     ui->customPlot_4->yAxis->setRange(0, 10);
     ui->customPlot_5->xAxis->setRange(0, 449);
-    ui->customPlot_5->yAxis->setRange(0, 10);
+    ui->customPlot_5->yAxis->setRange(0, 10);*/
     // show legend with slightly transparent background brush:
     ui->customPlot->legend->setVisible(true);
     ui->customPlot->legend->setBrush(QColor(255, 255, 255, 150));
@@ -464,11 +465,39 @@ void MainWindow::ShowContextMenu(const QPoint& pos) // this is a slot
     // QPoint globalPos = myWidget->viewport()->mapToGlobal(pos);
 
     QMenu myMenu;
-    myMenu.addAction("View Selection");
-    myMenu.addAction("Undo View Selected");
-    myMenu.addAction("Rescale View");
-    myMenu.addAction("Cancel");
-    // ...
+    QAction *viewSelectionAction = new QAction("View Selection");
+    QAction *undoViewSelectedAction = new QAction("Undo View Selected");
+    QAction *rescaleViewAction = new QAction("Rescale View");
+    QAction *cancelAction = new QAction("Cancel");
+    if (myMenu.isEmpty())
+    {
+        myMenu.addAction(viewSelectionAction);
+        viewSelectionAction->setShortcut(tr("Ctrl+V"));
+
+        myMenu.addAction(undoViewSelectedAction);
+        undoViewSelectedAction->setShortcut(tr("Ctrl+U"));
+
+        myMenu.addAction(rescaleViewAction);
+        rescaleViewAction->setShortcut(tr("Ctrl+R"));
+
+        myMenu.addAction(cancelAction);
+        cancelAction->setShortcut(tr("Ctrl+C"));
+        // ...
+    }
+    QCPDataSelection selection = ui->customPlot->graph(0)->selection();
+    /// NEED this check to keep from runtime error if no selection is trying to be viewed
+    if (selection.dataPointCount() != 0)
+    {
+
+    }
+    else
+    {
+        /// LOCK? or HIDE?
+        //myMenu.menuAction(0)->setEnabled(false);/// actions.at(0)->setEnabled(false);
+        viewSelectionAction->setEnabled(false);
+        undoViewSelectedAction->setEnabled(false);
+
+    }
 
     QAction* selectedItem = myMenu.exec(globalPos);
     if (selectedItem)
@@ -502,10 +531,13 @@ void MainWindow::ShowContextMenu(const QPoint& pos) // this is a slot
                 }
                 //QCPGraphData lowerBound = selectedData[0].value;
                 //QCPGraphData upperBound = selectedData[selectedData.length()].value;
-                ui->customPlot->graph()->data()->set(selectedData);
-                ui->customPlot->xAxis->setRange(100, 200);
+                //ui->customPlot->graph()->data()->set(selectedData);
+                double xAxisLowerBound = selectedData[0].key;
+                double xAxisUpperBound = selectedData[selectedData.length()-1].key;
+                double yAxisLowerBound = selectedData[0].value;
+                double yAxisUpperBound = selectedData[selectedData.length()-1].value;
+                ui->customPlot->xAxis->setRange(xAxisLowerBound,xAxisUpperBound);
                 ui->customPlot->yAxis->setRange(0, 10);
-                //ui->customPlot->rescaleAxes();
                 ui->customPlot->replot();
             }
         }
