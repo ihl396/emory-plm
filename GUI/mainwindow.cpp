@@ -33,15 +33,16 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::createActions() {
-    openAct = new QAction(tr("&Open Raw Data File"), this);
+    openAct = new QAction(QIcon(":/resources/toolbar/openRawDataFile.png"), tr("&Open Raw Data File"), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open a file"));
+    saveAct = new QAction(QIcon(":/resources/toolbar/saveFile.png"), tr("&Save File"), this);
+    saveAct->setShortcuts(QKeySequence::Save);
+    saveAct->setStatusTip(tr("Save a file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
+    /// connect(saveAct, &QAction::triggered, this, &MainWindow::save);
 
     // Tool Button Actions
-    //QPixmap handToolPix(":/resources/toolbar/handTool.png");
-    //QPixmap markerToolPix(":/myresources/img/markerTool.png");
-    //QPixmap labelToolPix(":/myresources/img/testdata/labelTool.png");
     handToolAct = new QAction(QIcon(":/resources/toolbar/handTool.png"), tr("Hand Tool"), this);
     markerToolAct = new QAction(QIcon(":/resources/toolbar/markerTool.png"), tr("Marker Tool"), this);
     labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
@@ -51,22 +52,25 @@ void MainWindow::createActions() {
     handToolAct->setShortcut(QKeySequence("Ctrl+H"));
     markerToolAct->setShortcut(QKeySequence("Ctrl+M"));
     labelToolAct->setShortcut(QKeySequence("Ctrl+L"));
-    //handToolAct->setIcon(QIcon(handToolPix));
-    //markerToolAct->setIcon(QIcon(markerToolPix));
-    //labelToolAct->setIcon(QIcon(labelToolPix));
+    handToolAct->setStatusTip(tr("Hand Tool"));
+    markerToolAct->setStatusTip(tr("Marker Tool"));
+    labelToolAct->setStatusTip(tr("Label Tool"));
+
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
+    viewSelectionAct->setShortcut(QKeySequence("CTRL+V"));
     viewSelectionAct->setStatusTip(tr("View Selection"));
     viewSelectionShortcut = new QShortcut(QKeySequence("CTRL+V"),this); /// Couldn't get the action shortcut to work, this works
     connect(viewSelectionAct, &QAction::triggered, this, &MainWindow::viewSelection);
-    connect(viewSelectionShortcut, &QShortcut::activated, this, &MainWindow::rescaleView);
+    connect(viewSelectionShortcut, &QShortcut::activated, this, &MainWindow::viewSelection);
 
     undoViewSelectedAct = new QAction("Undo View Selected");
     undoViewSelectedAct->setShortcut(QKeySequence("Ctrl+U"));
     undoViewSelectedAct->setStatusTip(tr("Undo View Selected"));
 
     rescaleViewAct = new QAction(tr("&Rescale View"), this);
+    rescaleViewAct->setShortcut(QKeySequence("CTRL+R"));
     rescaleViewAct->setStatusTip(tr("Rescale View"));
     rescaleViewShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
     connect(rescaleViewAct, &QAction::triggered, this, &MainWindow::rescaleView);
@@ -80,11 +84,16 @@ void MainWindow::createActions() {
 void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openAct);
+    fileMenu->addAction(saveAct);
 
     // Toolbar Menu
+    ui->toolBar->addAction(openAct);
+    ui->toolBar->addAction(saveAct);
+    ui->toolBar->addSeparator();
     ui->toolBar->addAction(handToolAct);//, "Hand Tool");
     ui->toolBar->addAction(markerToolAct);//, "Marker Tool");
     ui->toolBar->addAction(labelToolAct);//, "Label Tool");
+    emit disableToolBar();
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(markerToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(labelToolAct, &QAction::triggered, this, &MainWindow::labelToolTriggered);
@@ -116,14 +125,43 @@ void MainWindow::open()
     graphViewer.setFirstTime(firstRun);
     graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values);
     firstRun = false;
+    // Defaults to Hand Tool when file is opened
+    emit enableToolBar();
+    emit handToolAct->trigger();
+}
+
+void MainWindow::save()
+{
+
+}
+
+void MainWindow::enableToolBar()
+{
+    handToolAct->setEnabled(true);
+    markerToolAct->setEnabled(true);
+    labelToolAct->setEnabled(true);
+    viewSelectionShortcut->setEnabled(true);
+    rescaleViewShortcut->setEnabled(true);
+}
+
+void MainWindow::disableToolBar()
+{
+    handToolAct->setEnabled(false);
+    markerToolAct->setEnabled(false);
+    labelToolAct->setEnabled(false);
+    viewSelectionShortcut->setEnabled(false);
+    rescaleViewShortcut->setEnabled(false);
 }
 
 /* RIGHT CLICK EVENT and RECTANGLE SCALING*/
 void MainWindow::rightMousePress()
 {
     /// NEED TO ONLY ALLOW RIGHT CLICK WHEN A FILE IS LOADED
-    const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
-    emit showRightClickMenu(cursorLoc);
+    if (!firstRun)
+    {
+        const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
+        emit showRightClickMenu(cursorLoc);
+    }
 }
 
 void MainWindow::viewSelection()

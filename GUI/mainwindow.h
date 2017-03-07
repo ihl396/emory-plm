@@ -25,6 +25,13 @@ public:
 
 private slots:
     void open();
+    void save();
+    void handToolTriggered();
+    void markerToolTriggered();
+    void labelToolTriggered();
+    void rightMousePress();
+    void viewSelection();
+    void rescaleView();
 
 protected:
 
@@ -37,13 +44,15 @@ private:
     bool firstRun;
     QMenu *fileMenu;
     QAction *openAct;
+    QAction *saveAct;
 
     // Michael's Added private variables
-    //QToolBar *toolBar;
+    void showRightClickMenu(const QPoint& pos);
+    void enableToolBar();
+    void disableToolBar();
     QAction *handToolAct;
     QAction *markerToolAct;
     QAction *labelToolAct;
-    void showRightClickMenu(const QPoint& pos);
     QMenu *rightClickMenu;
     QAction *viewSelectionAct;
     QShortcut *viewSelectionShortcut;
@@ -53,15 +62,6 @@ private:
     QAction *cancelAct;
     QCPDataSelection selection;
     QAction *selectedItem;
-
-private slots:
-    void handToolTriggered();
-    void markerToolTriggered();
-    void labelToolTriggered();
-    void rightMousePress();
-    void viewSelection();
-    void rescaleView();
-
 };
 
 #endif // MAINWINDOW_h

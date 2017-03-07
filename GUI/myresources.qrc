@@ -3,5 +3,7 @@
         <file>resources/toolbar/handTool.png</file>
         <file>resources/toolbar/markerTool.png</file>
         <file>resources/toolbar/labelTool.png</file>
+        <file>resources/toolbar/openRawDataFile.png</file>
+        <file>resources/toolbar/saveFile.png</file>
     </qresource>
 </RCC>
