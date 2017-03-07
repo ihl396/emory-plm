@@ -36,15 +36,16 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->legend->setBrush(QColor(255, 255, 255, 150));
 
     // Set Interactions
+    /// May not need multiselect when we have one graph
     main_window_ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
-                                          QCP::iSelectLegend | QCP::iSelectPlottables);
+                                          QCP::iSelectLegend | QCP::iSelectPlottables | QCP::iMultiSelect);
 
     // Set Range Drag and Zoom
     main_window_ui->customPlot->axisRect()->setRangeDrag(Qt::Horizontal);
     main_window_ui->customPlot->axisRect()->setRangeZoom(Qt::Horizontal);
 
     // Setup right click context menu
-    main_window_ui->customPlot->setContextMenuPolicy(Qt::CustomContextMenu); /// correct placement?
+    main_window_ui->customPlot->setContextMenuPolicy(Qt::ActionsContextMenu); /// correct placement?
 
     // Add Connections
     /*connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_clicked()));//this clicks the button to disable functions when another toolbutton is being pressed

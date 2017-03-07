@@ -38,37 +38,65 @@ void MainWindow::createActions() {
     openAct->setStatusTip(tr("Open a file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
 
-    viewSelectionAction = new QAction("View Selection");
-    viewSelectionAction->setShortcut(tr("Ctrl+V"));
-    viewSelectionAction->setStatusTip(tr("Open a file"));
+    // Tool Button Actions
+    //QPixmap handToolPix(":/resources/toolbar/handTool.png");
+    //QPixmap markerToolPix(":/myresources/img/markerTool.png");
+    //QPixmap labelToolPix(":/myresources/img/testdata/labelTool.png");
+    handToolAct = new QAction(QIcon(":/resources/toolbar/handTool.png"), tr("Hand Tool"), this);
+    markerToolAct = new QAction(QIcon(":/resources/toolbar/markerTool.png"), tr("Marker Tool"), this);
+    labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
+    handToolAct->setCheckable(true);
+    markerToolAct->setCheckable(true);
+    labelToolAct->setCheckable(true);
+    handToolAct->setShortcut(QKeySequence("Ctrl+H"));
+    markerToolAct->setShortcut(QKeySequence("Ctrl+M"));
+    labelToolAct->setShortcut(QKeySequence("Ctrl+L"));
+    //handToolAct->setIcon(QIcon(handToolPix));
+    //markerToolAct->setIcon(QIcon(markerToolPix));
+    //labelToolAct->setIcon(QIcon(labelToolPix));
 
-    undoViewSelectedAction = new QAction("Undo View Selected");
-    undoViewSelectedAction->setShortcut(tr("Ctrl+U"));
-    undoViewSelectedAction->setStatusTip(tr("Open a file"));
+    // Right Click Actions
+    viewSelectionAct = new QAction(tr("&View Selection"), this);
+    viewSelectionAct->setStatusTip(tr("View Selection"));
+    viewSelectionShortcut = new QShortcut(QKeySequence("CTRL+V"),this); /// Couldn't get the action shortcut to work, this works
+    connect(viewSelectionAct, &QAction::triggered, this, &MainWindow::viewSelection);
+    connect(viewSelectionShortcut, &QShortcut::activated, this, &MainWindow::rescaleView);
 
-    rescaleViewAction = new QAction("Rescale View");
-    rescaleViewAction->setShortcut(tr("Ctrl+R"));
-    rescaleViewAction->setStatusTip(tr("Open a file"));
+    undoViewSelectedAct = new QAction("Undo View Selected");
+    undoViewSelectedAct->setShortcut(QKeySequence("Ctrl+U"));
+    undoViewSelectedAct->setStatusTip(tr("Undo View Selected"));
 
-    cancelAction = new QAction("Cancel");
-    cancelAction->setShortcut(tr("Ctrl+C"));
-    cancelAction->setStatusTip(tr("Open a file"));
+    rescaleViewAct = new QAction(tr("&Rescale View"), this);
+    rescaleViewAct->setStatusTip(tr("Rescale View"));
+    rescaleViewShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
+    connect(rescaleViewAct, &QAction::triggered, this, &MainWindow::rescaleView);
+    connect(rescaleViewShortcut, &QShortcut::activated, this, &MainWindow::rescaleView);
+
+    cancelAct = new QAction("Cancel");
+    cancelAct->setShortcut(QKeySequence("Ctrl+C"));
+    cancelAct->setStatusTip(tr("Cancel"));
 }
 
 void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openAct);
 
-    //toolMenu = new QToolBar("Toolbar", ui->toolBar);
-    //toolMenu->addAction(openAct);
+    // Toolbar Menu
+    ui->toolBar->addAction(handToolAct);//, "Hand Tool");
+    ui->toolBar->addAction(markerToolAct);//, "Marker Tool");
+    ui->toolBar->addAction(labelToolAct);//, "Label Tool");
+    connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
+    connect(markerToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
+    connect(labelToolAct, &QAction::triggered, this, &MainWindow::labelToolTriggered);
+
+    // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
-    rightClickMenu = new QMenu(ui->customPlot);
-    rightClickMenu->addAction(viewSelectionAction);
-    rightClickMenu->addAction(undoViewSelectedAction);
-    rightClickMenu->addAction(rescaleViewAction);
-    rightClickMenu->addAction(cancelAction);
-
-
+    rightClickMenu = new QMenu(ui->customPlot);//new QMenu(ui->customPlot);
+    //rightClickMenu->setContextMenuPolicy(Qt::ActionsContextMenu);
+    rightClickMenu->addAction(viewSelectionAct);
+    rightClickMenu->addAction(undoViewSelectedAct);
+    rightClickMenu->addAction(rescaleViewAct);
+    rightClickMenu->addAction(cancelAct);
 }
 
 void MainWindow::open()
@@ -91,6 +119,62 @@ void MainWindow::open()
 }
 
 /* RIGHT CLICK EVENT and RECTANGLE SCALING*/
+void MainWindow::rightMousePress()
+{
+    /// NEED TO ONLY ALLOW RIGHT CLICK WHEN A FILE IS LOADED
+    const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
+    emit showRightClickMenu(cursorLoc);
+}
+
+void MainWindow::viewSelection()
+{
+    selection = ui->customPlot->graph(0)->selection();
+
+    // Checks for selection
+    if (selection.dataPointCount() != 0)
+    {
+        // creates an empty QVector<QCPGraphData> array with the size of the data selection points
+        QVector<QCPGraphData> selectedData(selection.dataPointCount());
+        qDebug() << selection.dataRanges();
+        QCPGraphDataContainer::const_iterator begin;
+        QCPGraphDataContainer::const_iterator end;
+        foreach (QCPDataRange dataRange, selection.dataRanges())
+        {
+            qDebug() << "Data was selected";
+            QCPGraphDataContainer::const_iterator beginloop = ui->customPlot->graph()->data()->at(dataRange.begin()); // get range begin iterator from index
+            QCPGraphDataContainer::const_iterator endloop = ui->customPlot->graph()->data()->at(dataRange.end()); // get range end iterator from index
+            begin = beginloop;
+            end = endloop;
+            int j =0;
+            for (QCPGraphDataContainer::const_iterator it=begin; it!=end; ++it)
+            {
+                // iterator "it" will go through all selected data points
+                qDebug() << it->key;
+                selectedData[j].key = it->key;
+                selectedData[j].value = it->value;
+                j++;
+
+            }
+            /// Only takes into account of one graph
+            double xAxisLowerBound = selectedData[0].key;
+            double xAxisUpperBound = selectedData[selectedData.length()-1].key;
+            //double yAxisLowerBound = selectedData[0].value;
+            //double yAxisUpperBound = selectedData[selectedData.length()-1].value;
+            ui->customPlot->xAxis->setRange(xAxisLowerBound,xAxisUpperBound);
+            ui->customPlot->yAxis->setRange(-2, 2); /// make dynamic
+            ui->customPlot->replot();
+        }
+    }
+}
+
+void MainWindow::rescaleView()
+{
+    /// FIGURE OUT WHY IT RESCALES IT TWICE
+    ui->customPlot->rescaleAxes(true);
+    ui->customPlot->replot();
+    qDebug() << "Rescaled View";
+}
+
 void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
 {
     QPoint globalPos = ui->customPlot->mapToGlobal(pos);
@@ -98,10 +182,16 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
     selection = ui->customPlot->graph(0)->selection();
 
     // Checks for no selection and hides options
-    if (selection.dataPointCount() == 0)
+    /// LOOK INTO STILL ENABLED WHEN NO SELECTION (MIGHT BE ONE DATA POINT SELECTED)
+    if (selection.dataPointCount() == 0) /// Maybe set to == 0 || == 1?
     {
-        viewSelectionAction->setEnabled(false);
-        undoViewSelectedAction->setEnabled(false);
+        viewSelectionAct->setEnabled(false);
+        undoViewSelectedAct->setEnabled(false);
+    }
+    else
+    {
+        viewSelectionAct->setEnabled(true);
+        undoViewSelectedAct->setEnabled(true);
     }
 
     selectedItem = rightClickMenu->exec(globalPos);
@@ -109,40 +199,7 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
     {
         if (selectedItem->text().contains("View Selection"))
         {
-            // something was chosen, do stuff
-            //ui->customPlot->setSelectionRectMode(QCP::srmZoom);
-            //ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
-
-            QVector<QCPGraphData> selectedData(selection.dataPointCount()); /// creates an empty QVector<QCPGraphData> array with the size of the data selection points
-            //QCPGraphData test = selectedData[0];
-            qDebug() << selection.dataRanges();
-            QCPGraphDataContainer::const_iterator begin;
-            QCPGraphDataContainer::const_iterator end;
-            foreach (QCPDataRange dataRange, selection.dataRanges())
-            {
-                qDebug() << "Data was selected";
-                QCPGraphDataContainer::const_iterator beginloop = ui->customPlot->graph()->data()->at(dataRange.begin()); // get range begin iterator from index
-                QCPGraphDataContainer::const_iterator endloop = ui->customPlot->graph()->data()->at(dataRange.end()); // get range end iterator from index
-                begin = beginloop;
-                end = endloop;
-                int j =0;
-                for (QCPGraphDataContainer::const_iterator it=begin; it!=end; ++it)
-                {
-                    // iterator "it" will go through all selected data points
-                    qDebug() << it->key;
-                    selectedData[j].key = it->key;
-                    selectedData[j].value = it->value;
-                    j++;
-
-                }
-                double xAxisLowerBound = selectedData[0].key;
-                double xAxisUpperBound = selectedData[selectedData.length()-1].key;
-                //double yAxisLowerBound = selectedData[0].value;
-                //double yAxisUpperBound = selectedData[selectedData.length()-1].value;
-                ui->customPlot->xAxis->setRange(xAxisLowerBound,xAxisUpperBound);
-                ui->customPlot->yAxis->setRange(-2, 2);
-                ui->customPlot->replot();
-            }
+            emit viewSelection();
         }
         else if (selectedItem->text().contains("Undo View Selected"))
         {
@@ -150,7 +207,7 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         }
         else if (selectedItem->text().contains("Rescale View"))
         {
-            ui->customPlot->rescaleAxes(true);
+            emit rescaleView();
         }
     }
     else
@@ -159,8 +216,54 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
     }
 }
 
-void MainWindow::rightMousePress()
+void MainWindow::handToolTriggered()
 {
-    const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
-    emit showRightClickMenu(cursorLoc);
+    if (handToolAct->isChecked() == true){
+        markerToolAct->setChecked(false);
+        labelToolAct->setChecked(false);
+        emit markerToolTriggered();
+        emit labelToolTriggered();
+        qDebug() << "HandTool: toggled";
+    }
+    else{
+        qDebug() << "HandTool: un-toggled";
+    }
+}
+
+void MainWindow::markerToolTriggered()
+{
+    if (markerToolAct->isChecked() == true){
+        handToolAct->setChecked(false);
+        labelToolAct->setChecked(false);
+        emit handToolTriggered();
+        emit labelToolTriggered();
+        qDebug() << "MarkerTool: toggled";
+
+        ui->customPlot->setSelectionRectMode(QCP::srmSelect);
+        ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
+        ui->customPlot->graph(1)->setSelectable(QCP::stDataRange);
+        ui->customPlot->graph(2)->setSelectable(QCP::stDataRange);//QCP::SelectionType(QCP::stDataRange)
+    }
+    else{
+        qDebug() << "MarkerTool: un-toggled";
+
+        ui->customPlot->setSelectionRectMode(QCP::srmNone);
+        ui->customPlot->graph(0)->setSelectable(QCP::stNone);
+        ui->customPlot->graph(1)->setSelectable(QCP::stNone);
+        ui->customPlot->graph(2)->setSelectable(QCP::stNone);
+    }
+}
+
+void MainWindow::labelToolTriggered()
+{
+    if (labelToolAct->isChecked() == true){
+        handToolAct->setChecked(false);
+        markerToolAct->setChecked(false);
+        emit handToolTriggered();
+        emit markerToolTriggered();
+        qDebug() << "LabelTool: toggled";
+    }
+    else{
+        qDebug() << "LabelTool: un-toggled";
+    }
 }

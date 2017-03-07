@@ -1,7 +1,7 @@
 <RCC>
-    <qresource prefix="/Icons">
-        <file>testdata/6075-200.png</file>
-        <file>testdata/label.png</file>
-        <file>testdata/mouse-pointer-png-cursor-mouse-icon-0.png</file>
+    <qresource prefix="/">
+        <file>resources/toolbar/handTool.png</file>
+        <file>resources/toolbar/markerTool.png</file>
+        <file>resources/toolbar/labelTool.png</file>
     </qresource>
 </RCC>

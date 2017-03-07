@@ -39,19 +39,28 @@ private:
     QAction *openAct;
 
     // Michael's Added private variables
-    QToolBar *toolMenu;
+    //QToolBar *toolBar;
+    QAction *handToolAct;
+    QAction *markerToolAct;
+    QAction *labelToolAct;
     void showRightClickMenu(const QPoint& pos);
-    //void rightMousePress();
     QMenu *rightClickMenu;
-    QAction *viewSelectionAction;
-    QAction *undoViewSelectedAction;
-    QAction *rescaleViewAction;
-    QAction *cancelAction;
+    QAction *viewSelectionAct;
+    QShortcut *viewSelectionShortcut;
+    QAction *undoViewSelectedAct;
+    QAction *rescaleViewAct;
+    QShortcut *rescaleViewShortcut;
+    QAction *cancelAct;
     QCPDataSelection selection;
     QAction *selectedItem;
 
 private slots:
+    void handToolTriggered();
+    void markerToolTriggered();
+    void labelToolTriggered();
     void rightMousePress();
+    void viewSelection();
+    void rescaleView();
 
 };
 

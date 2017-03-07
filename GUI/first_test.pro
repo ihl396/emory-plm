@@ -36,4 +36,5 @@ RESOURCES += \
     myresources.qrc
 
 DISTFILES += \
-    plm_analyzer_model.qmodel
+    plm_analyzer_model.qmodel \
+    resources/toolbar/handTool.png
