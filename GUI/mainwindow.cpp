@@ -280,7 +280,8 @@ void MainWindow::markerToolTriggered()
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
         ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
         ui->customPlot->graph(1)->setSelectable(QCP::stDataRange);
-        ui->customPlot->graph(2)->setSelectable(QCP::stDataRange);//QCP::SelectionType(QCP::stDataRange)
+        ui->customPlot->graph(2)->setSelectable(QCP::stDataRange);
+        ui->customPlot->graph(3)->setSelectable(QCP::stDataRange);//QCP::SelectionType(QCP::stDataRange)
     }
     else{
         qDebug() << "MarkerTool: un-toggled";
@@ -289,6 +290,7 @@ void MainWindow::markerToolTriggered()
         ui->customPlot->graph(0)->setSelectable(QCP::stNone);
         ui->customPlot->graph(1)->setSelectable(QCP::stNone);
         ui->customPlot->graph(2)->setSelectable(QCP::stNone);
+        ui->customPlot->graph(3)->setSelectable(QCP::stNone);
     }
 }
 
