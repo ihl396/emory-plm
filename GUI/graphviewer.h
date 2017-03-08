@@ -12,7 +12,7 @@ class GraphViewer {
     bool first_time;
 public:
     GraphViewer(Ui::MainWindow *ui);
-    void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>);
+    void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>, QVector<double>);
     void setFirstTime(bool);
 private slots:
     void on_toolButton_triggered(QAction *arg1);

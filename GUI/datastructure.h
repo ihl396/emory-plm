@@ -9,6 +9,7 @@ struct DataStructure {
     QVector<double> x_acc_values;
     QVector<double> y_acc_values;
     QVector<double> z_acc_values;
+    QVector<double> magnitude_values;
 };
 
 #endif // DATASTRUCTURE_H

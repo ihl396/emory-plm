@@ -123,7 +123,7 @@ void MainWindow::open()
     GraphViewer graphViewer(ui);
 
     graphViewer.setFirstTime(firstRun);
-    graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values);
+    graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
     firstRun = false;
     // Defaults to Hand Tool when file is opened
     emit enableToolBar();
