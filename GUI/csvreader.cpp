@@ -67,22 +67,22 @@ void CsvReader::checkString(QString &temp, QChar character) {
 
 
 DataStructure CsvReader::exportData(DataStructure structure) {
-    for (int i = 0; i < dataArray.size(); i++) {
+    for (int i = 1; i < dataArray.size(); i++) {
         //QDebug deb = qDebug();
         for (int j = 0; j < dataArray[0].size(); j++) {
            //deb << dataArray[i][j];
-           if (j == 3) {
+           if (j == 0) {
                structure.time_values.append(dataArray[i][j]);
                //deb << dataArray[i][j];
            }
+           else if (j == 3) {
+               structure.z_acc_values.append((dataArray[i][j]/20));
+           }
            else if (j == 2) {
-               structure.z_acc_values.append(dataArray[i][j]);
+               structure.y_acc_values.append((dataArray[i][j]/20));
            }
            else if (j == 1) {
-               structure.y_acc_values.append(dataArray[i][j]);
-           }
-           else if (j == 0) {
-               structure.x_acc_values.append(dataArray[i][j]);
+               structure.x_acc_values.append((dataArray[i][j]/20));
            }
         }
       //qDebug() << "------------";
