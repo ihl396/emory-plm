@@ -1,6 +1,6 @@
 #include "markup.h"
 
-Markup::Markup()
+/*Markup::Markup()
 {
 }
 
@@ -23,4 +23,4 @@ void Markup::write(QJsonObject &json) const
     json["color"]       = color;
     json["tooltype"]    = tooltype;
 
-}
+}*/

@@ -7,15 +7,15 @@
 
 class Markup
 {
-public:
+/*public:
     enum ToolType { Shade, Trace };
     enum MarkType { I, P, R, U, D, N }; //Sample letter types, N = None
 
     Markup();
-    Markup(ToolType tooltype, int key, double height, Marktype marktype, QColor rgba);
+    Markup(ToolType tooltype, int key, double height, MarkType marktype, QColor rgba);
 
     QString notes() const;
-    void setNotes(const Qstring &notes);
+    void setNotes(const QString &notes);
 
     int key() const;
     void setKey(int key);
@@ -30,12 +30,12 @@ public:
     void write(QJsonObject &json) const;
 
 private:
-    QString notes;
+    QString *notes;
     int key;
     double height;
     QColor rgba;
     ToolType tooltype;
-    MarkType marktype;
+    MarkType marktype;*/
 };
 
 #endif // MARKUP_H
