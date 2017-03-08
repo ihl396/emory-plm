@@ -88,5 +88,10 @@ DataStructure CsvReader::exportData(DataStructure structure) {
       //qDebug() << "------------";
     }
 
+    for (int i = 0; i < structure.x_acc_values.size(); i++) {
+        double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
+        structure.magnitude_values.append(magnitude);
+    }
+
     return structure;
 }
