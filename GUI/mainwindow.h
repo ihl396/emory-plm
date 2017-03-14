@@ -31,6 +31,7 @@ private slots:
     void labelToolTriggered();
     void rightMousePress();
     void viewSelection();
+    void labelSelection();
     void rescaleView();
 
 protected:
@@ -54,13 +55,36 @@ private:
     QAction *markerToolAct;
     QAction *labelToolAct;
     QMenu *rightClickMenu;
+
+    QMenu *addMarkerMenu;
+    QAction *addUpMarker;
+    QAction *addDownMarker;
+    //QAction *addButtonMarker;
+    //QAction *addManual;
+    QAction *addPMarker;
+    QAction *addRMarker;
+    QAction *addKMarker;
+    QAction *addIMarker;
+
+    void getSelectionValues(QCPDataSelection selection, int graphNum);
+    void setMinMax(QList<double> keys, QList<double> values);
+    bool firstSelectionCheck;
+    double xAxisKeyMin;
+    double xAxisKeyMax;
+    double xAxisValueMin;
+    double xAxisValueMax;
     QAction *viewSelectionAct;
     QShortcut *viewSelectionShortcut;
-    QAction *undoViewSelectedAct;
+    QAction *labelSelectionAct;
+    QShortcut *labelSelectionShortcut;
+    QCPItemRect *labelRect;
     QAction *rescaleViewAct;
     QShortcut *rescaleViewShortcut;
     QAction *cancelAct;
-    QCPDataSelection selection;
+    QCPDataSelection xGraphSelection;
+    QCPDataSelection yGraphSelection;
+    QCPDataSelection zGraphSelection;
+    QCPDataSelection nGraphSelection;
     QAction *selectedItem;
 };
 
