@@ -30,6 +30,7 @@ private slots:
     void markerToolTriggered();
     void labelToolTriggered();
     void rightMousePress();
+    void clickedGraph(QMouseEvent*);
     void viewSelection();
     void labelSelection();
     void rescaleView();
@@ -40,6 +41,7 @@ private:
     GraphViewer graphViewer(Ui::MainWindow);
     void createActions();
     void createMenus();
+    void createMarkerPixmaps();
     Ui::MainWindow *ui;
     QStandardItemModel *model;
     bool firstRun;
@@ -55,7 +57,11 @@ private:
     QAction *markerToolAct;
     QAction *labelToolAct;
     QMenu *rightClickMenu;
+    double xKeyPos;
 
+    void placeMarker(int ID);
+    bool addMarkerClicked;
+    int markerID;
     QMenu *addMarkerMenu;
     QAction *addUpMarker;
     QAction *addDownMarker;
@@ -66,7 +72,20 @@ private:
     QAction *addKMarker;
     QAction *addIMarker;
 
-    void getSelectionValues(QCPDataSelection selection, int graphNum);
+    QCPItemPixmap *markerUP;
+    QPixmap *upPix;
+    QCPItemPixmap *markerD;
+    QPixmap *downPix;
+    QCPItemPixmap *markerP;
+    QPixmap *pPix;
+    QCPItemPixmap *markerR;
+    QPixmap *rPix;
+    QCPItemPixmap *markerK;
+    QPixmap *kPix;
+    QCPItemPixmap *markerI;
+    QPixmap *iPix;
+
+    void getSelectionValues();//QCPDataSelection selection, int graphNum);
     void setMinMax(QList<double> keys, QList<double> values);
     bool firstSelectionCheck;
     double xAxisKeyMin;
@@ -75,6 +94,7 @@ private:
     double xAxisValueMax;
     QAction *viewSelectionAct;
     QShortcut *viewSelectionShortcut;
+    QCPItemText *labelText;
     QAction *labelSelectionAct;
     QShortcut *labelSelectionShortcut;
     QCPItemRect *labelRect;

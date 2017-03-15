@@ -20,9 +20,11 @@ MainWindow::MainWindow(QWidget *parent) :
 {   
     ui->setupUi(this);
     firstRun = true;
+    addMarkerClicked = false;
 
     createActions();
     createMenus();
+    createMarkerPixmaps();
     setWindowTitle(tr("PLM Analyser"));
 }
 
@@ -69,8 +71,8 @@ void MainWindow::createActions() {
     labelSelectionAct->setShortcut(QKeySequence("CTRL+L"));
     labelSelectionAct->setStatusTip(tr("Label Selection"));
     labelSelectionShortcut = new QShortcut(QKeySequence("CTRL+L"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(labelSelectionAct, &QAction::triggered, this, &MainWindow::);
-    //connect(labelSelectionShortcut, &QShortcut::activated, this, &MainWindow::);
+    connect(labelSelectionAct, &QAction::triggered, this, &MainWindow::labelSelection);
+    connect(labelSelectionShortcut, &QShortcut::activated, this, &MainWindow::labelSelection);
 
     // Add Marker Actions
     addUpMarker = new QAction(tr("&Up Marker"), this);
@@ -164,6 +166,28 @@ void MainWindow::createMenus() {
     rightClickMenu->addAction(cancelAct);
 }
 
+void MainWindow::createMarkerPixmaps()
+{
+    // Add Marker Pixmaps
+    //const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
+    //QPoint globalPos = ui->customPlot->mapToGlobal(cursorLoc);
+    upPix = new QPixmap(":/resources/toolbar/UPMarker.png");
+    /// Still need to find a way to make transparent
+    //upPix->fill(Qt::transparent);
+    //QPainter painter(upPix);
+    //painter.drawPixmap(globalPos, upPix->scaled(50,50,Qt::KeepAspectRatio));
+
+    downPix = new QPixmap(":/resources/toolbar/DMarker.png");
+
+    pPix = new QPixmap(":/resources/toolbar/PMarker.png");
+
+    rPix = new QPixmap(":/resources/toolbar/RMarker.png");
+
+    kPix = new QPixmap(":/resources/toolbar/KMarker.png");
+
+    iPix = new QPixmap(":/resources/toolbar/IMarker.png");
+}
+
 void MainWindow::open()
 {
     model = new QStandardItemModel(this);
@@ -197,6 +221,7 @@ void MainWindow::enableToolBar()
     markerToolAct->setEnabled(true);
     labelToolAct->setEnabled(true);
     viewSelectionShortcut->setEnabled(true);
+    labelSelectionShortcut->setEnabled(true);
     rescaleViewShortcut->setEnabled(true);
 }
 
@@ -206,16 +231,18 @@ void MainWindow::disableToolBar()
     markerToolAct->setEnabled(false);
     labelToolAct->setEnabled(false);
     viewSelectionShortcut->setEnabled(false);
+    labelSelectionShortcut->setEnabled(false);
     rescaleViewShortcut->setEnabled(false);
 }
 
 /* RIGHT CLICK EVENT and RECTANGLE SCALING*/
 void MainWindow::rightMousePress()
 {
-    /// NEED TO ONLY ALLOW RIGHT CLICK WHEN A FILE IS LOADED
     if (!firstRun)
     {
         const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
+        qDebug() << cursorLoc;
+        qDebug() << cursorLoc.x();
         emit showRightClickMenu(cursorLoc);
     }
 }
@@ -237,121 +264,182 @@ void MainWindow::setMinMax(QList<double> keys, QList<double> values) {
     }
 }
 
-void MainWindow::getSelectionValues(QCPDataSelection selection, int graphNum)
+void MainWindow::getSelectionValues()//QCPDataSelection selection, int graphNum)
 {
-    // creates an empty QVector<QCPGraphData> array with the size of the data selection points
-    QList<double> selectedKeyData; //= new QList(double);//(selection.dataPointCount());
-    QList<double> selectedValueData; //= new QList(double);//(selection.dataPointCount());
-    //qDebug() << xGraphSelection.dataRanges();
-    QCPGraphDataContainer::const_iterator begin;
-    QCPGraphDataContainer::const_iterator end;
-    foreach (QCPDataRange dataRange, selection.dataRanges())
+    xGraphSelection = ui->customPlot->graph(0)->selection();
+    yGraphSelection = ui->customPlot->graph(1)->selection();
+    zGraphSelection = ui->customPlot->graph(2)->selection();
+    nGraphSelection = ui->customPlot->graph(3)->selection();
+    QVector<QCPDataSelection> selectionArray(4);
+    selectionArray[0] = xGraphSelection;
+    selectionArray[1] = yGraphSelection;
+    selectionArray[2] = zGraphSelection;
+    selectionArray[3] = nGraphSelection;
+    firstSelectionCheck = true;
+    for (int i = 0; i < selectionArray.length(); i++)
     {
-        qDebug() << "Data was selected";
-        QCPGraphDataContainer::const_iterator beginloop = ui->customPlot->graph(graphNum)->data()->at(dataRange.begin()); // get range begin iterator from index
-        QCPGraphDataContainer::const_iterator endloop = ui->customPlot->graph(graphNum)->data()->at(dataRange.end()); // get range end iterator from index
-        begin = beginloop;
-        end = endloop;
-        int j =0;
-        selectedKeyData.clear();
-        selectedValueData.clear();
-        for (QCPGraphDataContainer::const_iterator it=begin; it!=end; ++it)
+        // Checks for selection
+        if (selectionArray[i].dataPointCount() != 0)
         {
-            // iterator "it" will go through all selected data points
-            selectedKeyData.append(it->key);
-            selectedValueData.append(it->value);
-            j++;
+            // creates an empty QVector<QCPGraphData> array with the size of the data selection points
+            QList<double> selectedKeyData; //= new QList(double);//(selection.dataPointCount());
+            QList<double> selectedValueData; //= new QList(double);//(selection.dataPointCount());
+            //qDebug() << xGraphSelection.dataRanges();
+            QCPGraphDataContainer::const_iterator begin;
+            QCPGraphDataContainer::const_iterator end;
+            foreach (QCPDataRange dataRange, selectionArray[i].dataRanges())
+            {
+                qDebug() << "Data was selected";
+                QCPGraphDataContainer::const_iterator beginloop = ui->customPlot->graph(i)->data()->at(dataRange.begin()); // get range begin iterator from index
+                QCPGraphDataContainer::const_iterator endloop = ui->customPlot->graph(i)->data()->at(dataRange.end()); // get range end iterator from index
+                begin = beginloop;
+                end = endloop;
+                int j =0;
+                selectedKeyData.clear();
+                selectedValueData.clear();
+                for (QCPGraphDataContainer::const_iterator it=begin; it!=end; ++it)
+                {
+                    // iterator "it" will go through all selected data points
+                    selectedKeyData.append(it->key);
+                    selectedValueData.append(it->value);
+                    j++;
+                }
+                /// Could just hard code min and max to set axis range parameters. But this is dynamic.
+                emit setMinMax(selectedKeyData, selectedValueData);
+                firstSelectionCheck = false;
+            }
         }
-        /// Could just hard code min and max to set parameters. But this is dynamic.
-        emit setMinMax(selectedKeyData, selectedValueData);
-        firstSelectionCheck = false;
     }
+    selectionArray[0].clear();
+    selectionArray[1].clear();
+    selectionArray[2].clear();
+    selectionArray[3].clear();
 }
 
 void MainWindow::viewSelection()
 {
-    xGraphSelection = ui->customPlot->graph(0)->selection();
-    yGraphSelection = ui->customPlot->graph(1)->selection();
-    zGraphSelection = ui->customPlot->graph(2)->selection();
-    nGraphSelection = ui->customPlot->graph(3)->selection();
-
-    firstSelectionCheck = true;
-    // Checks for selection
-    if (xGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(xGraphSelection, 0);
-    }
-
-    if (yGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(yGraphSelection, 1);
-    }
-
-    if (zGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(zGraphSelection, 2);
-    }
-
-    if (nGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(nGraphSelection, 3);
-    }
+    emit getSelectionValues();
     ui->customPlot->xAxis->setRange(xAxisKeyMin,xAxisKeyMax);
     ui->customPlot->yAxis->setRange(floor(xAxisValueMin), ceil(xAxisValueMax)); /// make dynamic
     ui->customPlot->replot();
+    xGraphSelection.dataRanges().clear();
     xGraphSelection.clear();
+    yGraphSelection.clear();
+    zGraphSelection.clear();
+    nGraphSelection.clear();
 }
 
 void MainWindow::labelSelection()
 {
-    xGraphSelection = ui->customPlot->graph(0)->selection();
-    yGraphSelection = ui->customPlot->graph(1)->selection();
-    zGraphSelection = ui->customPlot->graph(2)->selection();
-    nGraphSelection = ui->customPlot->graph(3)->selection();
-
-    firstSelectionCheck = true;
-    // Checks for selection
-    if (xGraphSelection.dataPointCount() != 0)
-    {
-        /// Possibly create enum for the graph numbers
-        emit getSelectionValues(xGraphSelection, 0);
-    }
-
-    if (yGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(yGraphSelection, 1);
-    }
-
-    if (zGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(zGraphSelection, 2);
-    }
-
-    if (nGraphSelection.dataPointCount() != 0)
-    {
-        emit getSelectionValues(nGraphSelection, 3);
-    }
+    emit getSelectionValues();
     labelRect = new QCPItemRect(ui->customPlot);
     //QString redstr = popupData[0];QString greenstr = popupData[1];QString bluestr = popupData[2];
     //int red = redstr.toInt();int green = greenstr.toInt();int blue = bluestr.toInt();
     //labelRect->setBrush(QColor(red, green, blue, 75));
     //labelRect->setPen(QColor(red,green,blue, 75));
-    labelRect->setBrush(QColor(225, 0, 0, 75));
-    labelRect->setPen(QColor(225, 0, 0, 75));
+    labelRect->setBrush(QColor(225, 0, 0, 30));
+    labelRect->setPen(QColor(225, 0, 0, 30));
     labelRect->setSelected(false);
-
+    labelText = new QCPItemText(ui->customPlot);
+    labelText->setText("Leg Up");
+    labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+    labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
+    /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
     labelRect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
     labelRect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
+    /// DO WE NEED TO LABEL THESE SECTIONS?
+    ui->customPlot->replot();
     xGraphSelection.clear();
+    yGraphSelection.clear();
+    zGraphSelection.clear();
+    nGraphSelection.clear();
 }
 
 void MainWindow::rescaleView()
 {
-    /// FIGURE OUT WHY IT RESCALES IT TWICE
     ui->customPlot->rescaleAxes(true);
     ui->customPlot->replot();
-    xGraphSelection.clear(); // Need this?
+    xGraphSelection.clear();
+    yGraphSelection.clear();
+    zGraphSelection.clear();
+    nGraphSelection.clear();
     qDebug() << "Rescaled View";
+}
+
+void MainWindow::clickedGraph(QMouseEvent *event)
+{
+    QPoint p = event->pos();
+    xKeyPos = ui->customPlot->xAxis->pixelToCoord(p.x());
+    emit placeMarker(markerID);
+    ui->customPlot->replot();
+    if (addMarkerClicked)
+    {
+        addMarkerClicked = false;
+        disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+    }
+}
+
+/// COULD CHANGE markerID TO BE AN ENUM
+void MainWindow::placeMarker(int ID)
+{
+    switch(ID)
+    {
+        case 0: markerUP = new QCPItemPixmap(ui->customPlot);
+                markerUP->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                markerUP->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                markerUP->topLeft->setCoords(xKeyPos, 0);
+                /// Hard coded to be size 50x50, can make it constant
+                markerUP->setPixmap(upPix->scaled(50,50,Qt::KeepAspectRatio));
+                /// This could be used for setting label and view y-axis to the graph axis ranges
+                //mImage->topLeft->setCoords(mCusPlot->xAxis->range().lower, mCusPlot->yAxis->range().upper);
+                //mImage->bottomRight->setCoords(mCusPlot->xAxis->range().upper, mCusPlot->yAxis->range().lower);
+                /// Not sure why the y-coordinates don't change the location. (might be because scaling is set to false, uses topleft only)
+                markerUP->setScaled(false);
+                markerUP->setSelectable(true);
+                break;
+        case 1: markerD = new QCPItemPixmap(ui->customPlot);
+                markerD->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                markerD->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                markerD->topLeft->setCoords(xKeyPos, 0);
+                markerD->setPixmap(downPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerD->setScaled(false);
+                markerD->setSelectable(true);
+                break;
+        case 2: markerP = new QCPItemPixmap(ui->customPlot);
+                markerP->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                markerP->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                markerP->topLeft->setCoords(xKeyPos, 0);
+                markerP->setPixmap(pPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerP->setScaled(false);
+                markerP->setSelectable(true);
+                break;
+        case 3: markerR = new QCPItemPixmap(ui->customPlot);
+                markerR->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                markerR->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                markerR->topLeft->setCoords(xKeyPos, 0);
+                markerR->setPixmap(rPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerR->setScaled(false);
+                markerR->setSelectable(true);
+                break;
+        case 4: markerK = new QCPItemPixmap(ui->customPlot);
+                markerK->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                markerK->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                markerK->topLeft->setCoords(xKeyPos, 0);
+                markerK->setPixmap(kPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerK->setScaled(false);
+                markerK->setSelectable(true);
+                break;
+        case 5: markerI = new QCPItemPixmap(ui->customPlot);
+                markerI->topLeft->setType(QCPItemPosition::ptPlotCoords);
+                markerI->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                markerI->topLeft->setCoords(xKeyPos, 0);
+                markerI->setPixmap(iPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerI->setScaled(false);
+                markerI->setSelectable(true);
+                break;
+        default:
+                break;
+    }
 }
 
 void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
@@ -359,20 +447,23 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
     QPoint globalPos = ui->customPlot->mapToGlobal(pos);
 
     xGraphSelection = ui->customPlot->graph(0)->selection();
+    yGraphSelection = ui->customPlot->graph(1)->selection();
+    zGraphSelection = ui->customPlot->graph(2)->selection();
+    nGraphSelection = ui->customPlot->graph(3)->selection();
 
     // Checks for no selection and hides options
     /// LOOK INTO STILL ENABLED WHEN NO SELECTION (MIGHT BE ONE DATA POINT SELECTED)
-    if (xGraphSelection.dataPointCount() == 0) /// Maybe set to == 0 || == 1?
-    {
-        viewSelectionAct->setEnabled(false);
-        labelSelectionAct->setEnabled(false);
-    }
-    else
+    if (xGraphSelection.dataPointCount() != 0 || yGraphSelection.dataPointCount() != 0
+            || zGraphSelection.dataPointCount() != 0 || nGraphSelection.dataPointCount() != 0) /// Maybe set to != 0 or != 1?
     {
         viewSelectionAct->setEnabled(true);
         labelSelectionAct->setEnabled(true);
     }
-
+    else
+    {
+        viewSelectionAct->setEnabled(false);
+        labelSelectionAct->setEnabled(false);
+    }
     selectedItem = rightClickMenu->exec(globalPos);
     if (selectedItem)
     {
@@ -386,27 +477,39 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         }
         else if (selectedItem->text().contains("Up Marker"))
         {
-
+            addMarkerClicked = true;
+            markerID = 0;
+            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
         }
         else if (selectedItem->text().contains("Down Marker"))
         {
-
+            addMarkerClicked = true;
+            markerID = 1;
+            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
         }
         else if (selectedItem->text().contains("P Marker"))
         {
-
+            addMarkerClicked = true;
+            markerID = 2;
+            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
         }
         else if (selectedItem->text().contains("R Marker"))
         {
-
+            addMarkerClicked = true;
+            markerID = 3;
+            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
         }
         else if (selectedItem->text().contains("K Marker"))
         {
-
+            addMarkerClicked = true;
+            markerID = 4;
+            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
         }
         else if (selectedItem->text().contains("I Marker"))
         {
-
+            addMarkerClicked = true;
+            markerID = 5;
+            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
         }
         else if (selectedItem->text().contains("Rescale View"))
         {
