@@ -31,6 +31,12 @@ private slots:
     void labelToolTriggered();
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
+    void addMarkerUp();
+    void addMarkerDown();
+    void addMarkerP();
+    void addMarkerR();
+    void addMarkerK();
+    void addMarkerI();
     void viewSelection();
     void labelSelection();
     void rescaleView();
@@ -64,13 +70,19 @@ private:
     int markerID;
     QMenu *addMarkerMenu;
     QAction *addUpMarker;
+    QShortcut *addUpMarkerShortcut;
     QAction *addDownMarker;
+    QShortcut *addDownMarkerShortcut;
     //QAction *addButtonMarker;
     //QAction *addManual;
     QAction *addPMarker;
+    QShortcut *addPMarkerShortcut;
     QAction *addRMarker;
+    QShortcut *addRMarkerShortcut;
     QAction *addKMarker;
+    QShortcut *addKMarkerShortcut;
     QAction *addIMarker;
+    QShortcut *addIMarkerShortcut;
 
     QCPItemPixmap *markerUP;
     QPixmap *upPix;

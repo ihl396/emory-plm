@@ -64,6 +64,7 @@ void MainWindow::createActions() {
     viewSelectionAct->setShortcut(QKeySequence("CTRL+V"));
     viewSelectionAct->setStatusTip(tr("View Selection"));
     viewSelectionShortcut = new QShortcut(QKeySequence("CTRL+V"),this); /// Couldn't get the action shortcut to work, this works
+    /// don't need this connection or don't need rightclick selection check
     connect(viewSelectionAct, &QAction::triggered, this, &MainWindow::viewSelection);
     connect(viewSelectionShortcut, &QShortcut::activated, this, &MainWindow::viewSelection);
 
@@ -78,44 +79,44 @@ void MainWindow::createActions() {
     addUpMarker = new QAction(tr("&Up Marker"), this);
     addUpMarker->setShortcut(QKeySequence("CTRL+U"));
     addUpMarker->setStatusTip(tr("Up Marker"));
-    //addUpMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(addUpMarker, &QAction::triggered, this, &MainWindow::);
-    //connect(addUpMarkerShortcut, &QShortcut::activated, this, &MainWindow::);
+    addUpMarkerShortcut = new QShortcut(QKeySequence("CTRL+U"),this); /// Couldn't get the action shortcut to work, this works
+    connect(addUpMarker, &QAction::triggered, this, &MainWindow::addMarkerUp);
+    connect(addUpMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerUp);
 
     addDownMarker = new QAction(tr("&Down Marker"), this);
     addDownMarker->setShortcut(QKeySequence("CTRL+D"));
     addDownMarker->setStatusTip(tr("Down Marker"));
-    //addDownMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(addDownMarker, &QAction::triggered, this, &MainWindow::);
-    //connect(addDownMarkerShortcut, &QShortcut::activated, this, &MainWindow::);
+    addDownMarkerShortcut = new QShortcut(QKeySequence("CTRL+D"),this); /// Couldn't get the action shortcut to work, this works
+    connect(addDownMarker, &QAction::triggered, this, &MainWindow::addMarkerDown);
+    connect(addDownMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerDown);
 
     addPMarker = new QAction(tr("&P Marker"), this);
     addPMarker->setShortcut(QKeySequence("CTRL+P"));
     addPMarker->setStatusTip(tr("P Marker"));
-    //addPMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(addPMarker, &QAction::triggered, this, &MainWindow::);
-    //connect(addPMarkerShortcut, &QShortcut::activated, this, &MainWindow::);
+    addPMarkerShortcut = new QShortcut(QKeySequence("CTRL+P"),this); /// Couldn't get the action shortcut to work, this works
+    connect(addPMarker, &QAction::triggered, this, &MainWindow::addMarkerP);
+    connect(addPMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerP);
 
     addRMarker = new QAction(tr("&R Marker"), this);
     addRMarker->setShortcut(QKeySequence("CTRL+R"));
     addRMarker->setStatusTip(tr("R Marker"));
-    //addRMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(addRMarker, &QAction::triggered, this, &MainWindow::);
-    //connect(addRMarkerShortcut, &QShortcut::activated, this, &MainWindow::);
+    addRMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
+    connect(addRMarker, &QAction::triggered, this, &MainWindow::addMarkerR);
+    connect(addRMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerR);
 
     addKMarker = new QAction(tr("&K Marker"), this);
     addKMarker->setShortcut(QKeySequence("CTRL+K"));
     addKMarker->setStatusTip(tr("K Marker"));
-    //addKMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(addKMarker, &QAction::triggered, this, &MainWindow::);
-    //connect(addKMarkerShortcut, &QShortcut::activated, this, &MainWindow::);
+    addKMarkerShortcut = new QShortcut(QKeySequence("CTRL+K"),this); /// Couldn't get the action shortcut to work, this works
+    connect(addKMarker, &QAction::triggered, this, &MainWindow::addMarkerK);
+    connect(addKMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerK);
 
     addIMarker = new QAction(tr("&I Marker"), this);
     addIMarker->setShortcut(QKeySequence("CTRL+I"));
     addIMarker->setStatusTip(tr("I Marker"));
-    //addIMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    //connect(addIMarker, &QAction::triggered, this, &MainWindow::);
-    //connect(addIMarkerShortcut, &QShortcut::activated, this, &MainWindow::);
+    addIMarkerShortcut = new QShortcut(QKeySequence("CTRL+I"),this); /// Couldn't get the action shortcut to work, this works
+    connect(addIMarker, &QAction::triggered, this, &MainWindow::addMarkerI);
+    connect(addIMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerI);
 
     rescaleViewAct = new QAction(tr("&Rescale View"), this);
     rescaleViewAct->setShortcut(QKeySequence("CTRL+SHIFT+R"));
@@ -175,7 +176,7 @@ void MainWindow::createMarkerPixmaps()
     /// Still need to find a way to make transparent
     //upPix->fill(Qt::transparent);
     //QPainter painter(upPix);
-    //painter.drawPixmap(globalPos, upPix->scaled(50,50,Qt::KeepAspectRatio));
+    //painter.drawPixmap(globalPos, upPix->scaled(32,32,Qt::KeepAspectRatio));
 
     downPix = new QPixmap(":/resources/toolbar/DMarker.png");
 
@@ -266,10 +267,6 @@ void MainWindow::setMinMax(QList<double> keys, QList<double> values) {
 
 void MainWindow::getSelectionValues()//QCPDataSelection selection, int graphNum)
 {
-    xGraphSelection = ui->customPlot->graph(0)->selection();
-    yGraphSelection = ui->customPlot->graph(1)->selection();
-    zGraphSelection = ui->customPlot->graph(2)->selection();
-    nGraphSelection = ui->customPlot->graph(3)->selection();
     QVector<QCPDataSelection> selectionArray(4);
     selectionArray[0] = xGraphSelection;
     selectionArray[1] = yGraphSelection;
@@ -310,49 +307,61 @@ void MainWindow::getSelectionValues()//QCPDataSelection selection, int graphNum)
             }
         }
     }
-    selectionArray[0].clear();
-    selectionArray[1].clear();
-    selectionArray[2].clear();
-    selectionArray[3].clear();
 }
 
 void MainWindow::viewSelection()
 {
-    emit getSelectionValues();
-    ui->customPlot->xAxis->setRange(xAxisKeyMin,xAxisKeyMax);
-    ui->customPlot->yAxis->setRange(floor(xAxisValueMin), ceil(xAxisValueMax)); /// make dynamic
-    ui->customPlot->replot();
-    xGraphSelection.dataRanges().clear();
-    xGraphSelection.clear();
-    yGraphSelection.clear();
-    zGraphSelection.clear();
-    nGraphSelection.clear();
+    xGraphSelection = ui->customPlot->graph(0)->selection();
+    yGraphSelection = ui->customPlot->graph(1)->selection();
+    zGraphSelection = ui->customPlot->graph(2)->selection();
+    nGraphSelection = ui->customPlot->graph(3)->selection();
+    if (xGraphSelection.dataPointCount() != 0 || yGraphSelection.dataPointCount() != 0
+            || zGraphSelection.dataPointCount() !=0 || nGraphSelection.dataPointCount() !=0)
+    {
+        emit getSelectionValues();
+        ui->customPlot->xAxis->setRange(xAxisKeyMin,xAxisKeyMax);
+        ui->customPlot->yAxis->setRange(floor(xAxisValueMin), ceil(xAxisValueMax)); /// make dynamic
+        ui->customPlot->replot();
+        xGraphSelection.dataRanges().clear();
+        xGraphSelection.clear();
+        yGraphSelection.clear();
+        zGraphSelection.clear();
+        nGraphSelection.clear();
+    }
 }
 
 void MainWindow::labelSelection()
 {
-    emit getSelectionValues();
-    labelRect = new QCPItemRect(ui->customPlot);
-    //QString redstr = popupData[0];QString greenstr = popupData[1];QString bluestr = popupData[2];
-    //int red = redstr.toInt();int green = greenstr.toInt();int blue = bluestr.toInt();
-    //labelRect->setBrush(QColor(red, green, blue, 75));
-    //labelRect->setPen(QColor(red,green,blue, 75));
-    labelRect->setBrush(QColor(225, 0, 0, 30));
-    labelRect->setPen(QColor(225, 0, 0, 30));
-    labelRect->setSelected(false);
-    labelText = new QCPItemText(ui->customPlot);
-    labelText->setText("Leg Up");
-    labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
-    /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
-    labelRect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
-    labelRect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
-    /// DO WE NEED TO LABEL THESE SECTIONS?
-    ui->customPlot->replot();
-    xGraphSelection.clear();
-    yGraphSelection.clear();
-    zGraphSelection.clear();
-    nGraphSelection.clear();
+    xGraphSelection = ui->customPlot->graph(0)->selection();
+    yGraphSelection = ui->customPlot->graph(1)->selection();
+    zGraphSelection = ui->customPlot->graph(2)->selection();
+    nGraphSelection = ui->customPlot->graph(3)->selection();
+    if (xGraphSelection.dataPointCount() != 0 || yGraphSelection.dataPointCount() != 0
+            || zGraphSelection.dataPointCount() !=0 || nGraphSelection.dataPointCount() !=0)
+    {
+        emit getSelectionValues();
+        labelRect = new QCPItemRect(ui->customPlot);
+        //QString redstr = popupData[0];QString greenstr = popupData[1];QString bluestr = popupData[2];
+        //int red = redstr.toInt();int green = greenstr.toInt();int blue = bluestr.toInt();
+        //labelRect->setBrush(QColor(red, green, blue, 75));
+        //labelRect->setPen(QColor(red,green,blue, 75));
+        labelRect->setBrush(QColor(225, 0, 0, 30));
+        labelRect->setPen(QColor(225, 0, 0, 30));
+        labelRect->setSelected(false);
+        labelText = new QCPItemText(ui->customPlot);
+        labelText->setText("Leg Up");
+        labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
+        /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
+        labelRect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
+        labelRect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
+        /// DO WE NEED TO LABEL THESE SECTIONS?
+        ui->customPlot->replot();
+        xGraphSelection.clear();
+        yGraphSelection.clear();
+        zGraphSelection.clear();
+        nGraphSelection.clear();
+    }
 }
 
 void MainWindow::rescaleView()
@@ -375,6 +384,7 @@ void MainWindow::clickedGraph(QMouseEvent *event)
     if (addMarkerClicked)
     {
         addMarkerClicked = false;
+        this->setCursor(Qt::ArrowCursor);
         disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
     }
 }
@@ -385,11 +395,14 @@ void MainWindow::placeMarker(int ID)
     switch(ID)
     {
         case 0: markerUP = new QCPItemPixmap(ui->customPlot);
+                /// Slow function, but hides background white
+                upPix->setMask(pPix->createHeuristicMask(true));
                 markerUP->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerUP->bottomRight->setType(QCPItemPosition::ptPlotCoords);
+                /// FIND A WAY TO SET top to the anchor or move pixmap over to center placement position.
                 markerUP->topLeft->setCoords(xKeyPos, 0);
-                /// Hard coded to be size 50x50, can make it constant
-                markerUP->setPixmap(upPix->scaled(50,50,Qt::KeepAspectRatio));
+                /// Hard coded to be size 32x32, can make it constant
+                markerUP->setPixmap(upPix->scaled(32,32,Qt::KeepAspectRatio));
                 /// This could be used for setting label and view y-axis to the graph axis ranges
                 //mImage->topLeft->setCoords(mCusPlot->xAxis->range().lower, mCusPlot->yAxis->range().upper);
                 //mImage->bottomRight->setCoords(mCusPlot->xAxis->range().upper, mCusPlot->yAxis->range().lower);
@@ -398,48 +411,107 @@ void MainWindow::placeMarker(int ID)
                 markerUP->setSelectable(true);
                 break;
         case 1: markerD = new QCPItemPixmap(ui->customPlot);
+                /// Slow function, but hides background white
+                downPix->setMask(pPix->createHeuristicMask(true));
                 markerD->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerD->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerD->topLeft->setCoords(xKeyPos, 0);
-                markerD->setPixmap(downPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerD->setPixmap(downPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerD->setScaled(false);
                 markerD->setSelectable(true);
                 break;
         case 2: markerP = new QCPItemPixmap(ui->customPlot);
+                /// Slow function, but hides background white
+                pPix->setMask(pPix->createHeuristicMask(true));
                 markerP->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerP->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerP->topLeft->setCoords(xKeyPos, 0);
-                markerP->setPixmap(pPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerP->setPixmap(pPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerP->setScaled(false);
                 markerP->setSelectable(true);
                 break;
         case 3: markerR = new QCPItemPixmap(ui->customPlot);
+                /// Slow function, but hides background white
+                rPix->setMask(pPix->createHeuristicMask(true));
                 markerR->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerR->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerR->topLeft->setCoords(xKeyPos, 0);
-                markerR->setPixmap(rPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerR->setPixmap(rPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerR->setScaled(false);
                 markerR->setSelectable(true);
                 break;
         case 4: markerK = new QCPItemPixmap(ui->customPlot);
+                /// Slow function, but hides background white
+                kPix->setMask(pPix->createHeuristicMask(true));
                 markerK->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerK->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerK->topLeft->setCoords(xKeyPos, 0);
-                markerK->setPixmap(kPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerK->setPixmap(kPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerK->setScaled(false);
                 markerK->setSelectable(true);
                 break;
         case 5: markerI = new QCPItemPixmap(ui->customPlot);
+                /// Slow function, but hides background white
+                iPix->setMask(pPix->createHeuristicMask(true));
                 markerI->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerI->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerI->topLeft->setCoords(xKeyPos, 0);
-                markerI->setPixmap(iPix->scaled(50,50,Qt::KeepAspectRatio));
+                markerI->setPixmap(iPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerI->setScaled(false);
                 markerI->setSelectable(true);
                 break;
         default:
                 break;
     }
+}
+
+void MainWindow::addMarkerUp()
+{
+    addMarkerClicked = true;
+    markerID = 0;
+    /// CAN CHANGE TO PIXMAP IMAGE
+    this->setCursor(Qt::CrossCursor);
+    connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+}
+
+void MainWindow::addMarkerDown()
+{
+    addMarkerClicked = true;
+    markerID = 1;
+    this->setCursor(Qt::CrossCursor);
+    connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+}
+
+void MainWindow::addMarkerP()
+{
+    addMarkerClicked = true;
+    markerID = 2;
+    this->setCursor(Qt::CrossCursor);
+    connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+}
+
+void MainWindow::addMarkerR()
+{
+    addMarkerClicked = true;
+    markerID = 3;
+    this->setCursor(Qt::CrossCursor);
+    connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+}
+
+void MainWindow::addMarkerK()
+{
+    addMarkerClicked = true;
+    markerID = 4;
+    this->setCursor(Qt::CrossCursor);
+    connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+}
+
+void MainWindow::addMarkerI()
+{
+    addMarkerClicked = true;
+    markerID = 5;
+    this->setCursor(Qt::CrossCursor);
+    connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
 }
 
 void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
@@ -477,39 +549,27 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         }
         else if (selectedItem->text().contains("Up Marker"))
         {
-            addMarkerClicked = true;
-            markerID = 0;
-            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+            emit addMarkerUp();
         }
         else if (selectedItem->text().contains("Down Marker"))
         {
-            addMarkerClicked = true;
-            markerID = 1;
-            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+            emit addMarkerDown();
         }
         else if (selectedItem->text().contains("P Marker"))
         {
-            addMarkerClicked = true;
-            markerID = 2;
-            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+            emit addMarkerP();
         }
         else if (selectedItem->text().contains("R Marker"))
         {
-            addMarkerClicked = true;
-            markerID = 3;
-            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+            emit addMarkerR();
         }
         else if (selectedItem->text().contains("K Marker"))
         {
-            addMarkerClicked = true;
-            markerID = 4;
-            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+            emit addMarkerK();
         }
         else if (selectedItem->text().contains("I Marker"))
         {
-            addMarkerClicked = true;
-            markerID = 5;
-            connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
+            emit addMarkerI();
         }
         else if (selectedItem->text().contains("Rescale View"))
         {
