@@ -30,7 +30,15 @@ private slots:
     void markerToolTriggered();
     void labelToolTriggered();
     void rightMousePress();
+    void clickedGraph(QMouseEvent*);
+    void addMarkerUp();
+    void addMarkerDown();
+    void addMarkerP();
+    void addMarkerR();
+    void addMarkerK();
+    void addMarkerI();
     void viewSelection();
+    void labelSelection();
     void rescaleView();
 
 protected:
@@ -39,6 +47,7 @@ private:
     GraphViewer graphViewer(Ui::MainWindow);
     void createActions();
     void createMenus();
+    void createMarkerPixmaps();
     Ui::MainWindow *ui;
     QStandardItemModel *model;
     bool firstRun;
@@ -54,13 +63,60 @@ private:
     QAction *markerToolAct;
     QAction *labelToolAct;
     QMenu *rightClickMenu;
+    double xKeyPos;
+
+    void placeMarker(int ID);
+    bool addMarkerClicked;
+    int markerID;
+    QMenu *addMarkerMenu;
+    QAction *addUpMarker;
+    QShortcut *addUpMarkerShortcut;
+    QAction *addDownMarker;
+    QShortcut *addDownMarkerShortcut;
+    //QAction *addButtonMarker;
+    //QAction *addManual;
+    QAction *addPMarker;
+    QShortcut *addPMarkerShortcut;
+    QAction *addRMarker;
+    QShortcut *addRMarkerShortcut;
+    QAction *addKMarker;
+    QShortcut *addKMarkerShortcut;
+    QAction *addIMarker;
+    QShortcut *addIMarkerShortcut;
+
+    QCPItemPixmap *markerUP;
+    QPixmap *upPix;
+    QCPItemPixmap *markerD;
+    QPixmap *downPix;
+    QCPItemPixmap *markerP;
+    QPixmap *pPix;
+    QCPItemPixmap *markerR;
+    QPixmap *rPix;
+    QCPItemPixmap *markerK;
+    QPixmap *kPix;
+    QCPItemPixmap *markerI;
+    QPixmap *iPix;
+
+    void getSelectionValues();//QCPDataSelection selection, int graphNum);
+    void setMinMax(QList<double> keys, QList<double> values);
+    bool firstSelectionCheck;
+    double xAxisKeyMin;
+    double xAxisKeyMax;
+    double xAxisValueMin;
+    double xAxisValueMax;
     QAction *viewSelectionAct;
     QShortcut *viewSelectionShortcut;
-    QAction *undoViewSelectedAct;
+    QCPItemText *labelText;
+    QAction *labelSelectionAct;
+    QShortcut *labelSelectionShortcut;
+    QCPItemRect *labelRect;
     QAction *rescaleViewAct;
     QShortcut *rescaleViewShortcut;
     QAction *cancelAct;
-    QCPDataSelection selection;
+    QCPDataSelection xGraphSelection;
+    QCPDataSelection yGraphSelection;
+    QCPDataSelection zGraphSelection;
+    QCPDataSelection nGraphSelection;
     QAction *selectedItem;
 };
 

@@ -12676,7 +12676,7 @@ QCustomPlot::QCustomPlot(QWidget *parent) :
   mSelectionRect = new QCPSelectionRect(this);
   mSelectionRect->setLayer(QLatin1String("overlay"));
   
-  setViewport(rect()); // needs to be called after mPlotLayout has been created
+  setViewport(labelRect()); // needs to be called after mPlotLayout has been created
   
   replot(rpQueuedReplot);
 }
@@ -14474,7 +14474,7 @@ void QCustomPlot::resizeEvent(QResizeEvent *event)
 {
   Q_UNUSED(event)
   // resize and repaint the buffer:
-  setViewport(rect());
+  setViewport(labelRect());
   replot(rpQueuedRefresh); // queued refresh is important here, to prevent painting issues in some contexts (e.g. MDI subwindow)
 }
 

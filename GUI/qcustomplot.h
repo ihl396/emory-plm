@@ -3610,7 +3610,7 @@ public:
   bool openGl() const { return mOpenGl; }
   
   // setters:
-  void setViewport(const QRect &rect);
+  void setViewport(const QRect &labelRect);
   void setBufferDevicePixelRatio(double ratio);
   void setBackground(const QPixmap &pm);
   void setBackground(const QPixmap &pm, bool scaled, Qt::AspectRatioMode mode=Qt::KeepAspectRatioByExpanding);
@@ -3781,8 +3781,8 @@ protected:
   virtual void updateLayout();
   virtual void axisRemoved(QCPAxis *axis);
   virtual void legendRemoved(QCPLegend *legend);
-  Q_SLOT virtual void processRectSelection(QRect rect, QMouseEvent *event);
-  Q_SLOT virtual void processRectZoom(QRect rect, QMouseEvent *event);
+  Q_SLOT virtual void processRectSelection(QRect labelRect, QMouseEvent *event);
+  Q_SLOT virtual void processRectZoom(QRect labelRect, QMouseEvent *event);
   Q_SLOT virtual void processPointSelection(QMouseEvent *event);
   
   // non-virtual methods:
