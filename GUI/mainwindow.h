@@ -37,6 +37,7 @@ private slots:
     void addMarkerR();
     void addMarkerK();
     void addMarkerI();
+    void markerDelete();
     void viewSelection();
     void labelSelection();
     void rescaleView();
@@ -83,6 +84,9 @@ private:
     QShortcut *addKMarkerShortcut;
     QAction *addIMarker;
     QShortcut *addIMarkerShortcut;
+    QAction *deleteMarker;
+    QShortcut *deleteMarkerShortcut;
+    int itemsSelected;
 
     QCPItemPixmap *markerUP;
     QPixmap *upPix;
@@ -109,7 +113,7 @@ private:
     QCPItemText *labelText;
     QAction *labelSelectionAct;
     QShortcut *labelSelectionShortcut;
-    QCPItemRect *labelRect;
+    QCPItemRect *rect;
     QAction *rescaleViewAct;
     QShortcut *rescaleViewShortcut;
     QAction *cancelAct;

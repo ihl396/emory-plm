@@ -3,6 +3,7 @@
 #include "csvreader.h"
 #include "graphviewer.h"
 
+//#include <QDRuler>
 #include <QDir>
 #include <QFileDialog>
 
@@ -58,6 +59,24 @@ void MainWindow::createActions() {
     markerToolAct->setStatusTip(tr("Marker Tool"));
     labelToolAct->setStatusTip(tr("Label Tool"));
 
+    /*QGraphicsView *s = new QGraphicsView(this);
+    s->setViewportMargins(RULER_BREADTH,RULER_BREADTH,0,0);
+    QGridLayout* gridLayout = new QGridLayout();
+    gridLayout->setSpacing(0);
+    gridLayout->setMargin(0);
+
+    QWidget* fake = new QWidget();
+    QDRuler *mHorzRuler = new QDRuler(QDRuler::Horizontal,fake);
+    QDRuler *mVertRuler = new QDRuler(QDRuler::Vertical, fake);
+    fake->setBackgroundRole(QPalette::Window);
+    fake->setFixedSize(RULER_BREADTH,RULER_BREADTH);
+    ui->gridLayout->addWidget(fake,0,0);
+    ui->gridLayout->addWidget(mHorzRuler,0,1);
+    ui->gridLayout->addWidget(mVertRuler,1,0);
+    ui->gridLayout->addWidget(fake,1,1);
+
+    this->setLayout(gridLayout);*/
+
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -65,14 +84,14 @@ void MainWindow::createActions() {
     viewSelectionAct->setStatusTip(tr("View Selection"));
     viewSelectionShortcut = new QShortcut(QKeySequence("CTRL+V"),this); /// Couldn't get the action shortcut to work, this works
     /// don't need this connection or don't need rightclick selection check
-    connect(viewSelectionAct, &QAction::triggered, this, &MainWindow::viewSelection);
+    //connect(viewSelectionAct, &QAction::triggered, this, &MainWindow::viewSelection);
     connect(viewSelectionShortcut, &QShortcut::activated, this, &MainWindow::viewSelection);
 
     labelSelectionAct = new QAction(tr("&Label Selection"), this);
     labelSelectionAct->setShortcut(QKeySequence("CTRL+L"));
     labelSelectionAct->setStatusTip(tr("Label Selection"));
     labelSelectionShortcut = new QShortcut(QKeySequence("CTRL+L"),this); /// Couldn't get the action shortcut to work, this works
-    connect(labelSelectionAct, &QAction::triggered, this, &MainWindow::labelSelection);
+    //connect(labelSelectionAct, &QAction::triggered, this, &MainWindow::labelSelection);
     connect(labelSelectionShortcut, &QShortcut::activated, this, &MainWindow::labelSelection);
 
     // Add Marker Actions
@@ -80,51 +99,59 @@ void MainWindow::createActions() {
     addUpMarker->setShortcut(QKeySequence("CTRL+U"));
     addUpMarker->setStatusTip(tr("Up Marker"));
     addUpMarkerShortcut = new QShortcut(QKeySequence("CTRL+U"),this); /// Couldn't get the action shortcut to work, this works
-    connect(addUpMarker, &QAction::triggered, this, &MainWindow::addMarkerUp);
+    //connect(addUpMarker, &QAction::triggered, this, &MainWindow::addMarkerUp);
     connect(addUpMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerUp);
 
     addDownMarker = new QAction(tr("&Down Marker"), this);
     addDownMarker->setShortcut(QKeySequence("CTRL+D"));
     addDownMarker->setStatusTip(tr("Down Marker"));
     addDownMarkerShortcut = new QShortcut(QKeySequence("CTRL+D"),this); /// Couldn't get the action shortcut to work, this works
-    connect(addDownMarker, &QAction::triggered, this, &MainWindow::addMarkerDown);
+    //connect(addDownMarker, &QAction::triggered, this, &MainWindow::addMarkerDown);
     connect(addDownMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerDown);
 
     addPMarker = new QAction(tr("&P Marker"), this);
     addPMarker->setShortcut(QKeySequence("CTRL+P"));
     addPMarker->setStatusTip(tr("P Marker"));
     addPMarkerShortcut = new QShortcut(QKeySequence("CTRL+P"),this); /// Couldn't get the action shortcut to work, this works
-    connect(addPMarker, &QAction::triggered, this, &MainWindow::addMarkerP);
+    //connect(addPMarker, &QAction::triggered, this, &MainWindow::addMarkerP);
     connect(addPMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerP);
 
     addRMarker = new QAction(tr("&R Marker"), this);
     addRMarker->setShortcut(QKeySequence("CTRL+R"));
     addRMarker->setStatusTip(tr("R Marker"));
     addRMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
-    connect(addRMarker, &QAction::triggered, this, &MainWindow::addMarkerR);
+    //connect(addRMarker, &QAction::triggered, this, &MainWindow::addMarkerR);
     connect(addRMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerR);
 
     addKMarker = new QAction(tr("&K Marker"), this);
     addKMarker->setShortcut(QKeySequence("CTRL+K"));
     addKMarker->setStatusTip(tr("K Marker"));
     addKMarkerShortcut = new QShortcut(QKeySequence("CTRL+K"),this); /// Couldn't get the action shortcut to work, this works
-    connect(addKMarker, &QAction::triggered, this, &MainWindow::addMarkerK);
+    //connect(addKMarker, &QAction::triggered, this, &MainWindow::addMarkerK);
     connect(addKMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerK);
 
     addIMarker = new QAction(tr("&I Marker"), this);
     addIMarker->setShortcut(QKeySequence("CTRL+I"));
     addIMarker->setStatusTip(tr("I Marker"));
     addIMarkerShortcut = new QShortcut(QKeySequence("CTRL+I"),this); /// Couldn't get the action shortcut to work, this works
-    connect(addIMarker, &QAction::triggered, this, &MainWindow::addMarkerI);
+    //connect(addIMarker, &QAction::triggered, this, &MainWindow::addMarkerI);
     connect(addIMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerI);
+
+    deleteMarker = new QAction(tr("&Delete Marker(s)"), this);
+    deleteMarker->setShortcut(QKeySequence::Delete);
+    deleteMarker->setStatusTip(tr("Delete Marker(s)"));
+    deleteMarkerShortcut = new QShortcut(QKeySequence::Delete, this);
+    //connect(deleteMarker, &QAction::triggered, this, &MainWindow::markerDelete);
+    connect(deleteMarkerShortcut, &QShortcut::activated, this, &MainWindow::markerDelete);
 
     rescaleViewAct = new QAction(tr("&Rescale View"), this);
     rescaleViewAct->setShortcut(QKeySequence("CTRL+SHIFT+R"));
     rescaleViewAct->setStatusTip(tr("Rescale View"));
     rescaleViewShortcut = new QShortcut(QKeySequence("CTRL+SHIFT+R"),this); /// Couldn't get the action shortcut to work, this works
-    connect(rescaleViewAct, &QAction::triggered, this, &MainWindow::rescaleView);
+    //connect(rescaleViewAct, &QAction::triggered, this, &MainWindow::rescaleView);
     connect(rescaleViewShortcut, &QShortcut::activated, this, &MainWindow::rescaleView);
 
+    /// Currently does nothing
     cancelAct = new QAction("Cancel");
     cancelAct->setShortcut(QKeySequence("Ctrl+C"));
     cancelAct->setStatusTip(tr("Cancel"));
@@ -163,6 +190,7 @@ void MainWindow::createMenus() {
     addMarkerMenu->addAction(addRMarker);
     addMarkerMenu->addAction(addKMarker);
     addMarkerMenu->addAction(addIMarker);
+    rightClickMenu->addAction(deleteMarker);
     rightClickMenu->addAction(rescaleViewAct);
     rightClickMenu->addAction(cancelAct);
 }
@@ -243,7 +271,6 @@ void MainWindow::rightMousePress()
     {
         const QPoint cursorLoc = ui->customPlot->mapFromGlobal(QCursor::pos());
         qDebug() << cursorLoc;
-        qDebug() << cursorLoc.x();
         emit showRightClickMenu(cursorLoc);
     }
 }
@@ -286,7 +313,6 @@ void MainWindow::getSelectionValues()//QCPDataSelection selection, int graphNum)
             QCPGraphDataContainer::const_iterator end;
             foreach (QCPDataRange dataRange, selectionArray[i].dataRanges())
             {
-                qDebug() << "Data was selected";
                 QCPGraphDataContainer::const_iterator beginloop = ui->customPlot->graph(i)->data()->at(dataRange.begin()); // get range begin iterator from index
                 QCPGraphDataContainer::const_iterator endloop = ui->customPlot->graph(i)->data()->at(dataRange.end()); // get range end iterator from index
                 begin = beginloop;
@@ -340,21 +366,24 @@ void MainWindow::labelSelection()
             || zGraphSelection.dataPointCount() !=0 || nGraphSelection.dataPointCount() !=0)
     {
         emit getSelectionValues();
-        labelRect = new QCPItemRect(ui->customPlot);
+        rect = new QCPItemRect(ui->customPlot);
         //QString redstr = popupData[0];QString greenstr = popupData[1];QString bluestr = popupData[2];
         //int red = redstr.toInt();int green = greenstr.toInt();int blue = bluestr.toInt();
         //labelRect->setBrush(QColor(red, green, blue, 75));
         //labelRect->setPen(QColor(red,green,blue, 75));
-        labelRect->setBrush(QColor(225, 0, 0, 30));
-        labelRect->setPen(QColor(225, 0, 0, 30));
-        labelRect->setSelected(false);
+        rect->setBrush(QColor(225, 0, 0, 30));
+        rect->setPen(QColor(225, 0, 0, 30));
+        rect->setSelected(false);
+        /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
+        rect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
+        rect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
         labelText = new QCPItemText(ui->customPlot);
+        /// Allows deletion of label when rect is deleted. But causes Segmentation Fault. Fix.
+        //labelText->setParent(rect);
+        //labelText->setSelectable(false);
         labelText->setText("Leg Up");
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
-        /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
-        labelRect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
-        labelRect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
         /// DO WE NEED TO LABEL THESE SECTIONS?
         ui->customPlot->replot();
         xGraphSelection.clear();
@@ -366,7 +395,11 @@ void MainWindow::labelSelection()
 
 void MainWindow::rescaleView()
 {
+    //ui->customPlot->axisRect()->setMargins(QMargins(0,50,0,0));
+    /// This is auto rescaling based on plottables
     ui->customPlot->rescaleAxes(true);
+    /// Hard coded y range
+    ui->customPlot->yAxis->setRange(2,-2);
     ui->customPlot->replot();
     xGraphSelection.clear();
     yGraphSelection.clear();
@@ -399,10 +432,11 @@ void MainWindow::placeMarker(int ID)
                 upPix->setMask(pPix->createHeuristicMask(true));
                 markerUP->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerUP->bottomRight->setType(QCPItemPosition::ptPlotCoords);
-                /// FIND A WAY TO SET top to the anchor or move pixmap over to center placement position.
-                markerUP->topLeft->setCoords(xKeyPos, 0);
+                markerUP->selectable();
                 /// Hard coded to be size 32x32, can make it constant
                 markerUP->setPixmap(upPix->scaled(32,32,Qt::KeepAspectRatio));
+                /// FIND A WAY TO SET top to the anchor or move pixmap over to center placement position.
+                markerUP->topLeft->setCoords(xKeyPos, 0);           
                 /// This could be used for setting label and view y-axis to the graph axis ranges
                 //mImage->topLeft->setCoords(mCusPlot->xAxis->range().lower, mCusPlot->yAxis->range().upper);
                 //mImage->bottomRight->setCoords(mCusPlot->xAxis->range().upper, mCusPlot->yAxis->range().lower);
@@ -514,6 +548,28 @@ void MainWindow::addMarkerI()
     connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
 }
 
+void MainWindow::markerDelete()
+{
+    // ItemClick?
+    // selectTest?
+    itemsSelected = ui->customPlot->selectedItems().count();
+    for (int i = 0; i < itemsSelected; i++)
+    {
+        //delete ui->customPlot->selectedItems().at(0);
+        //ui->customPlot->mItems.removeOne(item);
+        //qDebug() << (ui->customPlot->selectedItems().at(0))->metaObject()->className();
+        /// Might be a better way to do this, but for now it can delete the child Text connected to the Rect
+        /*if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemRect") == 0)
+        {
+            ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
+        }*/
+        ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
+        //delete ui->customPlot->selectedItems().at(0);
+    }
+    //ui->customPlot->clearItems();
+    ui->customPlot->replot();
+}
+
 void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
 {
     QPoint globalPos = ui->customPlot->mapToGlobal(pos);
@@ -522,6 +578,16 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
     yGraphSelection = ui->customPlot->graph(1)->selection();
     zGraphSelection = ui->customPlot->graph(2)->selection();
     nGraphSelection = ui->customPlot->graph(3)->selection();
+
+    itemsSelected = ui->customPlot->selectedItems().count();
+    if (itemsSelected != 0)
+    {
+        deleteMarker->setEnabled(true);
+    }
+    else
+    {
+        deleteMarker->setEnabled(false);
+    }
 
     // Checks for no selection and hides options
     /// LOOK INTO STILL ENABLED WHEN NO SELECTION (MIGHT BE ONE DATA POINT SELECTED)
@@ -570,6 +636,10 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         else if (selectedItem->text().contains("I Marker"))
         {
             emit addMarkerI();
+        }
+        else if (selectedItem->text().contains("Delete Marker(s)"))
+        {
+            emit markerDelete();
         }
         else if (selectedItem->text().contains("Rescale View"))
         {
