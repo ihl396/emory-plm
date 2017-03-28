@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/toolbar/handTool.png</file>
-        <file>resources/toolbar/markerTool.png</file>
-        <file>resources/toolbar/labelTool.png</file>
         <file>resources/toolbar/openRawDataFile.png</file>
         <file>resources/toolbar/saveFile.png</file>
         <file>resources/toolbar/PMarker.png</file>
@@ -11,5 +9,7 @@
         <file>resources/toolbar/KMarker.png</file>
         <file>resources/toolbar/RMarker.png</file>
         <file>resources/toolbar/UPMarker.png</file>
+        <file>resources/toolbar/rulerTool.png</file>
+        <file>resources/toolbar/selectTool.png</file>
     </qresource>
 </RCC>
