@@ -28,7 +28,7 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->graph(2)->setName("Z Acceleration");
     main_window_ui->customPlot->graph(3)->setData(time_values, normalized_values);
     main_window_ui->customPlot->graph(3)->setPen(QPen(Qt::black, 2));
-    main_window_ui->customPlot->graph(3)->setName("Normalized Acceleration");
+    main_window_ui->customPlot->graph(3)->setName("Magnitude Acceleration");
 
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
