@@ -225,18 +225,20 @@ void MainWindow::open()
 
     struct DataStructure data_structure;
 
-    CsvReader csvReader(model);
-    csvReader.importCSV(csv_file);
-    data_structure = csvReader.exportData(data_structure);
+    if (!csv_file.isEmpty()) {
+        CsvReader csvReader(model);
+        csvReader.importCSV(csv_file);
+        data_structure = csvReader.exportData(data_structure);
 
-    GraphViewer graphViewer(ui);
+        GraphViewer graphViewer(ui);
 
-    graphViewer.setFirstTime(firstRun);
-    graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
-    firstRun = false;
+        graphViewer.setFirstTime(firstRun);
+        graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
+        firstRun = false;
     // Defaults to Hand Tool when file is opened
-    emit enableToolBar();
-    emit handToolAct->trigger();
+        emit enableToolBar();
+        emit handToolAct->trigger();
+    }
 }
 
 void MainWindow::save()
