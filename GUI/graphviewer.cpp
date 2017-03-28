@@ -42,7 +42,7 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
 
     // Set Interactions
     /// May not need multiselect when we have one graph
-    main_window_ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes |
+    main_window_ui->customPlot->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectAxes | QCP::iSelectItems |
                                           QCP::iSelectLegend | QCP::iSelectPlottables | QCP::iMultiSelect);
 
     // Set Range Drag and Zoom

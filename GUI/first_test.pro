@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     csvreader.cpp \
     graphviewer.cpp \
     graph.cpp \
-    markup.cpp
+    markup.cpp \
+    qdruler.cpp
 
 HEADERS  += \
     qcustomplot.h \
@@ -27,7 +28,8 @@ HEADERS  += \
     datastructure.h \
     graphviewer.h \
     graph.h \
-    markup.h
+    markup.h \
+    qdruler.h
 
 FORMS    += \
     mainwindow.ui
