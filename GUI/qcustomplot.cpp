@@ -12016,6 +12016,14 @@ void QCPAbstractItem::setSelectable(bool selectable)
   }
 }
 
+double QCPAbstractItem::getXPosition() {
+    return this->xPosition;
+}
+
+void QCPAbstractItem::setXPosition(double x) {
+    this->xPosition = x;
+}
+
 /*!
   Sets whether this item is selected or not. When selected, it might use a different visual
   appearance (e.g. pen and brush), this depends on the specific item though.
