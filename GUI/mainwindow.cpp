@@ -317,7 +317,14 @@ void MainWindow::loadSelections() {
         rect->setSelected(false);
         rect->topLeft->setCoords(selection_structure.xAxisKeyMin[i], floor(selection_structure.xAxisValueMin[i]));
         rect->bottomRight->setCoords(selection_structure.xAxisKeyMax[i], ceil(selection_structure.xAxisValueMax[i]));
+        rect->setXKeyMin(selection_structure.xAxisKeyMin[i]);
+        rect->setXKeyMax(selection_structure.xAxisKeyMax[i]);
+        rect->setXValueMin(selection_structure.xAxisValueMin[i]);
+        rect->setXValueMax(selection_structure.xAxisValueMax[i]);
         labelText = new QCPItemText(ui->customPlot);
+        labelText->setParent(rect);
+        labelText->setSelectable(false);
+        labelText->setObjectName("lText");
         labelText->setText("Leg Up");
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, 1.9);
@@ -489,6 +496,10 @@ void MainWindow::labelSelection()
         selection_structure.xAxisKeyMax.append(xAxisKeyMax);
         selection_structure.xAxisValueMin.append(xAxisValueMin);
         selection_structure.xAxisValueMax.append(xAxisValueMax);
+        rect->setXKeyMin(xAxisKeyMin);
+        rect->setXKeyMax(xAxisKeyMax);
+        rect->setXValueMin(xAxisValueMin);
+        rect->setXValueMax(xAxisValueMax);
         labelText = new QCPItemText(ui->customPlot);
         /// Allows deletion of label when rect is deleted. But causes Segmentation Fault. Fix.
         labelText->setParent(rect);
@@ -707,11 +718,14 @@ void MainWindow::selectionDelete()
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
 
             QCPAbstractItem* item =ui->customPlot->selectedItems().at(0);
-            qDebug() << "HERE:" << item->getXPosition();
+            qDebug() << "HERE:" << item->getXKeyMin();
 
-            int index = marker_structure.keyPosition.indexOf(item->getXPosition());
-            marker_structure.keyPosition.remove(index);
-            marker_structure.id.remove(index);
+            int index = selection_structure.xAxisKeyMin.indexOf(item->getXKeyMin());
+            selection_structure.xAxisKeyMin.remove(index);
+            selection_structure.xAxisKeyMax.remove(index);
+            selection_structure.xAxisValueMin.remove(index);
+            selection_structure.xAxisValueMax.remove(index);
+
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
             //delete ui->customPlot->selectedItems().at(0);
         }
