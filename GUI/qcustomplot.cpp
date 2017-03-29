@@ -12020,9 +12020,43 @@ double QCPAbstractItem::getXPosition() {
     return this->xPosition;
 }
 
+double QCPAbstractItem::getXKeyMin() {
+    return this->xKeyMin;
+}
+
+double QCPAbstractItem::getXKeyMax() {
+    return this->xKeyMax;
+}
+
+double QCPAbstractItem::getXValueMin() {
+    return this->xValueMin;
+}
+
+double QCPAbstractItem::getXValueMax() {
+    return this->xValueMax;
+}
+
 void QCPAbstractItem::setXPosition(double x) {
     this->xPosition = x;
 }
+
+void QCPAbstractItem::setXKeyMin(double x) {
+    this->xKeyMin = x;
+}
+
+void QCPAbstractItem::setXKeyMax(double x) {
+    this->xKeyMax = x;
+}
+
+void QCPAbstractItem::setXValueMin(double x) {
+    this->xValueMin = x;
+}
+
+void QCPAbstractItem::setXValueMax(double x) {
+    this->xValueMax = x;
+}
+
+
 
 /*!
   Sets whether this item is selected or not. When selected, it might use a different visual
