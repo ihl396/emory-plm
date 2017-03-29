@@ -130,6 +130,13 @@ void MainWindow::createActions() {
     //connect(deleteMarker, &QAction::triggered, this, &MainWindow::markerDelete);
     connect(deleteMarkerShortcut, &QShortcut::activated, this, &MainWindow::markerDelete);
 
+    deleteSelection = new QAction(tr("&Delete Selection(s)"), this);
+    //deleteSelection->setShortcut("CTRL" + QKeySequence::Delete);
+    deleteSelection->setStatusTip(tr("Delete Selection(s)"));
+    //deleteSelectionShortcut = new QShortcut("CTRL" + QKeySequence::Delete, this);
+    //connect(deleteMarker, &QAction::triggered, this, &MainWindow::markerDelete);
+    //connect(deleteSelectionShortcut, &QShortcut::activated, this, &MainWindow::selectionDelete);
+
     rescaleViewAct = new QAction(tr("&Rescale View"), this);
     rescaleViewAct->setShortcut(QKeySequence("CTRL+SHIFT+R"));
     rescaleViewAct->setStatusTip(tr("Rescale View"));
@@ -177,6 +184,7 @@ void MainWindow::createMenus() {
     addMarkerMenu->addAction(addKMarker);
     addMarkerMenu->addAction(addIMarker);
     rightClickMenu->addAction(deleteMarker);
+    rightClickMenu->addAction(deleteSelection);
     rightClickMenu->addAction(rescaleViewAct);
     rightClickMenu->addAction(cancelAct);
 
@@ -669,6 +677,27 @@ void MainWindow::markerDelete()
     itemsSelected = ui->customPlot->selectedItems().count();
     for (int i = 0; i < itemsSelected; i++)
     {
+        if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemPixmap") == 0)
+        {
+            QCPAbstractItem* item =ui->customPlot->selectedItems().at(0);
+            qDebug() << "HERE:" << item->getXPosition();
+
+            int index = marker_structure.keyPosition.indexOf(item->getXPosition());
+            marker_structure.keyPosition.remove(index);
+            marker_structure.id.remove(index);
+            ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
+            //delete ui->customPlot->selectedItems().at(0);
+        }
+    }
+    //ui->customPlot->clearItems();
+    ui->customPlot->replot();
+}
+
+void MainWindow::selectionDelete()
+{
+    itemsSelected = ui->customPlot->selectedItems().count();
+    for (int i = 0; i < itemsSelected; i++)
+    {
         //delete ui->customPlot->selectedItems().at(0);
         //ui->customPlot->mItems.removeOne(item);
         //qDebug() << (ui->customPlot->selectedItems().at(0))->metaObject()->className();
@@ -676,16 +705,16 @@ void MainWindow::markerDelete()
         if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemRect") == 0)
         {
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
+
+            QCPAbstractItem* item =ui->customPlot->selectedItems().at(0);
+            qDebug() << "HERE:" << item->getXPosition();
+
+            int index = marker_structure.keyPosition.indexOf(item->getXPosition());
+            marker_structure.keyPosition.remove(index);
+            marker_structure.id.remove(index);
+            ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
+            //delete ui->customPlot->selectedItems().at(0);
         }
-
-        QCPAbstractItem* item =ui->customPlot->selectedItems().at(0);
-        qDebug() << "HERE:" << item->getXPosition();
-
-        int index = marker_structure.keyPosition.indexOf(item->getXPosition());
-        marker_structure.keyPosition.remove(index);
-        marker_structure.id.remove(index);
-        ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
-        //delete ui->customPlot->selectedItems().at(0);
     }
     //ui->customPlot->clearItems();
     ui->customPlot->replot();
@@ -761,6 +790,10 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         else if (selectedItem->text().contains("Delete Marker(s)"))
         {
             emit markerDelete();
+        }
+        else if (selectedItem->text().contains("Delete Selection(s)"))
+        {
+            emit selectionDelete();
         }
         else if (selectedItem->text().contains("Rescale View"))
         {
