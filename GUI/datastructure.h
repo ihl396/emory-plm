@@ -12,4 +12,16 @@ struct DataStructure {
     QVector<double> magnitude_values;
 };
 
+struct markerStructure {
+    QVector<double> keyPosition;
+    QVector<double> id;
+};
+
+struct selectionStructure {
+    QVector<double> xAxisKeyMin;
+    QVector<double> xAxisKeyMax;
+    QVector<double> xAxisValueMin;
+    QVector<double> xAxisValueMax;
+};
+
 #endif // DATASTRUCTURE_H

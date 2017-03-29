@@ -8,7 +8,13 @@
 #include <QTableView>
 #include <vector>
 #include <QMainWindow>
+#include <QCloseEvent>
 #include "graphviewer.h"
+#include "datastructure.h"
+#include <iostream>
+#include <fstream>
+#include <QFileInfo>
+
 using namespace std;
 
 namespace Ui {
@@ -25,7 +31,10 @@ public:
 
 private slots:
     void open();
-    void save();
+    void saveMarkers();
+    void saveSelections();
+    void loadMarkers();
+    void loadSelections();
     void handToolTriggered();
     void markerToolTriggered();
     void labelToolTriggered();
@@ -49,12 +58,17 @@ private:
     void createActions();
     void createMenus();
     void createMarkerPixmaps();
+    void closeEvent(QCloseEvent *event);
+    bool fileExists(QString);
     Ui::MainWindow *ui;
     QStandardItemModel *model;
     bool firstRun;
     QMenu *fileMenu;
     QAction *openAct;
     QAction *saveAct;
+    markerStructure marker_structure;
+    selectionStructure selection_structure;
+    QString file;
 
     // Michael's Added private variables
     void showRightClickMenu(const QPoint& pos);
@@ -66,9 +80,9 @@ private:
     QMenu *rightClickMenu;
     double xKeyPos;
 
-    void placeMarker(int ID);
+    void placeMarker(double ID);
     bool addMarkerClicked;
-    int markerID;
+    double markerID;
     QMenu *addMarkerMenu;
     QAction *addUpMarker;
     QShortcut *addUpMarkerShortcut;
