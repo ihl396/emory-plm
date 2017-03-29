@@ -3490,12 +3490,14 @@ public:
   QCPAxisRect *clipAxisRect() const;
   bool selectable() const { return mSelectable; }
   bool selected() const { return mSelected; }
+  double getXPosition();
   
   // setters:
   void setClipToAxisRect(bool clip);
   void setClipAxisRect(QCPAxisRect *rect);
   Q_SLOT void setSelectable(bool selectable);
   Q_SLOT void setSelected(bool selected);
+  void setXPosition(double);
   
   // reimplemented virtual methods:
   virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=0) const Q_DECL_OVERRIDE = 0;
@@ -3518,6 +3520,7 @@ protected:
   QList<QCPItemPosition*> mPositions;
   QList<QCPItemAnchor*> mAnchors;
   bool mSelectable, mSelected;
+  double xPosition;
   
   // reimplemented virtual methods:
   virtual QCP::Interaction selectionCategory() const Q_DECL_OVERRIDE;

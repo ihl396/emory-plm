@@ -283,7 +283,9 @@ void MainWindow::saveSelections()
                 //qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
             }
 
-            stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1];
+            if (!selection_structure.xAxisKeyMax.isEmpty()) {
+                stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1];
+            }
         }
     }
     //qDebug() << path;
@@ -541,6 +543,7 @@ void MainWindow::placeMarker(double ID)
                 markerUP->setPixmap(upPix->scaled(32,32,Qt::KeepAspectRatio));
                 /// FIND A WAY TO SET top to the anchor or move pixmap over to center placement position.
                 markerUP->topLeft->setCoords(xKeyPos, 0);
+                markerUP->setXPosition(xKeyPos);
                 /// This could be used for setting label and view y-axis to the graph axis ranges
                 //mImage->topLeft->setCoords(mCusPlot->xAxis->range().lower, mCusPlot->yAxis->range().upper);
                 //mImage->bottomRight->setCoords(mCusPlot->xAxis->range().upper, mCusPlot->yAxis->range().lower);
@@ -554,6 +557,7 @@ void MainWindow::placeMarker(double ID)
                 markerD->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerD->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerD->topLeft->setCoords(xKeyPos, 0);
+                markerD->setXPosition(xKeyPos);
                 markerD->setPixmap(downPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerD->setScaled(false);
                 markerD->setSelectable(true);
@@ -564,6 +568,7 @@ void MainWindow::placeMarker(double ID)
                 markerP->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerP->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerP->topLeft->setCoords(xKeyPos, 0);
+                markerP->setXPosition(xKeyPos);
                 markerP->setPixmap(pPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerP->setScaled(false);
                 markerP->setSelectable(true);
@@ -574,6 +579,7 @@ void MainWindow::placeMarker(double ID)
                 markerR->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerR->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerR->topLeft->setCoords(xKeyPos, 0);
+                markerR->setXPosition(xKeyPos);
                 markerR->setPixmap(rPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerR->setScaled(false);
                 markerR->setSelectable(true);
@@ -584,6 +590,7 @@ void MainWindow::placeMarker(double ID)
                 markerK->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerK->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerK->topLeft->setCoords(xKeyPos, 0);
+                markerK->setXPosition(xKeyPos);
                 markerK->setPixmap(kPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerK->setScaled(false);
                 markerK->setSelectable(true);
@@ -594,6 +601,7 @@ void MainWindow::placeMarker(double ID)
                 markerI->topLeft->setType(QCPItemPosition::ptPlotCoords);
                 markerI->bottomRight->setType(QCPItemPosition::ptPlotCoords);
                 markerI->topLeft->setCoords(xKeyPos, 0);
+                markerI->setXPosition(xKeyPos);
                 markerI->setPixmap(iPix->scaled(32,32,Qt::KeepAspectRatio));
                 markerI->setScaled(false);
                 markerI->setSelectable(true);
@@ -667,7 +675,13 @@ void MainWindow::markerDelete()
         {
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
         }
-        //ui->customPlot->item()
+
+        QCPAbstractItem* item =ui->customPlot->selectedItems().at(0);
+        qDebug() << "HERE:" << item->getXPosition();
+
+        int index = marker_structure.keyPosition.indexOf(item->getXPosition());
+        marker_structure.keyPosition.remove(index);
+        marker_structure.id.remove(index);
         ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
         //delete ui->customPlot->selectedItems().at(0);
     }
