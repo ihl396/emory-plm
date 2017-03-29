@@ -37,7 +37,7 @@ private slots:
     void loadSelections();
     void handToolTriggered();
     void markerToolTriggered();
-    void labelToolTriggered();
+    void rulerToolTriggered();
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
     void addMarkerUp();
@@ -58,6 +58,7 @@ private:
     void createActions();
     void createMenus();
     void createMarkerPixmaps();
+    void createRuler(); // Temporary
     void closeEvent(QCloseEvent *event);
     bool fileExists(QString);
     Ui::MainWindow *ui;
@@ -75,8 +76,9 @@ private:
     void enableToolBar();
     void disableToolBar();
     QAction *handToolAct;
-    QAction *markerToolAct;
+    QAction *selectToolAct;
     QAction *labelToolAct;
+    QAction *rulerToolAct;
     QMenu *rightClickMenu;
     double xKeyPos;
 

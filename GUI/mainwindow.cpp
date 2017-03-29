@@ -2,6 +2,7 @@
 #include "datastructure.h"
 #include "csvreader.h"
 #include "graphviewer.h"
+//#include "icsrulerwidget.h"
 
 //#include <QDRuler>
 #include <QDir>
@@ -47,36 +48,21 @@ void MainWindow::createActions() {
 
     // Tool Button Actions
     handToolAct = new QAction(QIcon(":/resources/toolbar/handTool.png"), tr("Hand Tool"), this);
-    markerToolAct = new QAction(QIcon(":/resources/toolbar/markerTool.png"), tr("Marker Tool"), this);
-    labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
+    selectToolAct = new QAction(QIcon(":/resources/toolbar/selectTool.png"), tr("Select Tool"), this);
+    //labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
+    rulerToolAct = new QAction(QIcon(":/resources/toolbar/rulerTool.png"), tr("Ruler Tool"), this);
     handToolAct->setCheckable(true);
-    markerToolAct->setCheckable(true);
-    labelToolAct->setCheckable(true);
+    selectToolAct->setCheckable(true);
+    //labelToolAct->setCheckable(true);
+    rulerToolAct->setCheckable(true);
     handToolAct->setShortcut(QKeySequence("H"));
-    markerToolAct->setShortcut(QKeySequence("M"));
-    labelToolAct->setShortcut(QKeySequence("L"));
+    selectToolAct->setShortcut(QKeySequence("S"));
+    //labelToolAct->setShortcut(QKeySequence("L"));
+    rulerToolAct->setShortcut(QKeySequence("R"));
     handToolAct->setStatusTip(tr("Hand Tool"));
-    markerToolAct->setStatusTip(tr("Marker Tool"));
-    labelToolAct->setStatusTip(tr("Label Tool"));
-
-    /*QGraphicsView *s = new QGraphicsView(this);
-    s->setViewportMargins(RULER_BREADTH,RULER_BREADTH,0,0);
-    QGridLayout* gridLayout = new QGridLayout();
-    gridLayout->setSpacing(0);
-    gridLayout->setMargin(0);
-
-    QWidget* fake = new QWidget();
-    QDRuler *mHorzRuler = new QDRuler(QDRuler::Horizontal,fake);
-    QDRuler *mVertRuler = new QDRuler(QDRuler::Vertical, fake);
-    fake->setBackgroundRole(QPalette::Window);
-    fake->setFixedSize(RULER_BREADTH,RULER_BREADTH);
-    ui->gridLayout->addWidget(fake,0,0);
-    ui->gridLayout->addWidget(mHorzRuler,0,1);
-    ui->gridLayout->addWidget(mVertRuler,1,0);
-    ui->gridLayout->addWidget(fake,1,1);
-
-    this->setLayout(gridLayout);*/
-
+    selectToolAct->setStatusTip(tr("Marker Tool"));
+    //labelToolAct->setStatusTip(tr("Label Tool"));
+    rulerToolAct->setStatusTip(tr("Ruler Tool"));
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -167,12 +153,12 @@ void MainWindow::createMenus() {
     ui->toolBar->addAction(saveAct);
     ui->toolBar->addSeparator();
     ui->toolBar->addAction(handToolAct);//, "Hand Tool");
-    ui->toolBar->addAction(markerToolAct);//, "Marker Tool");
-    ui->toolBar->addAction(labelToolAct);//, "Label Tool");
-    emit disableToolBar();
+    ui->toolBar->addAction(selectToolAct);//, "Select Tool");
+    //ui->toolBar->addAction(labelToolAct);//, "Label Tool");
+    ui->toolBar->addAction(rulerToolAct);
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
-    connect(markerToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
-    connect(labelToolAct, &QAction::triggered, this, &MainWindow::labelToolTriggered);
+    connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
+    connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -193,6 +179,8 @@ void MainWindow::createMenus() {
     rightClickMenu->addAction(deleteMarker);
     rightClickMenu->addAction(rescaleViewAct);
     rightClickMenu->addAction(cancelAct);
+
+    emit disableToolBar();
 }
 
 void MainWindow::createMarkerPixmaps()
@@ -216,6 +204,12 @@ void MainWindow::createMarkerPixmaps()
 
     iPix = new QPixmap(":/resources/toolbar/IMarker.png");
 }
+
+/*void MainWindow::createRuler()
+{
+    //ICSRulerWidget.createMarker(false);
+
+}*/
 
 void MainWindow::open()
 {
@@ -333,21 +327,37 @@ bool MainWindow::fileExists(QString path) {
 void MainWindow::enableToolBar()
 {
     handToolAct->setEnabled(true);
-    markerToolAct->setEnabled(true);
-    labelToolAct->setEnabled(true);
+    selectToolAct->setEnabled(true);
+    //labelToolAct->setEnabled(true);
+    rulerToolAct->setEnabled(true);
     viewSelectionShortcut->setEnabled(true);
     labelSelectionShortcut->setEnabled(true);
     rescaleViewShortcut->setEnabled(true);
+    addMarkerMenu->setEnabled(true);
+    addUpMarkerShortcut->setEnabled(true);
+    addDownMarkerShortcut->setEnabled(true);
+    addPMarkerShortcut->setEnabled(true);
+    addRMarkerShortcut->setEnabled(true);
+    addKMarkerShortcut->setEnabled(true);
+    addIMarkerShortcut->setEnabled(true);
 }
 
 void MainWindow::disableToolBar()
 {
     handToolAct->setEnabled(false);
-    markerToolAct->setEnabled(false);
-    labelToolAct->setEnabled(false);
+    selectToolAct->setEnabled(false);
+    //labelToolAct->setEnabled(false);
+    rulerToolAct->setEnabled(false);
     viewSelectionShortcut->setEnabled(false);
     labelSelectionShortcut->setEnabled(false);
     rescaleViewShortcut->setEnabled(false);
+    addMarkerMenu->setEnabled(false);
+    addUpMarkerShortcut->setEnabled(false);
+    addDownMarkerShortcut->setEnabled(false);
+    addPMarkerShortcut->setEnabled(false);
+    addRMarkerShortcut->setEnabled(false);
+    addKMarkerShortcut->setEnabled(false);
+    addIMarkerShortcut->setEnabled(false);
 }
 
 /* RIGHT CLICK EVENT and RECTANGLE SCALING*/
@@ -469,8 +479,9 @@ void MainWindow::labelSelection()
         selection_structure.xAxisValueMax.append(xAxisValueMax);
         labelText = new QCPItemText(ui->customPlot);
         /// Allows deletion of label when rect is deleted. But causes Segmentation Fault. Fix.
-        //labelText->setParent(rect);
-        //labelText->setSelectable(false);
+        labelText->setParent(rect);
+        labelText->setSelectable(false);
+        labelText->setObjectName("lText");
         labelText->setText("Leg Up");
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
@@ -652,10 +663,10 @@ void MainWindow::markerDelete()
         //ui->customPlot->mItems.removeOne(item);
         //qDebug() << (ui->customPlot->selectedItems().at(0))->metaObject()->className();
         /// Might be a better way to do this, but for now it can delete the child Text connected to the Rect
-        /*if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemRect") == 0)
+        if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemRect") == 0)
         {
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
-        }*/
+        }
         //ui->customPlot->item()
         ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
         //delete ui->customPlot->selectedItems().at(0);
@@ -749,10 +760,10 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
 void MainWindow::handToolTriggered()
 {
     if (handToolAct->isChecked() == true){
-        markerToolAct->setChecked(false);
-        labelToolAct->setChecked(false);
+        selectToolAct->setChecked(false);
+        rulerToolAct->setChecked(false);
         emit markerToolTriggered();
-        emit labelToolTriggered();
+        emit rulerToolTriggered();
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -762,12 +773,12 @@ void MainWindow::handToolTriggered()
 
 void MainWindow::markerToolTriggered()
 {
-    if (markerToolAct->isChecked() == true){
+    if (selectToolAct->isChecked() == true){
         handToolAct->setChecked(false);
-        labelToolAct->setChecked(false);
+        rulerToolAct->setChecked(false);
         emit handToolTriggered();
-        emit labelToolTriggered();
-        qDebug() << "MarkerTool: toggled";
+        emit rulerToolTriggered();
+        qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
         ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
@@ -776,7 +787,7 @@ void MainWindow::markerToolTriggered()
         ui->customPlot->graph(3)->setSelectable(QCP::stDataRange);//QCP::SelectionType(QCP::stDataRange)
     }
     else{
-        qDebug() << "MarkerTool: un-toggled";
+        qDebug() << "Select Tool: un-toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmNone);
         ui->customPlot->graph(0)->setSelectable(QCP::stNone);
@@ -786,17 +797,17 @@ void MainWindow::markerToolTriggered()
     }
 }
 
-void MainWindow::labelToolTriggered()
+void MainWindow::rulerToolTriggered()
 {
-    if (labelToolAct->isChecked() == true){
+    if (rulerToolAct->isChecked() == true){
         handToolAct->setChecked(false);
-        markerToolAct->setChecked(false);
+        selectToolAct->setChecked(false);
         emit handToolTriggered();
         emit markerToolTriggered();
-        qDebug() << "LabelTool: toggled";
+        qDebug() << "Ruler Tool: toggled";
     }
     else{
-        qDebug() << "LabelTool: un-toggled";
+        qDebug() << "Ruler Tool: un-toggled";
     }
 }
 
