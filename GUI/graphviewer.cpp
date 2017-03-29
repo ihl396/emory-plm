@@ -34,7 +34,7 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
 
     main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20);
-    main_window_ui->customPlot->yAxis->setRange(-2, 2);
+    main_window_ui->customPlot->yAxis->setRange(-3, 3);
 
     // Show Legend
     main_window_ui->customPlot->legend->setVisible(true);

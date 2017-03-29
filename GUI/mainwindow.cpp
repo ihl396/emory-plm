@@ -221,13 +221,13 @@ void MainWindow::open()
 {
     model = new QStandardItemModel(this);
     ui->tableView->setModel(model);
-    QString csv_file = QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(),"CSV files (*.csv);;all files (*.*)");
+    file = QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(),"CSV files, txt files (*.csv *.txt);;all files (*.*)");
 
     struct DataStructure data_structure;
 
-    if (!csv_file.isEmpty()) {
+    if (!file.isEmpty()) {
         CsvReader csvReader(model);
-        csvReader.importCSV(csv_file);
+        csvReader.importCSV(file);
         data_structure = csvReader.exportData(data_structure);
 
         GraphViewer graphViewer(ui);
@@ -238,12 +238,96 @@ void MainWindow::open()
     // Defaults to Hand Tool when file is opened
         emit enableToolBar();
         emit handToolAct->trigger();
+
+        if (fileExists(file.left(file.length() - 4) + "_markers.txt")) {
+            csvReader.importMarkers(file.left(file.length() - 4) + "_markers.txt");
+            marker_structure = csvReader.exportMarkers(marker_structure);
+            emit loadMarkers();
+        }
+
+        if (fileExists(file.left(file.length() - 4) + "_selections.txt")) {
+            csvReader.importSelections(file.left(file.length() - 4) + "_selections.txt");
+            selection_structure = csvReader.exportSelections(selection_structure);
+            emit loadSelections();
+        }
     }
 }
 
-void MainWindow::save()
+void MainWindow::saveMarkers()
 {
+    if (!file.isEmpty()) {
+        QString path = file.left(file.length() - 4) + "_markers.txt";
+        QFile outputFile(path);
+        outputFile.resize(0);
 
+        if (outputFile.open(QIODevice::ReadWrite)) {
+
+            QTextStream stream( &outputFile );
+            for (int i = 0; i < marker_structure.keyPosition.length()-1; i++) {
+                stream << marker_structure.keyPosition[i] << "," << marker_structure.id[i] << ",";
+                qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
+            }
+
+            stream << marker_structure.keyPosition[marker_structure.keyPosition.length()-1] << "," << marker_structure.id[marker_structure.id.length()-1];
+        }
+    }
+    //qDebug() << path;
+}
+
+void MainWindow::saveSelections()
+{
+    if (!file.isEmpty()) {
+        QString path = file.left(file.length() - 4) + "_selections.txt";
+        QFile outputFile(path);
+        outputFile.resize(0);
+
+        if (outputFile.open(QIODevice::ReadWrite)) {
+
+            QTextStream stream( &outputFile );
+            for (int i = 0; i < selection_structure.xAxisKeyMin.length()-1; i++) {
+                stream << selection_structure.xAxisKeyMin[i] << "," << selection_structure.xAxisKeyMax[i] << "," << selection_structure.xAxisValueMin[i] << "," << selection_structure.xAxisValueMax[i] << ",";
+                //qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
+            }
+
+            stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1];
+        }
+    }
+    //qDebug() << path;
+}
+
+void MainWindow::loadMarkers() {
+    for (int i = 0; i < marker_structure.keyPosition.length(); i++) {
+        xKeyPos = marker_structure.keyPosition[i];
+        emit placeMarker(marker_structure.id[i]);
+    }
+    ui->customPlot->replot();
+}
+
+void MainWindow::loadSelections() {
+    for (int i = 0; i < selection_structure.xAxisKeyMax.length(); i++) {
+        rect = new QCPItemRect(ui->customPlot);
+        rect->setBrush(QColor(225, 0, 0, 30));
+        rect->setPen(QColor(225, 0, 0, 30));
+        rect->setSelected(false);
+        rect->topLeft->setCoords(selection_structure.xAxisKeyMin[i], floor(selection_structure.xAxisValueMin[i]));
+        rect->bottomRight->setCoords(selection_structure.xAxisKeyMax[i], ceil(selection_structure.xAxisValueMax[i]));
+        labelText = new QCPItemText(ui->customPlot);
+        labelText->setText("Leg Up");
+        labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, 1.9);
+        ui->customPlot->replot();
+    }
+    ui->customPlot->replot();
+}
+
+bool MainWindow::fileExists(QString path) {
+    QFileInfo check_file(path);
+    // check if file exists and if yes: Is it really a file and no directory?
+    if (check_file.exists() && check_file.isFile()) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void MainWindow::enableToolBar()
@@ -379,6 +463,10 @@ void MainWindow::labelSelection()
         /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
         rect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
         rect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
+        selection_structure.xAxisKeyMin.append(xAxisKeyMin);
+        selection_structure.xAxisKeyMax.append(xAxisKeyMax);
+        selection_structure.xAxisValueMin.append(xAxisValueMin);
+        selection_structure.xAxisValueMax.append(xAxisValueMax);
         labelText = new QCPItemText(ui->customPlot);
         /// Allows deletion of label when rect is deleted. But causes Segmentation Fault. Fix.
         //labelText->setParent(rect);
@@ -401,7 +489,7 @@ void MainWindow::rescaleView()
     /// This is auto rescaling based on plottables
     ui->customPlot->rescaleAxes(true);
     /// Hard coded y range
-    ui->customPlot->yAxis->setRange(2,-2);
+    ui->customPlot->yAxis->setRange(3,-3);
     ui->customPlot->replot();
     xGraphSelection.clear();
     yGraphSelection.clear();
@@ -415,6 +503,9 @@ void MainWindow::clickedGraph(QMouseEvent *event)
     QPoint p = event->pos();
     xKeyPos = ui->customPlot->xAxis->pixelToCoord(p.x());
     emit placeMarker(markerID);
+    marker_structure.keyPosition.append(xKeyPos);
+    marker_structure.id.append(markerID);
+    //qDebug() << xKeyPos << "," << markerID;
     ui->customPlot->replot();
     if (addMarkerClicked)
     {
@@ -425,9 +516,9 @@ void MainWindow::clickedGraph(QMouseEvent *event)
 }
 
 /// COULD CHANGE markerID TO BE AN ENUM
-void MainWindow::placeMarker(int ID)
+void MainWindow::placeMarker(double ID)
 {
-    switch(ID)
+    switch((int)ID)
     {
         case 0: markerUP = new QCPItemPixmap(ui->customPlot);
                 /// Slow function, but hides background white
@@ -438,7 +529,7 @@ void MainWindow::placeMarker(int ID)
                 /// Hard coded to be size 32x32, can make it constant
                 markerUP->setPixmap(upPix->scaled(32,32,Qt::KeepAspectRatio));
                 /// FIND A WAY TO SET top to the anchor or move pixmap over to center placement position.
-                markerUP->topLeft->setCoords(xKeyPos, 0);           
+                markerUP->topLeft->setCoords(xKeyPos, 0);
                 /// This could be used for setting label and view y-axis to the graph axis ranges
                 //mImage->topLeft->setCoords(mCusPlot->xAxis->range().lower, mCusPlot->yAxis->range().upper);
                 //mImage->bottomRight->setCoords(mCusPlot->xAxis->range().upper, mCusPlot->yAxis->range().lower);
@@ -565,6 +656,7 @@ void MainWindow::markerDelete()
         {
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
         }*/
+        //ui->customPlot->item()
         ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
         //delete ui->customPlot->selectedItems().at(0);
     }
@@ -706,4 +798,12 @@ void MainWindow::labelToolTriggered()
     else{
         qDebug() << "LabelTool: un-toggled";
     }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    qDebug() << "CLOSING";
+    QMainWindow::closeEvent(event);
+    emit saveMarkers();
+    emit saveSelections();
 }

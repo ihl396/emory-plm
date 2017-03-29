@@ -17,26 +17,50 @@ void CsvReader::importCSV(QString input) {
         QChar character;
         QTextStream textStream(&data);
         QVector<double> row;
+        int count = 0;
 
-        while (!textStream.atEnd()) {
-            textStream >> character;
-            if (character == ',') {
-          //    qDebug() << "here:" << temp.toDouble();
-                row.push_back(temp.toDouble());
-                checkString(temp, character);
-            } else if (character == '\n') {
-          //    qDebug() << "here:" << temp.toDouble();
-                row.push_back(temp.toDouble());
-                dataArray.push_back(row);
-                row.clear();
-                checkString(temp, character);
-            } else if (textStream.atEnd()) {
-                temp.append(character);
-                checkString(temp);
-            } else {
-                temp.append(character);
+        // If the input file is a csv file.
+        if (input.right(3) == "csv") {
+            while (!textStream.atEnd()) {
+                textStream >> character;
+                if (character == ',') {
+                    row.push_back(temp.toDouble());
+                    checkString(temp, character);
+                } else if (character == '\n') {
+                    row.push_back(temp.toDouble());
+                    dataArray.push_back(row);
+                    row.clear();
+                    checkString(temp, character);
+                } else if (textStream.atEnd()) {
+                    temp.append(character);
+                    checkString(temp);
+                } else {
+                    temp.append(character);
+                }
             }
+        }
 
+        // If the input file is a txt file.
+        if (input.right(3) == "txt") {
+            while (!textStream.atEnd()) {
+                textStream >> character;
+                if ((character == ',') & (count != 3)) {
+                    row.push_back(temp.toDouble());
+                    checkString(temp, character);
+                    count++;
+                } else if ((character == ',') & (count == 3)) {
+                    row.push_back(temp.toDouble());
+                    dataArray.push_back(row);
+                    row.clear();
+                    checkString(temp, character);
+                    count = 0;
+                } else if (textStream.atEnd()) {
+                    temp.append(character);
+                    checkString(temp);
+                } else {
+                    temp.append(character);
+                }
+            }
         }
     }
 }
@@ -67,7 +91,7 @@ void CsvReader::checkString(QString &temp, QChar character) {
 
 
 DataStructure CsvReader::exportData(DataStructure structure) {
-    for (int i = 1; i < dataArray.size(); i++) {
+    for (int i = 0; i < dataArray.size(); i++) {
         //QDebug deb = qDebug();
         for (int j = 0; j < dataArray[0].size(); j++) {
            //deb << dataArray[i][j];
@@ -79,7 +103,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
                structure.z_acc_values.append((dataArray[i][j]/20));
            }
            else if (j == 2) {
-               structure.y_acc_values.append((dataArray[i][j]/20));
+               structure.y_acc_values.append((dataArray[i][j]/20)); 
            }
            else if (j == 1) {
                structure.x_acc_values.append((dataArray[i][j]/20));
@@ -91,6 +115,121 @@ DataStructure CsvReader::exportData(DataStructure structure) {
     for (int i = 0; i < structure.x_acc_values.size(); i++) {
         double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
         structure.magnitude_values.append(magnitude);
+        //qDebug() << magnitude;
+    }
+
+    return structure;
+}
+
+void CsvReader::importMarkers(QString input) {
+    QFile file (input);
+    if (file.open(QIODevice::ReadOnly)) {
+        QString data = file.readAll();
+        data.remove( QRegExp("\r") ); //remove all ocurrences of CR (Carriage Return)
+        QString temp;
+        QChar character;
+        QTextStream textStream(&data);
+        QVector<double> row;
+        int count = 0;
+
+        while (!textStream.atEnd()) {
+            textStream >> character;
+            if ((character == ',') & (count != 1)) {
+                row.push_back(temp.toDouble());
+                checkString(temp, character);
+                count++;
+            } else if ((character == ',') & (count == 1)) {
+                row.push_back(temp.toDouble());
+                markerArray.push_back(row);
+                row.clear();
+                checkString(temp, character);
+                count = 0;
+            } else if (textStream.atEnd()) {
+                temp.append(character);
+                row.push_back(temp.toDouble());
+                markerArray.push_back(row);
+                checkString(temp);
+            } else {
+                temp.append(character);
+            }
+
+        }
+    }
+}
+
+markerStructure CsvReader::exportMarkers(markerStructure structure) {
+    for (int i = 0; i < markerArray.size(); i++) {
+        //QDebug deb = qDebug();
+        for (int j = 0; j < markerArray[0].size(); j++) {
+           //deb << dataArray[i][j];
+           if (j == 0) {
+               structure.keyPosition.append(markerArray[i][j]);
+               //deb << dataArray[i][j];
+           } else {
+               structure.id.append((markerArray[i][j]));
+           }
+        }
+      //qDebug() << "------------";
+    }
+
+    return structure;
+}
+
+void CsvReader::importSelections(QString input) {
+    QFile file (input);
+    if (file.open(QIODevice::ReadOnly)) {
+        QString data = file.readAll();
+        data.remove( QRegExp("\r") ); //remove all ocurrences of CR (Carriage Return)
+        QString temp;
+        QChar character;
+        QTextStream textStream(&data);
+        QVector<double> row;
+        int count = 0;
+
+        while (!textStream.atEnd()) {
+            textStream >> character;
+            if ((character == ',') & (count != 3)) {
+                row.push_back(temp.toDouble());
+                checkString(temp, character);
+                count++;
+            } else if ((character == ',') & (count == 3)) {
+                row.push_back(temp.toDouble());
+                selectionArray.push_back(row);
+                row.clear();
+                checkString(temp, character);
+                count = 0;
+            } else if (textStream.atEnd()) {
+                temp.append(character);
+                row.push_back(temp.toDouble());
+                selectionArray.push_back(row);
+                checkString(temp);
+            } else {
+                temp.append(character);
+            }
+
+        }
+    }
+}
+
+selectionStructure CsvReader::exportSelections(selectionStructure structure) {
+    for (int i = 0; i < selectionArray.size(); i++) {
+        for (int j = 0; j < selectionArray[0].size(); j++) {
+           //deb << dataArray[i][j];
+           if (j == 0) {
+               structure.xAxisKeyMin.append(selectionArray[i][j]);
+               //deb << dataArray[i][j];
+           }
+           else if (j == 3) {
+               structure.xAxisValueMax.append((selectionArray[i][j]));
+           }
+           else if (j == 2) {
+               structure.xAxisValueMin.append((selectionArray[i][j]));
+           }
+           else if (j == 1) {
+               structure.xAxisKeyMax.append((selectionArray[i][j]));
+           }
+        }
+      //qDebug() << "------------";
     }
 
     return structure;
