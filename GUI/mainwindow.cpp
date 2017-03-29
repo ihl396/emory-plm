@@ -262,7 +262,9 @@ void MainWindow::saveMarkers()
                 qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
             }
 
-            stream << marker_structure.keyPosition[marker_structure.keyPosition.length()-1] << "," << marker_structure.id[marker_structure.id.length()-1];
+            if (!marker_structure.keyPosition.isEmpty()) {
+                stream << marker_structure.keyPosition[marker_structure.keyPosition.length()-1] << "," << marker_structure.id[marker_structure.id.length()-1];
+            }
         }
     }
     //qDebug() << path;

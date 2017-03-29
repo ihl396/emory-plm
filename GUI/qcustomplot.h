@@ -3491,6 +3491,10 @@ public:
   bool selectable() const { return mSelectable; }
   bool selected() const { return mSelected; }
   double getXPosition();
+  double getXKeyMin();
+  double getXKeyMax();
+  double getXValueMin();
+  double getXValueMax();
   
   // setters:
   void setClipToAxisRect(bool clip);
@@ -3498,6 +3502,10 @@ public:
   Q_SLOT void setSelectable(bool selectable);
   Q_SLOT void setSelected(bool selected);
   void setXPosition(double);
+  void setXKeyMin(double);
+  void setXKeyMax(double);
+  void setXValueMin(double);
+  void setXValueMax(double);
   
   // reimplemented virtual methods:
   virtual double selectTest(const QPointF &pos, bool onlySelectable, QVariant *details=0) const Q_DECL_OVERRIDE = 0;
@@ -3521,6 +3529,7 @@ protected:
   QList<QCPItemAnchor*> mAnchors;
   bool mSelectable, mSelected;
   double xPosition;
+  double xKeyMin, xKeyMax, xValueMin, xValueMax;
   
   // reimplemented virtual methods:
   virtual QCP::Interaction selectionCategory() const Q_DECL_OVERRIDE;
