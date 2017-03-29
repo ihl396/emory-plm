@@ -17,26 +17,50 @@ void CsvReader::importCSV(QString input) {
         QChar character;
         QTextStream textStream(&data);
         QVector<double> row;
+        int count = 0;
 
-        while (!textStream.atEnd()) {
-            textStream >> character;
-            if (character == ',') {
-          //    qDebug() << "here:" << temp.toDouble();
-                row.push_back(temp.toDouble());
-                checkString(temp, character);
-            } else if (character == '\n') {
-          //    qDebug() << "here:" << temp.toDouble();
-                row.push_back(temp.toDouble());
-                dataArray.push_back(row);
-                row.clear();
-                checkString(temp, character);
-            } else if (textStream.atEnd()) {
-                temp.append(character);
-                checkString(temp);
-            } else {
-                temp.append(character);
+        // If the input file is a csv file.
+        if (input.right(3) == "csv") {
+            while (!textStream.atEnd()) {
+                textStream >> character;
+                if (character == ',') {
+                    row.push_back(temp.toDouble());
+                    checkString(temp, character);
+                } else if (character == '\n') {
+                    row.push_back(temp.toDouble());
+                    dataArray.push_back(row);
+                    row.clear();
+                    checkString(temp, character);
+                } else if (textStream.atEnd()) {
+                    temp.append(character);
+                    checkString(temp);
+                } else {
+                    temp.append(character);
+                }
             }
+        }
 
+        // If the input file is a txt file.
+        if (input.right(3) == "txt") {
+            while (!textStream.atEnd()) {
+                textStream >> character;
+                if ((character == ',') & (count != 3)) {
+                    row.push_back(temp.toDouble());
+                    checkString(temp, character);
+                    count++;
+                } else if ((character == ',') & (count == 3)) {
+                    row.push_back(temp.toDouble());
+                    dataArray.push_back(row);
+                    row.clear();
+                    checkString(temp, character);
+                    count = 0;
+                } else if (textStream.atEnd()) {
+                    temp.append(character);
+                    checkString(temp);
+                } else {
+                    temp.append(character);
+                }
+            }
         }
     }
 }
@@ -79,7 +103,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
                structure.z_acc_values.append((dataArray[i][j]/20));
            }
            else if (j == 2) {
-               structure.y_acc_values.append((dataArray[i][j]/20));
+               structure.y_acc_values.append((dataArray[i][j]/20)); 
            }
            else if (j == 1) {
                structure.x_acc_values.append((dataArray[i][j]/20));
@@ -91,6 +115,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
     for (int i = 0; i < structure.x_acc_values.size(); i++) {
         double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
         structure.magnitude_values.append(magnitude);
+        qDebug() << magnitude;
     }
 
     return structure;

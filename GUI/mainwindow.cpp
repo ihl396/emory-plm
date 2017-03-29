@@ -221,13 +221,13 @@ void MainWindow::open()
 {
     model = new QStandardItemModel(this);
     ui->tableView->setModel(model);
-    QString csv_file = QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(),"CSV files (*.csv);;all files (*.*)");
+    QString file = QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(),"CSV files, txt files (*.csv *.txt);;all files (*.*)");
 
     struct DataStructure data_structure;
 
-    if (!csv_file.isEmpty()) {
+    if (!file.isEmpty()) {
         CsvReader csvReader(model);
-        csvReader.importCSV(csv_file);
+        csvReader.importCSV(file);
         data_structure = csvReader.exportData(data_structure);
 
         GraphViewer graphViewer(ui);
@@ -401,7 +401,7 @@ void MainWindow::rescaleView()
     /// This is auto rescaling based on plottables
     ui->customPlot->rescaleAxes(true);
     /// Hard coded y range
-    ui->customPlot->yAxis->setRange(2,-2);
+    ui->customPlot->yAxis->setRange(3,-3);
     ui->customPlot->replot();
     xGraphSelection.clear();
     yGraphSelection.clear();
@@ -438,7 +438,7 @@ void MainWindow::placeMarker(int ID)
                 /// Hard coded to be size 32x32, can make it constant
                 markerUP->setPixmap(upPix->scaled(32,32,Qt::KeepAspectRatio));
                 /// FIND A WAY TO SET top to the anchor or move pixmap over to center placement position.
-                markerUP->topLeft->setCoords(xKeyPos, 0);           
+                markerUP->topLeft->setCoords(xKeyPos, 0);
                 /// This could be used for setting label and view y-axis to the graph axis ranges
                 //mImage->topLeft->setCoords(mCusPlot->xAxis->range().lower, mCusPlot->yAxis->range().upper);
                 //mImage->bottomRight->setCoords(mCusPlot->xAxis->range().upper, mCusPlot->yAxis->range().lower);

@@ -7,6 +7,7 @@
 #include <QStandardItem>
 #include <QList>
 #include "datastructure.h"
+#include <QDebug>
 
 using namespace std;
 
