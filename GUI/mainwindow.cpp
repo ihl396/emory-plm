@@ -81,61 +81,61 @@ void MainWindow::createActions() {
     connect(labelSelectionShortcut, &QShortcut::activated, this, &MainWindow::labelSelection);
 
     // Add Marker Actions
-    addUpMarker = new QAction(tr("&Up Marker"), this);
-    addUpMarker->setShortcut(QKeySequence("CTRL+U"));
-    addUpMarker->setStatusTip(tr("Up Marker"));
-    addUpMarkerShortcut = new QShortcut(QKeySequence("CTRL+U"),this); /// Couldn't get the action shortcut to work, this works
+    addUpMarkerAct = new QAction(tr("&Up Marker"), this);
+    addUpMarkerAct->setShortcut(QKeySequence("CTRL+U"));
+    addUpMarkerAct->setStatusTip(tr("Up Marker"));
+    addUpMarkerActShortcut = new QShortcut(QKeySequence("CTRL+U"),this); /// Couldn't get the action shortcut to work, this works
     //connect(addUpMarker, &QAction::triggered, this, &MainWindow::addMarkerUp);
-    connect(addUpMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerUp);
+    connect(addUpMarkerActShortcut, &QShortcut::activated, this, &MainWindow::addMarkerUp);
 
-    addDownMarker = new QAction(tr("&Down Marker"), this);
-    addDownMarker->setShortcut(QKeySequence("CTRL+D"));
-    addDownMarker->setStatusTip(tr("Down Marker"));
-    addDownMarkerShortcut = new QShortcut(QKeySequence("CTRL+D"),this); /// Couldn't get the action shortcut to work, this works
+    addDownMarkerAct = new QAction(tr("&Down Marker"), this);
+    addDownMarkerAct->setShortcut(QKeySequence("CTRL+D"));
+    addDownMarkerAct->setStatusTip(tr("Down Marker"));
+    addDownMarkerActShortcut = new QShortcut(QKeySequence("CTRL+D"),this); /// Couldn't get the action shortcut to work, this works
     //connect(addDownMarker, &QAction::triggered, this, &MainWindow::addMarkerDown);
-    connect(addDownMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerDown);
+    connect(addDownMarkerActShortcut, &QShortcut::activated, this, &MainWindow::addMarkerDown);
 
-    addPMarker = new QAction(tr("&P Marker"), this);
-    addPMarker->setShortcut(QKeySequence("CTRL+P"));
-    addPMarker->setStatusTip(tr("P Marker"));
-    addPMarkerShortcut = new QShortcut(QKeySequence("CTRL+P"),this); /// Couldn't get the action shortcut to work, this works
+    addPMarkerAct = new QAction(tr("&P Marker"), this);
+    addPMarkerAct->setShortcut(QKeySequence("CTRL+P"));
+    addPMarkerAct->setStatusTip(tr("P Marker"));
+    addPMarkerActShortcut = new QShortcut(QKeySequence("CTRL+P"),this); /// Couldn't get the action shortcut to work, this works
     //connect(addPMarker, &QAction::triggered, this, &MainWindow::addMarkerP);
-    connect(addPMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerP);
+    connect(addPMarkerActShortcut, &QShortcut::activated, this, &MainWindow::addMarkerP);
 
-    addRMarker = new QAction(tr("&R Marker"), this);
-    addRMarker->setShortcut(QKeySequence("CTRL+R"));
-    addRMarker->setStatusTip(tr("R Marker"));
-    addRMarkerShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
+    addRMarkerAct = new QAction(tr("&R Marker"), this);
+    addRMarkerAct->setShortcut(QKeySequence("CTRL+R"));
+    addRMarkerAct->setStatusTip(tr("R Marker"));
+    addRMarkerActShortcut = new QShortcut(QKeySequence("CTRL+R"),this); /// Couldn't get the action shortcut to work, this works
     //connect(addRMarker, &QAction::triggered, this, &MainWindow::addMarkerR);
-    connect(addRMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerR);
+    connect(addRMarkerActShortcut, &QShortcut::activated, this, &MainWindow::addMarkerR);
 
-    addKMarker = new QAction(tr("&K Marker"), this);
-    addKMarker->setShortcut(QKeySequence("CTRL+K"));
-    addKMarker->setStatusTip(tr("K Marker"));
-    addKMarkerShortcut = new QShortcut(QKeySequence("CTRL+K"),this); /// Couldn't get the action shortcut to work, this works
+    addKMarkerAct = new QAction(tr("&K Marker"), this);
+    addKMarkerAct->setShortcut(QKeySequence("CTRL+K"));
+    addKMarkerAct->setStatusTip(tr("K Marker"));
+    addKMarkerActShortcut = new QShortcut(QKeySequence("CTRL+K"),this); /// Couldn't get the action shortcut to work, this works
     //connect(addKMarker, &QAction::triggered, this, &MainWindow::addMarkerK);
-    connect(addKMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerK);
+    connect(addKMarkerActShortcut, &QShortcut::activated, this, &MainWindow::addMarkerK);
 
-    addIMarker = new QAction(tr("&I Marker"), this);
-    addIMarker->setShortcut(QKeySequence("CTRL+I"));
-    addIMarker->setStatusTip(tr("I Marker"));
-    addIMarkerShortcut = new QShortcut(QKeySequence("CTRL+I"),this); /// Couldn't get the action shortcut to work, this works
+    addIMarkerAct = new QAction(tr("&I Marker"), this);
+    addIMarkerAct->setShortcut(QKeySequence("CTRL+I"));
+    addIMarkerAct->setStatusTip(tr("I Marker"));
+    addIMarkerActShortcut = new QShortcut(QKeySequence("CTRL+I"),this); /// Couldn't get the action shortcut to work, this works
     //connect(addIMarker, &QAction::triggered, this, &MainWindow::addMarkerI);
-    connect(addIMarkerShortcut, &QShortcut::activated, this, &MainWindow::addMarkerI);
+    connect(addIMarkerActShortcut, &QShortcut::activated, this, &MainWindow::addMarkerI);
 
-    deleteMarker = new QAction(tr("&Delete Marker(s)"), this);
-    deleteMarker->setShortcut(QKeySequence::Delete);
-    deleteMarker->setStatusTip(tr("Delete Marker(s)"));
-    deleteMarkerShortcut = new QShortcut(QKeySequence::Delete, this);
+    deleteAct = new QAction(tr("&Delete Marker/Selection(s)"), this);
+    deleteAct->setShortcut(QKeySequence::Delete);
+    deleteAct->setStatusTip(tr("Delete Marker/Selection(s)"));
+    deleteActShortcut = new QShortcut(QKeySequence::Delete, this);
     //connect(deleteMarker, &QAction::triggered, this, &MainWindow::markerDelete);
-    connect(deleteMarkerShortcut, &QShortcut::activated, this, &MainWindow::markerDelete);
+    connect(deleteActShortcut, &QShortcut::activated, this, &MainWindow::deleteMS);
 
-    deleteSelection = new QAction(tr("&Delete Selection(s)"), this);
-    //deleteSelection->setShortcut("CTRL" + QKeySequence::Delete);
-    deleteSelection->setStatusTip(tr("Delete Selection(s)"));
-    //deleteSelectionShortcut = new QShortcut("CTRL" + QKeySequence::Delete, this);
+    /*deleteSelectionAct = new QAction(tr("&Delete Selection(s)"), this);
+    deleteSelectionAct->setShortcut(QKeySequence(Qt::CTRL) + QKeySequence::Delete);
+    deleteSelectionAct->setStatusTip(tr("Delete Selection(s)"));
+    deleteSelectionActShortcut = new QShortcut(QKeySequence(Qt::CTRL + QKeySequence::Delete), this);
     //connect(deleteMarker, &QAction::triggered, this, &MainWindow::markerDelete);
-    //connect(deleteSelectionShortcut, &QShortcut::activated, this, &MainWindow::selectionDelete);
+    connect(deleteSelectionActShortcut, &QShortcut::activated, this, &MainWindow::deleteSelection);*/
 
     rescaleViewAct = new QAction(tr("&Rescale View"), this);
     rescaleViewAct->setShortcut(QKeySequence("CTRL+SHIFT+R"));
@@ -177,14 +177,14 @@ void MainWindow::createMenus() {
     rightClickMenu->addAction(viewSelectionAct);
     rightClickMenu->addAction(labelSelectionAct);
     rightClickMenu->addMenu(addMarkerMenu);
-    addMarkerMenu->addAction(addUpMarker);
-    addMarkerMenu->addAction(addDownMarker);
-    addMarkerMenu->addAction(addPMarker);
-    addMarkerMenu->addAction(addRMarker);
-    addMarkerMenu->addAction(addKMarker);
-    addMarkerMenu->addAction(addIMarker);
-    rightClickMenu->addAction(deleteMarker);
-    rightClickMenu->addAction(deleteSelection);
+    addMarkerMenu->addAction(addUpMarkerAct);
+    addMarkerMenu->addAction(addDownMarkerAct);
+    addMarkerMenu->addAction(addPMarkerAct);
+    addMarkerMenu->addAction(addRMarkerAct);
+    addMarkerMenu->addAction(addKMarkerAct);
+    addMarkerMenu->addAction(addIMarkerAct);
+    rightClickMenu->addAction(deleteAct);
+    //rightClickMenu->addAction(deleteSelectionAct);
     rightClickMenu->addAction(rescaleViewAct);
     rightClickMenu->addAction(cancelAct);
 
@@ -304,7 +304,7 @@ void MainWindow::saveSelections()
 void MainWindow::loadMarkers() {
     for (int i = 0; i < marker_structure.keyPosition.length(); i++) {
         xKeyPos = marker_structure.keyPosition[i];
-        emit placeMarker(marker_structure.id[i]);
+        emit createMarker(marker_structure.id[i]);
     }
     ui->customPlot->replot();
 }
@@ -353,12 +353,12 @@ void MainWindow::enableToolBar()
     labelSelectionShortcut->setEnabled(true);
     rescaleViewShortcut->setEnabled(true);
     addMarkerMenu->setEnabled(true);
-    addUpMarkerShortcut->setEnabled(true);
-    addDownMarkerShortcut->setEnabled(true);
-    addPMarkerShortcut->setEnabled(true);
-    addRMarkerShortcut->setEnabled(true);
-    addKMarkerShortcut->setEnabled(true);
-    addIMarkerShortcut->setEnabled(true);
+    addUpMarkerActShortcut->setEnabled(true);
+    addDownMarkerActShortcut->setEnabled(true);
+    addPMarkerActShortcut->setEnabled(true);
+    addRMarkerActShortcut->setEnabled(true);
+    addKMarkerActShortcut->setEnabled(true);
+    addIMarkerActShortcut->setEnabled(true);
 }
 
 void MainWindow::disableToolBar()
@@ -371,12 +371,12 @@ void MainWindow::disableToolBar()
     labelSelectionShortcut->setEnabled(false);
     rescaleViewShortcut->setEnabled(false);
     addMarkerMenu->setEnabled(false);
-    addUpMarkerShortcut->setEnabled(false);
-    addDownMarkerShortcut->setEnabled(false);
-    addPMarkerShortcut->setEnabled(false);
-    addRMarkerShortcut->setEnabled(false);
-    addKMarkerShortcut->setEnabled(false);
-    addIMarkerShortcut->setEnabled(false);
+    addUpMarkerActShortcut->setEnabled(false);
+    addDownMarkerActShortcut->setEnabled(false);
+    addPMarkerActShortcut->setEnabled(false);
+    addRMarkerActShortcut->setEnabled(false);
+    addKMarkerActShortcut->setEnabled(false);
+    addIMarkerActShortcut->setEnabled(false);
 }
 
 /* RIGHT CLICK EVENT and RECTANGLE SCALING*/
@@ -536,7 +536,7 @@ void MainWindow::clickedGraph(QMouseEvent *event)
 {
     QPoint p = event->pos();
     xKeyPos = ui->customPlot->xAxis->pixelToCoord(p.x());
-    emit placeMarker(markerID);
+    emit createMarker(markerID);
     marker_structure.keyPosition.append(xKeyPos);
     marker_structure.id.append(markerID);
     //qDebug() << xKeyPos << "," << markerID;
@@ -550,7 +550,7 @@ void MainWindow::clickedGraph(QMouseEvent *event)
 }
 
 /// COULD CHANGE markerID TO BE AN ENUM
-void MainWindow::placeMarker(double ID)
+void MainWindow::createMarker(double ID)
 {
     switch((int)ID)
     {
@@ -681,7 +681,7 @@ void MainWindow::addMarkerI()
     connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(clickedGraph(QMouseEvent*)));
 }
 
-void MainWindow::markerDelete()
+void MainWindow::deleteMS()
 {
     // ItemClick?
     // selectTest?
@@ -699,21 +699,7 @@ void MainWindow::markerDelete()
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0));
             //delete ui->customPlot->selectedItems().at(0);
         }
-    }
-    //ui->customPlot->clearItems();
-    ui->customPlot->replot();
-}
-
-void MainWindow::selectionDelete()
-{
-    itemsSelected = ui->customPlot->selectedItems().count();
-    for (int i = 0; i < itemsSelected; i++)
-    {
-        //delete ui->customPlot->selectedItems().at(0);
-        //ui->customPlot->mItems.removeOne(item);
-        //qDebug() << (ui->customPlot->selectedItems().at(0))->metaObject()->className();
-        /// Might be a better way to do this, but for now it can delete the child Text connected to the Rect
-        if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemRect") == 0)
+        else if (strcmp((ui->customPlot->selectedItems().at(0))->metaObject()->className(), "QCPItemRect") == 0)
         {
             ui->customPlot->removeItem(ui->customPlot->selectedItems().at(0)->findChild<QCPItemText*>("lText"));
 
@@ -746,11 +732,11 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
     itemsSelected = ui->customPlot->selectedItems().count();
     if (itemsSelected != 0)
     {
-        deleteMarker->setEnabled(true);
+        deleteAct->setEnabled(true);
     }
     else
     {
-        deleteMarker->setEnabled(false);
+        deleteAct->setEnabled(false);
     }
 
     // Checks for no selection and hides options
@@ -801,13 +787,9 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         {
             emit addMarkerI();
         }
-        else if (selectedItem->text().contains("Delete Marker(s)"))
+        else if (selectedItem->text().contains("Delete Marker/Selection(s)"))
         {
-            emit markerDelete();
-        }
-        else if (selectedItem->text().contains("Delete Selection(s)"))
-        {
-            emit selectionDelete();
+            emit deleteMS();
         }
         else if (selectedItem->text().contains("Rescale View"))
         {
@@ -860,6 +842,20 @@ void MainWindow::markerToolTriggered()
     }
 }
 
+void MainWindow::updatePhaseTracer(QMouseEvent *event)
+{
+    QPoint p = event->pos();
+    phaseTracerKeyPos = ui->customPlot->xAxis->pixelToCoord(p.x());
+    phaseTracer->setGraphKey(phaseTracerKeyPos);
+    phaseTracerValuePos = phaseTracer->position->value();
+
+    phaseTracerItemText->setText(QString("Time: %1\nG: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
+    phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+1.5);
+
+    //ui->customPlot->setStatusTip(QString("Time: %1, G: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
+    ui->customPlot->replot();
+}
+
 void MainWindow::rulerToolTriggered()
 {
     if (rulerToolAct->isChecked() == true){
@@ -868,6 +864,20 @@ void MainWindow::rulerToolTriggered()
         emit handToolTriggered();
         emit markerToolTriggered();
         qDebug() << "Ruler Tool: toggled";
+
+        // add the phase tracer (red circle) which sticks to the graph data (and gets updated in bracketDataSlot by timer event):
+        phaseTracer = new QCPItemTracer(ui->customPlot);
+        //itemDemoPhaseTracer = phaseTracer; // so we can access it later in the bracketDataSlot for animation
+        phaseTracer->setGraph(ui->customPlot->graph(3));
+        phaseTracer->setInterpolating(false);
+        phaseTracer->setStyle(QCPItemTracer::tsCircle);
+        phaseTracer->setPen(QPen(Qt::red));
+        phaseTracer->setBrush(Qt::red);
+        phaseTracer->setSize(7);
+
+        phaseTracerItemText = new QCPItemText(ui->customPlot);
+        phaseTracerItemText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+        connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
     }
     else{
         qDebug() << "Ruler Tool: un-toggled";

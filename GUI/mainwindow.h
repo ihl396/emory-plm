@@ -46,11 +46,12 @@ private slots:
     void addMarkerR();
     void addMarkerK();
     void addMarkerI();
-    void markerDelete();
-    void selectionDelete();
+    void deleteMS();
+    //void deleteSelection();
     void viewSelection();
     void labelSelection();
     void rescaleView();
+    void updatePhaseTracer(QMouseEvent *event);
 
 protected:
 
@@ -83,28 +84,28 @@ private:
     QMenu *rightClickMenu;
     double xKeyPos;
 
-    void placeMarker(double ID);
+    void createMarker(double ID);
     bool addMarkerClicked;
     double markerID;
     QMenu *addMarkerMenu;
-    QAction *addUpMarker;
-    QShortcut *addUpMarkerShortcut;
-    QAction *addDownMarker;
-    QShortcut *addDownMarkerShortcut;
+    QAction *addUpMarkerAct;
+    QShortcut *addUpMarkerActShortcut;
+    QAction *addDownMarkerAct;
+    QShortcut *addDownMarkerActShortcut;
     //QAction *addButtonMarker;
     //QAction *addManual;
-    QAction *addPMarker;
-    QShortcut *addPMarkerShortcut;
-    QAction *addRMarker;
-    QShortcut *addRMarkerShortcut;
-    QAction *addKMarker;
-    QShortcut *addKMarkerShortcut;
-    QAction *addIMarker;
-    QShortcut *addIMarkerShortcut;
-    QAction *deleteMarker;
-    QShortcut *deleteMarkerShortcut;
-    QAction *deleteSelection;
-    QShortcut *deleteSelectionShortcut;
+    QAction *addPMarkerAct;
+    QShortcut *addPMarkerActShortcut;
+    QAction *addRMarkerAct;
+    QShortcut *addRMarkerActShortcut;
+    QAction *addKMarkerAct;
+    QShortcut *addKMarkerActShortcut;
+    QAction *addIMarkerAct;
+    QShortcut *addIMarkerActShortcut;
+    QAction *deleteAct;
+    QShortcut *deleteActShortcut;
+    //QAction *deleteSelectionAct;
+    //QShortcut *deleteSelectionActShortcut;
     int itemsSelected;
 
     QCPItemPixmap *markerUP;
@@ -141,6 +142,11 @@ private:
     QCPDataSelection zGraphSelection;
     QCPDataSelection nGraphSelection;
     QAction *selectedItem;
+
+    double phaseTracerKeyPos;
+    double phaseTracerValuePos;
+    QCPItemTracer *phaseTracer;
+    QCPItemText *phaseTracerItemText;
 };
 
 #endif // MAINWINDOW_h
