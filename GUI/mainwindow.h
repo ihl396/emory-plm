@@ -52,6 +52,9 @@ private slots:
     void labelSelection();
     void rescaleView();
     void updatePhaseTracer(QMouseEvent *event);
+    void createRuler(QMouseEvent *event);
+    void horzScrollBarChanged(int);
+    void xAxisChanged(QCPRange);
 
 protected:
 
@@ -60,7 +63,6 @@ private:
     void createActions();
     void createMenus();
     void createMarkerPixmaps();
-    void createRuler(); // Temporary
     void closeEvent(QCloseEvent *event);
     bool fileExists(QString);
     Ui::MainWindow *ui;

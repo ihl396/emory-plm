@@ -11,7 +11,7 @@
 #include <QString>
 #include <QDebug>
 
-
+#include <QScrollBar>
 #include <iostream>
 #include <iomanip>
 
@@ -29,7 +29,6 @@ MainWindow::MainWindow(QWidget *parent) :
     createMarkerPixmaps();
     setWindowTitle(tr("PLM Analyser"));
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -148,6 +147,10 @@ void MainWindow::createActions() {
     cancelAct = new QAction("Cancel");
     cancelAct->setShortcut(QKeySequence("Ctrl+C"));
     cancelAct->setStatusTip(tr("Cancel"));
+
+    /// Connects Scrollbar to Customplot
+    connect(ui->horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(horzScrollBarChanged(int)));
+    connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisChanged(QCPRange)));
 }
 
 void MainWindow::createMenus() {
@@ -219,6 +222,36 @@ void MainWindow::createMarkerPixmaps()
 
 }*/
 
+void MainWindow::horzScrollBarChanged(int value)
+{
+    //qDebug() << "Lower: " << ui->customPlot->xAxis->range().lower;
+    //qDebug() << qAbs(ui->customPlot->xAxis->range().center()-value);
+    if (qAbs(ui->customPlot->xAxis->range().center()-value) > 1) // if user is dragging plot, we don't want to replot twice
+    {
+        //qDebug() << "Range(" << value << "," << ui->customPlot->xAxis->range().size() << ")";
+        //ui->customPlot->xAxis->setRange(ui->customPlot->xAxis->range().lower+value, ui->customPlot->xAxis->range().upper+value, Qt::AlignCenter);
+        ui->customPlot->xAxis->setRange(value, ui->customPlot->xAxis->range().size(), Qt::AlignCenter);
+        ui->customPlot->replot();
+    }
+}
+
+void MainWindow::xAxisChanged(QCPRange range)
+{
+    //qDebug() << "range: " << range;
+    //qDebug() << "range.lower: " << qRound(range.lower);
+    /*if (qRound(range.lower) < 0)
+    {
+        ui->horizontalScrollBar->setValue(0);//center())); // adjust position of scroll bar slider
+    }
+    else
+    {
+        ui->horizontalScrollBar->setValue(qRound(range.lower));//center())); // adjust position of scroll bar slider
+    }*/
+    //qDebug() << qRound(range.lower);
+    ui->horizontalScrollBar->setValue(qRound(range.center()));//center())); // adjust position of scroll bar slider
+    ui->horizontalScrollBar->setPageStep(qRound(range.size())); // adjust size of scroll bar slider
+}
+
 void MainWindow::open()
 {
     model = new QStandardItemModel(this);
@@ -237,7 +270,7 @@ void MainWindow::open()
         graphViewer.setFirstTime(firstRun);
         graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
         firstRun = false;
-    // Defaults to Hand Tool when file is opened
+        // Defaults to Hand Tool when file is opened
         emit enableToolBar();
         emit handToolAct->trigger();
 
@@ -252,6 +285,9 @@ void MainWindow::open()
             selection_structure = csvReader.exportSelections(selection_structure);
             emit loadSelections();
         }
+
+        ui->horizontalScrollBar->setRange(graphViewer.getGraphKeyMin(), graphViewer.getGraphKeyMax());
+        ui->horizontalScrollBar->setValue(ui->customPlot->xAxis->range().lower);//ui->customPlot->xAxis->range().center());
     }
 }
 
@@ -359,6 +395,7 @@ void MainWindow::enableToolBar()
     addRMarkerActShortcut->setEnabled(true);
     addKMarkerActShortcut->setEnabled(true);
     addIMarkerActShortcut->setEnabled(true);
+    ui->horizontalScrollBar->setEnabled(true);
 }
 
 void MainWindow::disableToolBar()
@@ -377,6 +414,7 @@ void MainWindow::disableToolBar()
     addRMarkerActShortcut->setEnabled(false);
     addKMarkerActShortcut->setEnabled(false);
     addIMarkerActShortcut->setEnabled(false);
+    ui->horizontalScrollBar->setEnabled(false);
 }
 
 /* RIGHT CLICK EVENT and RECTANGLE SCALING*/
@@ -850,10 +888,16 @@ void MainWindow::updatePhaseTracer(QMouseEvent *event)
     phaseTracerValuePos = phaseTracer->position->value();
 
     phaseTracerItemText->setText(QString("Time: %1\nG: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
-    phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+1.5);
+    phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+1.0);
 
     //ui->customPlot->setStatusTip(QString("Time: %1, G: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
     ui->customPlot->replot();
+}
+
+void MainWindow::createRuler(QMouseEvent *event)
+{
+    QPoint p = event->pos();
+
 }
 
 void MainWindow::rulerToolTriggered()
@@ -878,6 +922,7 @@ void MainWindow::rulerToolTriggered()
         phaseTracerItemText = new QCPItemText(ui->customPlot);
         phaseTracerItemText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
+        connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
     }
     else{
         qDebug() << "Ruler Tool: un-toggled";

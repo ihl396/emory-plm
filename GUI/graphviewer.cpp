@@ -34,6 +34,8 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
 
     main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20);
+    graphKeyMin = 0;
+    graphKeyMax = time_values.back() + time_values.back()/20;
     main_window_ui->customPlot->yAxis->setRange(-3, 3);
 
     // Show Legend
@@ -51,19 +53,43 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
 
     // Setup right click context menu
     main_window_ui->customPlot->setContextMenuPolicy(Qt::ActionsContextMenu); /// correct placement?
-
-    // Add Connections
-    /*connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_clicked()));//this clicks the button to disable functions when another toolbutton is being pressed
-    //connect(this, SIGNAL(toolbutton3_trig()), this, SLOT(on_toolButton_clicked()));
-
-    connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_2_clicked()));
-    //connect(this, SIGNAL(toolbutton3_trig()), this, SLOT(on_toolButton_2_clicked()));
-
-    //connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_3_clicked()));
-    //connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_3_clicked()));*/
-
     main_window_ui->customPlot->replot();
 }
+
+double GraphViewer::getGraphKeyMin()
+{
+    return graphKeyMin;
+}
+
+double GraphViewer::getGraphKeyMax()
+{
+    return graphKeyMax;
+}
+
+/*void GraphViewer::setGraphKeyMin(double min)
+{
+    graphKeyMin = min;
+}
+
+void GraphViewer::setGraphKeyMax(double max)
+{
+    graphKeyMax = max;
+}*/
+
+/*void GraphViewer::horzScrollBarChanged(int value)
+{
+    if (qAbs(main_window_ui->customPlot->xAxis->range().center()-value/100.0) > 0.01) // if user is dragging plot, we don't want to replot twice
+    {
+        main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20, Qt::AlignCenter);
+        main_window_ui->customPlot->replot();
+    }
+}
+
+void GraphViewer::xAxisChanged(QCPRange range)
+{
+    main_window_ui->horizontalScrollBar->setValue(qRound(range.center()*100.0)); // adjust position of scroll bar slider
+    main_window_ui->horizontalScrollBar->setPageStep(qRound(range.size()*100.0)); // adjust size of scroll bar slider
+}*/
 
 void GraphViewer::setFirstTime(bool input) {
     first_time = input;

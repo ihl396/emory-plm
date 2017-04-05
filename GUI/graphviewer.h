@@ -14,6 +14,13 @@ public:
     GraphViewer(Ui::MainWindow *ui);
     void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>, QVector<double>);
     void setFirstTime(bool);
+    double getGraphKeyMin();
+    double getGraphKeyMax();
+    //void setGraphKeyMin(double);
+    //void setGraphKeyMax(double);
+
+    double graphKeyMin;
+    double graphKeyMax;
 private slots:
     void on_toolButton_triggered(QAction *arg1);
     void on_toolButton_2_triggered(QAction *arg1);
