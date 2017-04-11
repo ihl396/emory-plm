@@ -1,7 +1,14 @@
 % check is the leg movement could be consider into PLM
 
-function LM = isLM(LM_start, LM_end, Acc_mag, date, onset, decay)
+function LM = isLM()
 LM = [];
+onset = 1
+decay = 0.7
+LM_start = 0.5
+LM_end = 10
+PLM_start = 5
+PLM_end = 90
+Acc_mag = dlmread( 'log_magnitude.txt' ,',')
 
 %determines what indices are at and above the onset that would be
 %characterized as a leg movement

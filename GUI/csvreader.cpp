@@ -131,14 +131,28 @@ DataStructure CsvReader::exportData(DataStructure structure) {
       //qDebug() << "------------";
     }
 
+
+
     for (int i = 0; i < structure.x_acc_values.size(); i++) {
         double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
-        if (magnitude > 4) {
-            qDebug() << magnitude;
-        }
         structure.magnitude_values.append(magnitude);
         //qDebug() << magnitude;
     }
+
+
+        QString path = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude.txt";
+        QFile outputFile(path);
+        outputFile.resize(0);
+
+        if (outputFile.open(QIODevice::ReadWrite)) {
+
+            QTextStream stream( &outputFile );
+            for (int i = 0; i < structure.magnitude_values.length()-1; i++) {
+                stream << structure.magnitude_values.at(i) << ",";
+            }
+
+            stream << structure.magnitude_values.at(structure.magnitude_values.length()-1);
+        }
 
     return structure;
 }

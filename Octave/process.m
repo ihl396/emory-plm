@@ -5,8 +5,15 @@
 function [retval] = process (filepath)
 
 %% Get parameter file under the filepath
-parameterpath = strcat(filepath,'/parameter.csv'); %%complete parameter file path
-[onset,decay,LM_start,LM_end,PLM_start,PLM_end]=getParameter (parameterpath);
+%%parameterpath = strcat(filepath,'/parameter.csv'); %%complete parameter file path
+%%[onset,decay,LM_start,LM_end,PLM_start,PLM_end]=getParameter (parameterpath);
+
+onset = 1
+decay = 0.7
+LM_start = 0.5
+LM_end = 10
+PLM_start = 5
+PLM_end = 90
 
 %% Get raw data file under the filepath
 rawdatapath = strcat(filepath,'/rawdata.csv'); %%complete raw data file path
@@ -17,11 +24,11 @@ rawdatapath = strcat(filepath,'/rawdata.csv'); %%complete raw data file path
 [convertTime,off] = convertTime(startTime,endTime,row);
 
 %% convert raw acceleroemter date to unit in g
-rawAccx = rawdata(:,2); rawAccy = rawdata(:,3); rawAccz = rawdata(:,4);
-[AccX,AccY,AccZ] = convertAccel(rawAccx,rawAccy,rawAccz);
+#rawAccx = rawdata(:,2); rawAccy = rawdata(:,3); rawAccz = rawdata(:,4);
+#[AccX,AccY,AccZ] = convertAccel(rawAccx,rawAccy,rawAccz);
 
 %calculates the magnitude of the accelerometer values
-Acc_mag = sqrt(AccX.^2 + AccY.^2 + AccZ.^2);
+#Acc_mag = sqrt(AccX.^2 + AccY.^2 + AccZ.^2);
 
 % calls the is_LM function to determine if the individual events can be
 % considered a leg movement. If it is, then it will be placed in the
@@ -33,11 +40,11 @@ LM = isLM(LM_start, LM_end, Acc_mag, convertTime, onset, decay);
 [PLM,PI] = isPLM( LM, PLM_start, PLM_end, convertTime);
 
 %% calls the convertRotation function to compute the actual rotation of leg
-[heading,pitch,roll] = convertRotation(AccX, AccY, AccZ);
+%[heading,pitch,roll] = convertRotation(AccX, AccY, AccZ);
 
 % calls the isStand function to determine if pateint is standing or not
 % 1 for standing, 0 for not standing
-Stand = isStand(heading,pitch,roll);
+%Stand = isStand(heading,pitch,roll);
 
 % calls the LMandPLM to represent the leg movement and PLM in 1 or 0
 % 1 is standing, 0 is not standing
