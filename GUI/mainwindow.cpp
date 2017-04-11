@@ -10,6 +10,7 @@
 
 #include <QString>
 #include <QDebug>
+#include <QKeyEvent>
 
 #include <QScrollBar>
 #include <iostream>
@@ -222,6 +223,27 @@ void MainWindow::createMarkerPixmaps()
 
 }*/
 
+bool MainWindow::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress )
+    {
+        QKeyEvent* keyEvent = (QKeyEvent*)event;
+        double move = ui->customPlot->xAxis->range().size()*scaledMovement;
+        if (keyEvent->key() == Qt::Key_Left)
+        {
+            qDebug() << "move slider left";
+            ui->horizontalScrollBar->setSliderPosition(ui->horizontalScrollBar->sliderPosition()-move);
+        }
+        else if (keyEvent->key()== Qt::Key_Right)
+        {
+            qDebug() << "move slider right";
+            ui->horizontalScrollBar->setSliderPosition(ui->horizontalScrollBar->sliderPosition()+move);
+        }
+
+    }
+    return QMainWindow::eventFilter(watched, event);
+}
+
 void MainWindow::horzScrollBarChanged(int value)
 {
     //qDebug() << "Lower: " << ui->customPlot->xAxis->range().lower;
@@ -237,18 +259,11 @@ void MainWindow::horzScrollBarChanged(int value)
 
 void MainWindow::xAxisChanged(QCPRange range)
 {
-    //qDebug() << "range: " << range;
-    //qDebug() << "range.lower: " << qRound(range.lower);
-    /*if (qRound(range.lower) < 0)
+    //qDebug() << "range.center" << qRound(range.center());
+    if (!firstRun)
     {
-        ui->horizontalScrollBar->setValue(0);//center())); // adjust position of scroll bar slider
+        ui->horizontalScrollBar->setValue(qRound(range.center()));//center())); // adjust position of scroll bar slider
     }
-    else
-    {
-        ui->horizontalScrollBar->setValue(qRound(range.lower));//center())); // adjust position of scroll bar slider
-    }*/
-    //qDebug() << qRound(range.lower);
-    ui->horizontalScrollBar->setValue(qRound(range.center()));//center())); // adjust position of scroll bar slider
     ui->horizontalScrollBar->setPageStep(qRound(range.size())); // adjust size of scroll bar slider
 }
 
@@ -269,6 +284,13 @@ void MainWindow::open()
 
         graphViewer.setFirstTime(firstRun);
         graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
+
+        ui->horizontalScrollBar->setRange(graphViewer.getGraphKeyMin(), graphViewer.getGraphKeyMax());
+        qDebug() << "xAxis center" << ui->customPlot->xAxis->range().center();
+        qDebug() << "xAxis lower" << ui->customPlot->xAxis->range().lower;
+        qDebug() << "xAxis upper" << ui->customPlot->xAxis->range().upper;
+        ui->horizontalScrollBar->setValue(ui->customPlot->xAxis->range().center());
+        scaledMovement = 0.05;
         firstRun = false;
         // Defaults to Hand Tool when file is opened
         emit enableToolBar();
@@ -286,8 +308,8 @@ void MainWindow::open()
             emit loadSelections();
         }
 
-        ui->horizontalScrollBar->setRange(graphViewer.getGraphKeyMin(), graphViewer.getGraphKeyMax());
-        ui->horizontalScrollBar->setValue(ui->customPlot->xAxis->range().lower);//ui->customPlot->xAxis->range().center());
+        ui->horizontalScrollBar->installEventFilter(this);
+        ui->horizontalScrollBar->setFocus(Qt::OtherFocusReason);
     }
 }
 
@@ -926,6 +948,8 @@ void MainWindow::rulerToolTriggered()
     }
     else{
         qDebug() << "Ruler Tool: un-toggled";
+        disconnect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
+        disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
     }
 }
 

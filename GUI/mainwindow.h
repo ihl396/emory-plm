@@ -55,6 +55,7 @@ private slots:
     void createRuler(QMouseEvent *event);
     void horzScrollBarChanged(int);
     void xAxisChanged(QCPRange);
+    bool eventFilter(QObject *watched, QEvent *event);
 
 protected:
 
@@ -145,6 +146,7 @@ private:
     QCPDataSelection nGraphSelection;
     QAction *selectedItem;
 
+    double scaledMovement;
     double phaseTracerKeyPos;
     double phaseTracerValuePos;
     QCPItemTracer *phaseTracer;
