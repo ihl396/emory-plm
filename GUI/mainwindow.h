@@ -56,6 +56,7 @@ private slots:
     void horzScrollBarChanged(int);
     void xAxisChanged(QCPRange);
     bool eventFilter(QObject *watched, QEvent *event);
+    void focusChanged();
 
 protected:
 

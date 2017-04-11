@@ -241,7 +241,16 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
         }
 
     }
+    else if (event->type() == QEvent::FocusOut)
+    {
+        emit focusChanged();
+    }
     return QMainWindow::eventFilter(watched, event);
+}
+
+void MainWindow::focusChanged()
+{
+    ui->horizontalScrollBar->setFocus(Qt::OtherFocusReason);
 }
 
 void MainWindow::horzScrollBarChanged(int value)
@@ -307,6 +316,20 @@ void MainWindow::open()
             selection_structure = csvReader.exportSelections(selection_structure);
             emit loadSelections();
         }
+
+        phaseTracer = new QCPItemTracer(ui->customPlot);
+        phaseTracer->setGraph(ui->customPlot->graph(3));
+        phaseTracer->setInterpolating(false);
+        phaseTracer->setStyle(QCPItemTracer::tsCircle);
+        phaseTracer->setPen(QPen(Qt::red));
+        phaseTracer->setBrush(Qt::red);
+        phaseTracer->setSize(7);
+
+        phaseTracerItemText = new QCPItemText(ui->customPlot);
+        phaseTracerItemText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+
+        phaseTracer->setVisible(false);
+        phaseTracerItemText->setVisible(false);
 
         ui->horizontalScrollBar->installEventFilter(this);
         ui->horizontalScrollBar->setFocus(Qt::OtherFocusReason);
@@ -906,11 +929,13 @@ void MainWindow::updatePhaseTracer(QMouseEvent *event)
 {
     QPoint p = event->pos();
     phaseTracerKeyPos = ui->customPlot->xAxis->pixelToCoord(p.x());
+    qDebug() << "PhaseTracerKeyPos" << phaseTracerKeyPos;
     phaseTracer->setGraphKey(phaseTracerKeyPos);
     phaseTracerValuePos = phaseTracer->position->value();
+    qDebug() << "PhaseTracerValuePos" << phaseTracerValuePos;
 
     phaseTracerItemText->setText(QString("Time: %1\nG: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
-    phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+1.0);
+    phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+0.8);
 
     //ui->customPlot->setStatusTip(QString("Time: %1, G: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
     ui->customPlot->replot();
@@ -932,22 +957,19 @@ void MainWindow::rulerToolTriggered()
         qDebug() << "Ruler Tool: toggled";
 
         // add the phase tracer (red circle) which sticks to the graph data (and gets updated in bracketDataSlot by timer event):
-        phaseTracer = new QCPItemTracer(ui->customPlot);
-        //itemDemoPhaseTracer = phaseTracer; // so we can access it later in the bracketDataSlot for animation
-        phaseTracer->setGraph(ui->customPlot->graph(3));
-        phaseTracer->setInterpolating(false);
-        phaseTracer->setStyle(QCPItemTracer::tsCircle);
-        phaseTracer->setPen(QPen(Qt::red));
-        phaseTracer->setBrush(Qt::red);
-        phaseTracer->setSize(7);
+        phaseTracer->setVisible(true);
+        phaseTracerItemText->setVisible(true);
 
-        phaseTracerItemText = new QCPItemText(ui->customPlot);
-        phaseTracerItemText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+
+        ui->customPlot->replot();
         connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
         connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
     }
     else{
         qDebug() << "Ruler Tool: un-toggled";
+        phaseTracer->setVisible(false);
+        phaseTracerItemText->setVisible(false);
+        ui->customPlot->replot();
         disconnect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
         disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
     }
