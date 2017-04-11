@@ -51,6 +51,7 @@ private slots:
     void viewSelection();
     void labelSelection();
     void rescaleView();
+    void axisGraphs();
 
 protected:
 
@@ -68,6 +69,7 @@ private:
     QMenu *fileMenu;
     QAction *openAct;
     QAction *saveAct;
+    QAction *graphAct;
     markerStructure marker_structure;
     selectionStructure selection_structure;
     QString file;

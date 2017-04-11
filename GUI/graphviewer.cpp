@@ -3,6 +3,7 @@
 GraphViewer::GraphViewer(Ui::MainWindow *input) {
     first_time = true;
     main_window_ui = input;
+    axis_graphs = true;
 }
 
 void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
@@ -15,7 +16,6 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
         first_time = false;
     }
 
-    main_window_ui->customPlot->legend->setVisible(true);
     main_window_ui->customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
     main_window_ui->customPlot->graph(0)->setData(time_values, x_acc_values);
     main_window_ui->customPlot->graph(0)->setPen(QPen(Qt::blue, 1, Qt::DotLine));
@@ -29,12 +29,11 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->graph(3)->setData(time_values, normalized_values);
     main_window_ui->customPlot->graph(3)->setPen(QPen(Qt::black, 2));
     main_window_ui->customPlot->graph(3)->setName("Magnitude Acceleration");
-
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
 
     main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20);
-    main_window_ui->customPlot->yAxis->setRange(-3, 3);
+    main_window_ui->customPlot->yAxis->setRange(-2, 8);
 
     // Show Legend
     main_window_ui->customPlot->legend->setVisible(true);
@@ -63,6 +62,20 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     //connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_3_clicked()));*/
 
     main_window_ui->customPlot->replot();
+}
+
+void GraphViewer::axisGraphs() {
+    if (axis_graphs) {
+        main_window_ui->customPlot->graph(0)->setVisible(false);
+        main_window_ui->customPlot->graph(1)->setVisible(false);
+        main_window_ui->customPlot->graph(2)->setVisible(false);
+        axis_graphs = false;
+    } else {
+        main_window_ui->customPlot->graph(0)->setVisible(true);
+        main_window_ui->customPlot->graph(1)->setVisible(true);
+        main_window_ui->customPlot->graph(2)->setVisible(true);
+        axis_graphs = true;
+    }
 }
 
 void GraphViewer::setFirstTime(bool input) {

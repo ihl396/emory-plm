@@ -44,11 +44,11 @@ void CsvReader::importCSV(QString input) {
         if (input.right(3) == "txt") {
             while (!textStream.atEnd()) {
                 textStream >> character;
-                if ((character == ',') & (count != 3)) {
+                if ((character == ',') & (count != 6)) {
                     row.push_back(temp.toDouble());
                     checkString(temp, character);
                     count++;
-                } else if ((character == ',') & (count == 3)) {
+                } else if ((character == ',') & (count == 6)) {
                     row.push_back(temp.toDouble());
                     dataArray.push_back(row);
                     row.clear();
@@ -91,6 +91,7 @@ void CsvReader::checkString(QString &temp, QChar character) {
 
 
 DataStructure CsvReader::exportData(DataStructure structure) {
+    long x_msb, x_lsb, y_msb, y_lsb, z_msb, z_lsb;
     for (int i = 0; i < dataArray.size(); i++) {
         //QDebug deb = qDebug();
         for (int j = 0; j < dataArray[0].size(); j++) {
@@ -99,14 +100,32 @@ DataStructure CsvReader::exportData(DataStructure structure) {
                structure.time_values.append(dataArray[i][j]);
                //deb << dataArray[i][j];
            }
-           else if (j == 3) {
-               structure.z_acc_values.append((dataArray[i][j]/20));
+           else if (j == 5) {
+               z_msb = (long) dataArray[i][j];
+               z_lsb = (long) dataArray[i][j+1];
+
+               long zAccel = ((z_msb << 8) | z_lsb) >> 4;
+               if (zAccel > 2047) zAccel += (~4096 + 1);
+               double zAccelToAdd = ((double)zAccel)/512;
+               structure.z_acc_values.append((zAccelToAdd));
            }
-           else if (j == 2) {
-               structure.y_acc_values.append((dataArray[i][j]/20)); 
+           else if (j == 3) {
+               y_msb = (long) dataArray[i][j];
+               y_lsb = (long) dataArray[i][j+1];
+
+               long yAccel = ((y_msb << 8) | y_lsb) >> 4;
+               if (yAccel > 2047) yAccel += (~4096 + 1);
+               double yAccelToAdd = ((double)yAccel)/512;
+               structure.y_acc_values.append((yAccelToAdd));
            }
            else if (j == 1) {
-               structure.x_acc_values.append((dataArray[i][j]/20));
+               x_msb = (long) dataArray[i][j];
+               x_lsb = (long) dataArray[i][j+1];
+
+               long xAccel = ((x_msb << 8) | x_lsb) >> 4;
+               if (xAccel > 2047) xAccel += (~4096 + 1);
+               double xAccelToAdd = ((double)xAccel)/512;
+               structure.x_acc_values.append((xAccelToAdd));
            }
         }
       //qDebug() << "------------";
@@ -114,6 +133,9 @@ DataStructure CsvReader::exportData(DataStructure structure) {
 
     for (int i = 0; i < structure.x_acc_values.size(); i++) {
         double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
+        if (magnitude > 4) {
+            qDebug() << magnitude;
+        }
         structure.magnitude_values.append(magnitude);
         //qDebug() << magnitude;
     }

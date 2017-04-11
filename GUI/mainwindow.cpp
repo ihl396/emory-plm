@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     firstRun = true;
     addMarkerClicked = false;
 
+
     createActions();
     createMenus();
     createMarkerPixmaps();
@@ -45,6 +46,9 @@ void MainWindow::createActions() {
     saveAct->setStatusTip(tr("Save a file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     /// connect(saveAct, &QAction::triggered, this, &MainWindow::save);
+    graphAct = new QAction(this);
+    graphAct->setShortcut(Qt::Key_G | Qt::CTRL);
+    connect(graphAct, &QAction::triggered, this, &MainWindow::axisGraphs);
 
     // Tool Button Actions
     handToolAct = new QAction(QIcon(":/resources/toolbar/handTool.png"), tr("Hand Tool"), this);
@@ -232,6 +236,7 @@ void MainWindow::open()
         csvReader.importCSV(file);
         data_structure = csvReader.exportData(data_structure);
 
+
         GraphViewer graphViewer(ui);
 
         graphViewer.setFirstTime(firstRun);
@@ -276,6 +281,10 @@ void MainWindow::saveMarkers()
         }
     }
     //qDebug() << path;
+}
+
+void MainWindow::axisGraphs() {
+   // graphViewer.axisGraphs();
 }
 
 void MainWindow::saveSelections()
@@ -327,7 +336,7 @@ void MainWindow::loadSelections() {
         labelText->setObjectName("lText");
         labelText->setText("Leg Up");
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, 1.9);
+        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, selection_structure.xAxisValueMax[i]);
         ui->customPlot->replot();
     }
     ui->customPlot->replot();
@@ -507,7 +516,7 @@ void MainWindow::labelSelection()
         labelText->setObjectName("lText");
         labelText->setText("Leg Up");
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
+        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, xAxisValueMax);
         /// DO WE NEED TO LABEL THESE SECTIONS?
         ui->customPlot->replot();
         xGraphSelection.clear();
@@ -523,7 +532,7 @@ void MainWindow::rescaleView()
     /// This is auto rescaling based on plottables
     ui->customPlot->rescaleAxes(true);
     /// Hard coded y range
-    ui->customPlot->yAxis->setRange(3,-3);
+    ui->customPlot->yAxis->setRange(8,-2);
     ui->customPlot->replot();
     xGraphSelection.clear();
     yGraphSelection.clear();
