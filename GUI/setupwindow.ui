@@ -40,12 +40,12 @@
       <rect>
        <x>20</x>
        <y>380</y>
-       <width>121</width>
+       <width>141</width>
        <height>23</height>
       </rect>
      </property>
      <property name="text">
-      <string>Reset Default Settings</string>
+      <string>Reset Graph View Settings</string>
      </property>
     </widget>
     <widget class="QGroupBox" name="graphArrowMovementScaleGroupBox">
@@ -453,7 +453,7 @@
       </widget>
      </widget>
     </widget>
-    <widget class="QPushButton" name="okGrapheViewButton">
+    <widget class="QPushButton" name="okGraphViewButton">
      <property name="geometry">
       <rect>
        <x>360</x>
@@ -482,8 +482,144 @@
    </widget>
    <widget class="QWidget" name="labelPreferencesTab">
     <attribute name="title">
-     <string>Labeling Preferences</string>
+     <string>Label Preferences</string>
     </attribute>
+    <widget class="QGroupBox" name="labelGroupBox">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>521</width>
+       <height>341</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+       <underline>true</underline>
+      </font>
+     </property>
+     <property name="title">
+      <string>Label Parameters</string>
+     </property>
+     <widget class="QGroupBox" name="labelTextGroupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>481</width>
+        <height>61</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>50</weight>
+        <italic>true</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+       </font>
+      </property>
+      <property name="title">
+       <string>Label Text</string>
+      </property>
+      <widget class="QLineEdit" name="labelTextLineEdit">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>141</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <italic>false</italic>
+        </font>
+       </property>
+       <property name="text">
+        <string>Leg Up</string>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QGroupBox" name="labelColorGroupBox">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>100</y>
+        <width>481</width>
+        <height>231</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+        <weight>50</weight>
+        <italic>true</italic>
+        <bold>false</bold>
+        <underline>false</underline>
+       </font>
+      </property>
+      <property name="title">
+       <string>Label Color</string>
+      </property>
+      <widget class="QComboBox" name="labelColorComboBox">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>20</y>
+         <width>141</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <property name="font">
+        <font>
+         <italic>false</italic>
+        </font>
+       </property>
+       <property name="editable">
+        <bool>true</bool>
+       </property>
+       <property name="currentText">
+        <string/>
+       </property>
+       <property name="currentIndex">
+        <number>-1</number>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+    <widget class="QPushButton" name="okLabelButton">
+     <property name="geometry">
+      <rect>
+       <x>360</x>
+       <y>380</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Ok</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="cancelLabelButton">
+     <property name="geometry">
+      <rect>
+       <x>450</x>
+       <y>380</y>
+       <width>75</width>
+       <height>23</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

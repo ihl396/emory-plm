@@ -361,7 +361,8 @@ void MainWindow::openSetupWindow()
 {
     qDebug() << sender();
     // figure out "OK" and "Cancel" saving method
-    sWindow->setOkButtonEnabled();
+    sWindow->setOkGraphViewButtonEnabled();
+    sWindow->setOkLabelButtonEnabled();
     sWindow->initArrowMovementValue = sWindow->currentArrowMovementValue;
     sWindow->initKeyScalingValue = sWindow->currentKeyScalingValue;
     sWindow->initValueMinValue = sWindow->currentValueMinValue;
@@ -374,7 +375,7 @@ void MainWindow::openSetupWindow()
     {
         sWindow->setCurrentTabIndex(1);
     }
-    sWindow->show();
+    sWindow->exec();
 }
 
 /*void MainWindow::setCustomPlotChanges()
@@ -623,8 +624,8 @@ void MainWindow::labelSelection()
         //int red = redstr.toInt();int green = greenstr.toInt();int blue = bluestr.toInt();
         //labelRect->setBrush(QColor(red, green, blue, 75));
         //labelRect->setPen(QColor(red,green,blue, 75));
-        rect->setBrush(QColor(225, 0, 0, 30));
-        rect->setPen(QColor(225, 0, 0, 30));
+        rect->setBrush(sWindow->getLabelColor());
+        rect->setPen(sWindow->getLabelColor());
         rect->setSelected(false);
         /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
         rect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
@@ -642,7 +643,7 @@ void MainWindow::labelSelection()
         labelText->setParent(rect);
         labelText->setSelectable(false);
         labelText->setObjectName("lText");
-        labelText->setText("Leg Up");
+        labelText->setText(sWindow->getLabelText());
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
         /// DO WE NEED TO LABEL THESE SECTIONS?
@@ -1038,7 +1039,7 @@ void MainWindow::updatePhaseTracer(QMouseEvent *event)
 
 void MainWindow::createRuler(QMouseEvent *event)
 {
-    QPoint p = event->pos();
+    //QPoint p = event->pos();
 
 }
 

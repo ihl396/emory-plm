@@ -18,10 +18,12 @@ public:
     SetupWindow(QWidget *parent = 0);//, GraphViewer *gViewer = 0); //Ui::MainWindow *main_ui = 0);
     ~SetupWindow();
     void setCurrentTabIndex(int);
-    void setInitialConditions();
-    void setOkButtonEnabled();
+    void setInitialGraphViewConditions();
+    void setInitialLabelConditions();
+    void setOkGraphViewButtonEnabled();
+    void setOkLabelButtonEnabled();
 
-    // Getter Methods
+    // Graph View Getter Methods
     void getGraphViewer(GraphViewer *gViewer);
     int getSliderScaledMovement();
     int getSliderKeyScale();
@@ -31,7 +33,10 @@ public:
     int getSpinBoxKeyScale();
     int getSpinBoxValueMin();
     int getSpinBoxValueMax();
-    bool isGraphViewChanged();
+
+    // Label Getter Methods
+    QString getLabelText();
+    QColor getLabelColor();
 
     int initArrowMovementValue;
     int initKeyScalingValue;
@@ -42,9 +47,17 @@ public:
     int currentValueMinValue;
     int currentValueMaxValue;
 
+    QString initLabelText;
+    QString initLabelColorText;
+    int initLabelColorIndex;
+    QString currentLabelText;
+    QString currentLabelColorText;
+    QColor labelColor;
+    int currentLabelColorIndex;
+
 private slots:
     void resetDefaultGraphViewPreferences();
-    void resetDefaultLabelPreferences();
+    //void resetDefaultLabelPreferences();
 
     // Setter Methods
     void setSliderScaledMovement(int);
@@ -56,8 +69,14 @@ private slots:
     void setSpinBoxValueMin(int);
     void setSpinBoxValueMax(int);*/
 
-    void okButtonClicked();
-    void cancelButtonClicked();
+    void setLabelText(QString labelText);
+    void setLabelColorIndex(int index);
+
+    void okGraphViewButtonClicked();
+    void okLabelButtonClicked();
+    //void cancelGraphViewButtonClicked();
+    //void cancelLabelButtonClicked();
+    void cancelBothTabs();
 
 private:
     Ui::SetupWindow *ui;
@@ -67,6 +86,8 @@ private:
     //void setGraphViewChanges();
 
     void setupLabelPreferencesTab();
+    void setupLabelTextLineEdit();
+    void setupLabelColorComboBox();
 
     //void mousePressEvent(QMouseEvent *event);
     void closeEvent(QCloseEvent *);
@@ -75,10 +96,19 @@ private:
     const int KEY_SCALING_DEFAULT_VALUE = 5;
     const int VALUE_MIN_DEFAULT_VALUE = -7;
     const int VALUE_MAX_DEFAULT_VALUE = 7;
-    bool graphViewPreferencesChanged = false;
+    //bool graphViewPreferencesChanged = false;
     bool isOkButton = false;
     //bool isCancelButton = false;
     bool closeSetupWindow = false;
+    enum Colors
+    {
+        RED = 0,
+        ORANGE = 1,
+        YELLOW = 2,
+        GREEN = 3,
+        BLUE = 4,
+        VIOLET = 5
+    };
 };
 
 #endif // SETUPWINDOW_H

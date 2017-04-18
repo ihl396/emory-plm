@@ -26,8 +26,12 @@ public:
     void setGraphKeyMax(double);
     void setGraphValueMin(double);
     void setGraphValueMax(double);
+
+    //QString getLabelText();
+    //QString getColorText();
     //void setCustomPlotChanges();
     void setGraphRanges(int keyScale, int valueMin, int valueMax);
+    //void setLabelPreferences(QString lText, QString cText);
 
     double graphKeyMin;
     double graphKeyMax;
@@ -35,6 +39,9 @@ public:
     int graphKeyScale;
     double graphValueMin;
     double graphValueMax;
+
+    QString labelText;
+    QString colorText;
 private slots:
     void on_toolButton_triggered(QAction *arg1);
     void on_toolButton_2_triggered(QAction *arg1);

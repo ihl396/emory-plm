@@ -95,6 +95,11 @@ void GraphViewer::setGraphRanges(int keyScale, int valueMin, int valueMax)
     main_window_ui->customPlot->replot();
 }
 
+/*void GraphViewer::setLabelPreferences(QString lText, QString cText)
+{
+
+}*/
+
 double GraphViewer::getGraphValueMin()
 {
     return graphValueMin;

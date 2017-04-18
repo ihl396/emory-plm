@@ -11,6 +11,7 @@ SetupWindow::SetupWindow(QWidget *parent) : //, GraphViewer *gViewer) ://Ui::Mai
     ui(new Ui::SetupWindow)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
     //graphViewer = gViewer;
     setupGraphViewPreferencesTab();
 
@@ -32,8 +33,9 @@ void SetupWindow::setupGraphViewPreferencesTab()
     setupGraphViewSliders();
     setupGraphViewSpinBoxes();
     connect(ui->defaultGraphViewButton, SIGNAL(clicked(bool)), this, SLOT(resetDefaultGraphViewPreferences()));
-    connect(ui->okGrapheViewButton, SIGNAL(clicked(bool)), this, SLOT(okButtonClicked()));
+    connect(ui->okGraphViewButton, SIGNAL(clicked(bool)), this, SLOT(okGraphViewButtonClicked()));
     connect(ui->cancelGraphViewButton, SIGNAL(clicked(bool)), this, SLOT(close()));
+    connect(this, SIGNAL(rejected()), this, SLOT(close()));
 }
 
 void SetupWindow::setupGraphViewSliders()
@@ -93,7 +95,7 @@ void SetupWindow::setupGraphViewSpinBoxes()
     connect(ui->valueMaxSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setSliderValueMax(int)));
 }
 
-void SetupWindow::okButtonClicked()
+void SetupWindow::okGraphViewButtonClicked()
 {
     QMessageBox::StandardButton reply;
     reply = QMessageBox::question(this, "Confirm", "Are you sure you want to confirm your changes?", QMessageBox::Yes|QMessageBox::No);
@@ -108,6 +110,7 @@ void SetupWindow::okButtonClicked()
         //setGraphViewChanges();
         graphViewer->setGraphRanges(getSliderKeyScale(), getSliderValueMin(), getSliderValueMax());
         isOkButton = true;
+        closeSetupWindow = true;
         SetupWindow::close();
     }
     else
@@ -122,10 +125,10 @@ void SetupWindow::okButtonClicked()
     graphViewer->setGraphRanges(getSliderKeyScale(), getSliderValueMin(), getSliderValueMax()); //setCustomPlotChanges();
 }*/
 
-void SetupWindow::cancelButtonClicked()
+/*void SetupWindow::cancelGraphViewButtonClicked()
 {
     isOkButton = false;
-    if (ui->okGrapheViewButton->isEnabled())
+    if (ui->okGraphViewButton->isEnabled())
     {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Cancel", "Are you sure you want to cancel your changes? Your changes will not be saved.", QMessageBox::Yes|QMessageBox::No);
@@ -133,42 +136,167 @@ void SetupWindow::cancelButtonClicked()
         if (reply == QMessageBox::Yes)
         {
             qDebug() << "YES";
-            setInitialConditions();
+            setInitialGraphViewConditions();
             closeSetupWindow = true;
-            ui->defaultGraphViewButton->setEnabled(false);
+            //isOkButton = true;
+            ui->okGraphViewButton->setEnabled(false);
             SetupWindow::close();
         }
-        else
-        {
-            closeSetupWindow = false;
-        }
+        //else
+        //{
+            //closeSetupWindow = false;
+        //}
     }
     else
     {
         closeSetupWindow = true;
+        //isOkButton = true; // to get out of close loop
+        SetupWindow::close();
+    }
+}*/
+
+void SetupWindow::setupLabelPreferencesTab()
+{
+    setupLabelTextLineEdit();
+    setupLabelColorComboBox();
+    //connect(ui->defaultLabelButton, SIGNAL(clicked(bool)), this, SLOT(resetDefaultLabelPreferences()));
+    connect(ui->okLabelButton, SIGNAL(clicked(bool)), this, SLOT(okLabelButtonClicked()));
+    connect(ui->cancelLabelButton, SIGNAL(clicked(bool)), this, SLOT(reject()));
+    connect(this, SIGNAL(rejected()), this, SLOT(close()));
+}
+
+void SetupWindow::setupLabelTextLineEdit()
+{
+    ui->labelTextLineEdit->setText("Leg Up");
+    initLabelText = ui->labelTextLineEdit->text();
+    currentLabelText = ui->labelTextLineEdit->text();
+
+    connect(ui->labelTextLineEdit, SIGNAL(textChanged(QString)), this, SLOT(setLabelText(QString)));
+}
+
+void SetupWindow::setupLabelColorComboBox()
+{
+    ui->labelColorComboBox->addItem("Red");
+    ui->labelColorComboBox->addItem("Orange");
+    ui->labelColorComboBox->addItem("Yellow");
+    ui->labelColorComboBox->addItem("Green");
+    ui->labelColorComboBox->addItem("Blue");
+    ui->labelColorComboBox->addItem("Violet");
+    ui->labelColorComboBox->setCurrentIndex(0);
+    initLabelColorIndex = ui->labelColorComboBox->currentIndex();
+    currentLabelColorIndex = ui->labelColorComboBox->currentIndex();
+
+    connect(ui->labelColorComboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(setLabelColorIndex(int)));
+}
+
+void SetupWindow::okLabelButtonClicked()
+{
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Confirm", "Are you sure you want to confirm your changes?", QMessageBox::Yes|QMessageBox::No);
+
+    //isOkButton = true;
+    //isCancelButton = false;
+    if (reply == QMessageBox::Yes)
+    {
+        qDebug() << "YES";
+        //graphViewer->setLabelPreferences(getLabelText(), getLabelColorText());
+        isOkButton = true;
+        SetupWindow::close();
+    }
+    else
+    {
+        isOkButton = false;
+        //graphViewPreferencesChanged = false;
+    }
+}
+
+void SetupWindow::cancelBothTabs()
+{
+    isOkButton = false;
+    if (ui->okGraphViewButton->isEnabled() || ui->okLabelButton->isEnabled())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Cancel", "Are you sure you want to cancel your changes? Your changes will not be saved.", QMessageBox::Yes|QMessageBox::No);
+
+        if (reply == QMessageBox::Yes)
+        {
+            qDebug() << "YES";
+            setInitialGraphViewConditions();
+            setInitialLabelConditions();
+            closeSetupWindow = true;
+            //isOkButton = true;
+            ui->okGraphViewButton->setEnabled(false);
+            ui->okLabelButton->setEnabled(false);
+            SetupWindow::close();
+        }
+        //else
+        //{
+            //closeSetupWindow = false;
+        //}
+    }
+    else
+    {
+        closeSetupWindow = true;
+        //isOkButton = true; // to get out of close loop
         SetupWindow::close();
     }
 }
 
-void SetupWindow::setupLabelPreferencesTab()
+/*void SetupWindow::cancelLabelButtonClicked()
 {
+    isOkButton = false;
+    if (ui->okLabelButton->isEnabled())
+    {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Cancel", "Are you sure you want to cancel your changes? Your changes will not be saved.", QMessageBox::Yes|QMessageBox::No);
 
-}
+        if (reply == QMessageBox::Yes)
+        {
+            qDebug() << "YES";
+            setInitialLabelConditions();
+            closeSetupWindow = true;
+            //isOkButton = true;
+            ui->okLabelButton->setEnabled(false);
+            SetupWindow::close();
+        }
+        //else
+        //{
+            //closeSetupWindow = false;
+        //}
+    }
+    else
+    {
+        closeSetupWindow = true;
+        //isOkButton = true; // to get out of close loop
+        SetupWindow::close();
+    }
+}*/
 
 void SetupWindow::closeEvent(QCloseEvent *event)
 {
-    if (!isOkButton)
+    qDebug() << sender();
+    if (!isOkButton)// && !closeSetupWindow)
     {
         event->ignore();
-        emit cancelButtonClicked();
-        if (closeSetupWindow)
+        //if (sender() == QObject)
+        //{
+        emit cancelBothTabs();
+        //}
+        /*else if (ui->preferencesTabWidget->currentIndex() == 0)
         {
-            event->accept();
+            emit cancelGraphViewButtonClicked();
         }
-        else
+        else if (ui->preferencesTabWidget->currentIndex() == 1)
         {
+            emit cancelLabelButtonClicked();
+        }*/
+    }
 
-        }
+    if (closeSetupWindow)
+    {
+        closeSetupWindow = false;
+        isOkButton = false;
+        event->accept();
     }
 }
 
@@ -214,37 +342,36 @@ int SetupWindow::getSpinBoxValueMax()
     return ui->valueMaxSpinBox->value();
 }
 
-bool SetupWindow::isGraphViewChanged()
-{
-    return graphViewPreferencesChanged;
-}
-
 void SetupWindow::setSliderScaledMovement(int scaleMovement)
 {
     ui->arrowMSHorizontalSlider->setValue(scaleMovement);
     currentArrowMovementValue = ui->arrowMSHorizontalSlider->value();
-    ui->okGrapheViewButton->setEnabled(true);
+    ui->okGraphViewButton->setEnabled(true);
+    ui->okLabelButton->setEnabled(true);
 }
 
 void SetupWindow::setSliderKeyScale(int keyScale)
 {
     ui->keyScalingSlider->setValue(keyScale);
     currentKeyScalingValue = ui->keyScalingSlider->value();
-    ui->okGrapheViewButton->setEnabled(true);
+    ui->okGraphViewButton->setEnabled(true);
+    ui->okLabelButton->setEnabled(true);
 }
 
 void SetupWindow::setSliderValueMin(int valueMin)
 {
     ui->valueMinSlider->setValue(valueMin);
     currentValueMinValue = ui->valueMinSlider->value();
-    ui->okGrapheViewButton->setEnabled(true);
+    ui->okGraphViewButton->setEnabled(true);
+    ui->okLabelButton->setEnabled(true);
 }
 
 void SetupWindow::setSliderValueMax(int valueMax)
 {
     ui->valueMaxSlider->setValue(valueMax);
     currentValueMaxValue = ui->valueMaxSlider->value();
-    ui->okGrapheViewButton->setEnabled(true);
+    ui->okGraphViewButton->setEnabled(true);
+    ui->okLabelButton->setEnabled(true);
 }
 
 /*void SetupWindow::setSpinBoxScaledMovement(int scaleMovement)
@@ -267,6 +394,53 @@ void SetupWindow::setSpinBoxValueMax(int valueMax)
     ui->valueMaxSpinBox->setValue(valueMax);
 }*/
 
+void SetupWindow::setLabelText(QString labelText)
+{
+    ui->labelTextLineEdit->setText(labelText);
+    currentLabelText = ui->labelTextLineEdit->text();
+    ui->okGraphViewButton->setEnabled(true);
+    ui->okLabelButton->setEnabled(true);
+}
+
+void SetupWindow::setLabelColorIndex(int index)
+{
+    ui->labelColorComboBox->setCurrentIndex(index);
+    currentLabelColorIndex = ui->labelColorComboBox->currentIndex();
+    ui->okGraphViewButton->setEnabled(true);
+    ui->okLabelButton->setEnabled(true);
+}
+
+QString SetupWindow::getLabelText()
+{
+    return ui->labelTextLineEdit->text();
+}
+
+QColor SetupWindow::getLabelColor()
+{
+   switch (ui->labelColorComboBox->currentIndex())
+   {
+   case RED:
+       labelColor = QColor(225, 0, 0, 30);
+       break;
+   case ORANGE:
+       labelColor = QColor(225, 153, 51, 30);
+       break;
+   case YELLOW:
+       labelColor = QColor(225, 255, 0, 30);
+       break;
+   case GREEN:
+       labelColor = QColor(0, 255, 0, 30);
+       break;
+   case BLUE:
+       labelColor = QColor(0, 0, 255, 30);
+       break;
+   case VIOLET:
+       labelColor = QColor(153, 51, 255, 30);
+       break;
+   }
+   return labelColor;
+}
+
 void SetupWindow::setCurrentTabIndex(int index)
 {
     ui->preferencesTabWidget->setCurrentIndex(index);
@@ -282,19 +456,30 @@ void SetupWindow::setCurrentTabIndex(int index)
     ui->okGrapheViewButton->setEnabled(false);
 }*/
 
-void SetupWindow::setInitialConditions()
+void SetupWindow::setInitialGraphViewConditions()
 {
     //graphViewPreferencesChanged = false;
     ui->arrowMSHorizontalSlider->setValue(initArrowMovementValue);
     ui->keyScalingSlider->setValue(initKeyScalingValue);
     ui->valueMinSlider->setValue(initValueMinValue);
     ui->valueMaxSlider->setValue(initValueMaxValue);
-    ui->okGrapheViewButton->setEnabled(false);
+    ui->okGraphViewButton->setEnabled(false);
 }
 
-void SetupWindow::setOkButtonEnabled()
+void SetupWindow::setInitialLabelConditions()
 {
-    ui->okGrapheViewButton->setEnabled(false);
+    ui->labelTextLineEdit->setText(initLabelText);
+    ui->labelColorComboBox->setCurrentIndex(initLabelColorIndex);
+}
+
+void SetupWindow::setOkGraphViewButtonEnabled()
+{
+    ui->okGraphViewButton->setEnabled(false);
+}
+
+void SetupWindow::setOkLabelButtonEnabled()
+{
+    ui->okLabelButton->setEnabled(false);
 }
 
 void SetupWindow::resetDefaultGraphViewPreferences()
@@ -305,7 +490,7 @@ void SetupWindow::resetDefaultGraphViewPreferences()
     ui->valueMaxSlider->setValue(VALUE_MAX_DEFAULT_VALUE);
 }
 
-void SetupWindow::resetDefaultLabelPreferences()
+/*void SetupWindow::resetDefaultLabelPreferences()
 {
-
-}
+    ui->labelTextLineEdit->setText();
+}*/
