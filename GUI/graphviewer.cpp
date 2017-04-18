@@ -1,8 +1,11 @@
 #include "graphviewer.h"
+#include "setupwindow.h"
+#include "mainwindow.h"
 
-GraphViewer::GraphViewer(Ui::MainWindow *input) {
+GraphViewer::GraphViewer(Ui::MainWindow *input, SetupWindow *sWin) {
     first_time = true;
     main_window_ui = input;
+    setupWindow_ui = sWin;
 }
 
 void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
@@ -33,10 +36,20 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
 
-    main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20);
+    graphKeyScale = setupWindow_ui->getSliderKeyScale();
+    qDebug() << "graphKeyScale = " << graphKeyScale;
     graphKeyMin = 0;
-    graphKeyMax = time_values.back() + time_values.back()/20;
-    main_window_ui->customPlot->yAxis->setRange(-3, 3);
+    //qDebug() << "time_values.back() = " << time_values.back();
+    graphKeyMax = time_values.back();
+    //graphKeyUpper = graphKeyMax*(graphKeyScale/10.0) + (graphKeyMax*(graphKeyScale/10.0))/20;
+    //qDebug() << graphKeyMax;
+    //main_window_ui->customPlot->xAxis->setRange(graphKeyMin, graphKeyUpper);
+
+    /// Magnitude of (+/-)4 has an approximate max/min of (+/-)7
+    //graphValueMin =  // Maybe just get the normalized min and max?
+    //graphValueMax =
+    //main_window_ui->customPlot->yAxis->setRange(graphValueMin, graphValueMax);
+    setGraphRanges(graphKeyScale, setupWindow_ui->getSliderValueMin(), setupWindow_ui->getSliderValueMax());
 
     // Show Legend
     main_window_ui->customPlot->legend->setVisible(true);
@@ -56,6 +69,7 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->replot();
 }
 
+/// Getter Methods
 double GraphViewer::getGraphKeyMin()
 {
     return graphKeyMin;
@@ -66,7 +80,33 @@ double GraphViewer::getGraphKeyMax()
     return graphKeyMax;
 }
 
-/*void GraphViewer::setGraphKeyMin(double min)
+double GraphViewer::getGraphKeyUpper()
+{
+    return graphKeyUpper;
+}
+
+void GraphViewer::setGraphRanges(int keyScale, int valueMin, int valueMax)
+{
+    graphKeyUpper = graphKeyMax*(keyScale/10.0) + (graphKeyMax*(keyScale/10.0))/20;
+    graphValueMin = valueMin;
+    graphValueMax = valueMax;
+    main_window_ui->customPlot->xAxis->setRange(graphKeyMin, graphKeyUpper);
+    main_window_ui->customPlot->yAxis->setRange(graphValueMin, graphValueMax);
+    main_window_ui->customPlot->replot();
+}
+
+double GraphViewer::getGraphValueMin()
+{
+    return graphValueMin;
+}
+
+double GraphViewer::getGraphValueMax()
+{
+    return graphValueMax;
+}
+
+/// Setter Methods
+void GraphViewer::setGraphKeyMin(double min)
 {
     graphKeyMin = min;
 }
@@ -74,7 +114,17 @@ double GraphViewer::getGraphKeyMax()
 void GraphViewer::setGraphKeyMax(double max)
 {
     graphKeyMax = max;
-}*/
+}
+
+void GraphViewer::setGraphValueMin(double min)
+{
+    graphValueMin = min;
+}
+
+void GraphViewer::setGraphValueMax(double max)
+{
+    graphValueMax = max;
+}
 
 /*void GraphViewer::horzScrollBarChanged(int value)
 {

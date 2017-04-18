@@ -9,6 +9,7 @@
 #include <vector>
 #include <QMainWindow>
 #include <QCloseEvent>
+#include "setupwindow.h"
 #include "graphviewer.h"
 #include "datastructure.h"
 #include <iostream>
@@ -28,9 +29,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setGraphRanges();
 
 private slots:
     void open();
+    void openSetupWindow();
     void saveMarkers();
     void saveSelections();
     void loadMarkers();
@@ -51,6 +54,8 @@ private slots:
     void viewSelection();
     void labelSelection();
     void rescaleView();
+    void hideXYZGraphs();
+    void toggleHide();
     void updatePhaseTracer(QMouseEvent *event);
     void createRuler(QMouseEvent *event);
     void horzScrollBarChanged(int);
@@ -61,7 +66,9 @@ private slots:
 protected:
 
 private:
-    GraphViewer graphViewer(Ui::MainWindow);
+    //GraphViewer graphViewer(Ui::MainWindow, Ui::SetupWindow);
+    class SetupWindow *sWindow;
+    class GraphViewer *graphViewer;
     void createActions();
     void createMenus();
     void createMarkerPixmaps();
@@ -73,6 +80,9 @@ private:
     QMenu *fileMenu;
     QAction *openAct;
     QAction *saveAct;
+    QMenu *editMenu;
+    QAction *graphViewPreferencesAct;
+    QAction *labelPreferencesAct;
     markerStructure marker_structure;
     selectionStructure selection_structure;
     QString file;
@@ -140,14 +150,15 @@ private:
     QCPItemRect *rect;
     QAction *rescaleViewAct;
     QShortcut *rescaleViewShortcut;
-    QAction *cancelAct;
+    QAction *hideGraphAct;
+    QShortcut *hideGraphShortcut;
     QCPDataSelection xGraphSelection;
     QCPDataSelection yGraphSelection;
     QCPDataSelection zGraphSelection;
     QCPDataSelection nGraphSelection;
     QAction *selectedItem;
 
-    double scaledMovement;
+    int scaledMovement;
     double phaseTracerKeyPos;
     double phaseTracerValuePos;
     QCPItemTracer *phaseTracer;

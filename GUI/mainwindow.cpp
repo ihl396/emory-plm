@@ -2,9 +2,8 @@
 #include "datastructure.h"
 #include "csvreader.h"
 #include "graphviewer.h"
-//#include "icsrulerwidget.h"
+#include "setupwindow.h"
 
-//#include <QDRuler>
 #include <QDir>
 #include <QFileDialog>
 
@@ -37,6 +36,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::createActions() {
+    // File Menu Actions
     openAct = new QAction(QIcon(":/resources/toolbar/openRawDataFile.png"), tr("&Open Raw Data File"), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open a file"));
@@ -45,6 +45,13 @@ void MainWindow::createActions() {
     saveAct->setStatusTip(tr("Save a file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     /// connect(saveAct, &QAction::triggered, this, &MainWindow::save);
+
+    // Edit Menu Actions
+    graphViewPreferencesAct = new QAction(tr("Graph View Preferences"));
+    labelPreferencesAct = new QAction(tr("Label Preferences"));
+    connect(graphViewPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
+    connect(labelPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
+
 
     // Tool Button Actions
     handToolAct = new QAction(QIcon(":/resources/toolbar/handTool.png"), tr("Hand Tool"), this);
@@ -145,9 +152,14 @@ void MainWindow::createActions() {
     connect(rescaleViewShortcut, &QShortcut::activated, this, &MainWindow::rescaleView);
 
     /// Currently does nothing
-    cancelAct = new QAction("Cancel");
-    cancelAct->setShortcut(QKeySequence("Ctrl+C"));
-    cancelAct->setStatusTip(tr("Cancel"));
+    hideGraphAct = new QAction("Hide X, Y, Z Graphs");
+    hideGraphAct->setCheckable(true);
+    hideGraphAct->setChecked(false);
+    hideGraphAct->setShortcut(QKeySequence("CTRL+H"));
+    hideGraphAct->setStatusTip(tr("Hide X, Y, Z Graphs"));
+    hideGraphShortcut = new QShortcut(QKeySequence("CTRL+H"), this);
+    connect(hideGraphAct, &QAction::changed, this, &MainWindow::hideXYZGraphs);
+    connect(hideGraphShortcut, &QShortcut::activated, this, &MainWindow::toggleHide);
 
     /// Connects Scrollbar to Customplot
     connect(ui->horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(horzScrollBarChanged(int)));
@@ -158,6 +170,10 @@ void MainWindow::createMenus() {
     fileMenu = menuBar()->addMenu(tr("&File"));
     fileMenu->addAction(openAct);
     fileMenu->addAction(saveAct);
+
+    editMenu = menuBar()->addMenu(tr("&Edit"));
+    editMenu->addAction(graphViewPreferencesAct);
+    editMenu->addAction(labelPreferencesAct);
 
     // Toolbar Menu
     ui->toolBar->addAction(openAct);
@@ -190,7 +206,7 @@ void MainWindow::createMenus() {
     rightClickMenu->addAction(deleteAct);
     //rightClickMenu->addAction(deleteSelectionAct);
     rightClickMenu->addAction(rescaleViewAct);
-    rightClickMenu->addAction(cancelAct);
+    rightClickMenu->addAction(hideGraphAct);
 
     emit disableToolBar();
 }
@@ -228,15 +244,16 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::KeyPress )
     {
         QKeyEvent* keyEvent = (QKeyEvent*)event;
-        double move = ui->customPlot->xAxis->range().size()*scaledMovement;
+        double move = ui->customPlot->xAxis->range().size()*(sWindow->getSliderScaledMovement()/10.0);
+        qDebug() << "move = " << move;
         if (keyEvent->key() == Qt::Key_Left)
         {
-            qDebug() << "move slider left";
+            //qDebug() << "move slider left";
             ui->horizontalScrollBar->setSliderPosition(ui->horizontalScrollBar->sliderPosition()-move);
         }
         else if (keyEvent->key()== Qt::Key_Right)
         {
-            qDebug() << "move slider right";
+            //qDebug() << "move slider right";
             ui->horizontalScrollBar->setSliderPosition(ui->horizontalScrollBar->sliderPosition()+move);
         }
 
@@ -289,17 +306,21 @@ void MainWindow::open()
         csvReader.importCSV(file);
         data_structure = csvReader.exportData(data_structure);
 
-        GraphViewer graphViewer(ui);
+        sWindow = new SetupWindow(ui->customPlot); //, graphViewer);
+        graphViewer = new GraphViewer(ui, sWindow);
 
-        graphViewer.setFirstTime(firstRun);
-        graphViewer.createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
+        graphViewer->setFirstTime(firstRun);
+        qDebug() << "data_structure.time_values = " << data_structure.time_values;
+        graphViewer->createGraph(data_structure.time_values, data_structure.x_acc_values, data_structure.y_acc_values, data_structure.z_acc_values, data_structure.magnitude_values);
 
-        ui->horizontalScrollBar->setRange(graphViewer.getGraphKeyMin(), graphViewer.getGraphKeyMax());
+        ui->horizontalScrollBar->setRange(graphViewer->getGraphKeyMin(), graphViewer->getGraphKeyUpper());
         qDebug() << "xAxis center" << ui->customPlot->xAxis->range().center();
         qDebug() << "xAxis lower" << ui->customPlot->xAxis->range().lower;
         qDebug() << "xAxis upper" << ui->customPlot->xAxis->range().upper;
         ui->horizontalScrollBar->setValue(ui->customPlot->xAxis->range().center());
-        scaledMovement = 0.05;
+        qDebug() << sWindow->getSliderScaledMovement();
+        scaledMovement = sWindow->getSliderScaledMovement();
+        sWindow->getGraphViewer(graphViewer);
         firstRun = false;
         // Defaults to Hand Tool when file is opened
         emit enableToolBar();
@@ -335,6 +356,35 @@ void MainWindow::open()
         ui->horizontalScrollBar->setFocus(Qt::OtherFocusReason);
     }
 }
+
+void MainWindow::openSetupWindow()
+{
+    qDebug() << sender();
+    // figure out "OK" and "Cancel" saving method
+    sWindow->setOkButtonEnabled();
+    sWindow->initArrowMovementValue = sWindow->currentArrowMovementValue;
+    sWindow->initKeyScalingValue = sWindow->currentKeyScalingValue;
+    sWindow->initValueMinValue = sWindow->currentValueMinValue;
+    sWindow->initValueMaxValue = sWindow->currentValueMaxValue;
+    if (sender() == graphViewPreferencesAct)
+    {
+        sWindow->setCurrentTabIndex(0); // Make Constant index values
+    }
+    else if (sender() == labelPreferencesAct)
+    {
+        sWindow->setCurrentTabIndex(1);
+    }
+    sWindow->show();
+}
+
+/*void MainWindow::setCustomPlotChanges()
+{
+    scaledMovement = sWindow->getSliderScaledMovement();
+    graphViewer->setGraphRanges(sWindow->getSliderKeyScale(), sWindow->getSliderValueMin(), sWindow->getSliderValueMax());
+    //graphViwerkeyMax*(sWindow->getSliderKeyScale()/10.0) + (keyMax*(sWindow->getSliderKeyScale()/10.0))/20;
+}*/
+
+
 
 void MainWindow::saveMarkers()
 {
@@ -426,6 +476,8 @@ bool MainWindow::fileExists(QString path) {
 
 void MainWindow::enableToolBar()
 {
+    graphViewPreferencesAct->setEnabled(true);
+    labelPreferencesAct->setEnabled(true);
     handToolAct->setEnabled(true);
     selectToolAct->setEnabled(true);
     //labelToolAct->setEnabled(true);
@@ -445,6 +497,8 @@ void MainWindow::enableToolBar()
 
 void MainWindow::disableToolBar()
 {
+    graphViewPreferencesAct->setEnabled(false);
+    labelPreferencesAct->setEnabled(false);
     handToolAct->setEnabled(false);
     selectToolAct->setEnabled(false);
     //labelToolAct->setEnabled(false);
@@ -803,6 +857,35 @@ void MainWindow::deleteMS()
     ui->customPlot->replot();
 }
 
+void MainWindow::hideXYZGraphs()
+{
+    if (hideGraphAct->isChecked())
+    {
+        ui->customPlot->graph(0)->setVisible(false);
+        ui->customPlot->graph(1)->setVisible(false);
+        ui->customPlot->graph(2)->setVisible(false);
+        ui->customPlot->graph(0)->setSelectable(QCP::stNone);
+        ui->customPlot->graph(1)->setSelectable(QCP::stNone);
+        ui->customPlot->graph(2)->setSelectable(QCP::stNone);
+        ui->customPlot->replot();
+    }
+    else
+    {
+        ui->customPlot->graph(0)->setVisible(true);
+        ui->customPlot->graph(1)->setVisible(true);
+        ui->customPlot->graph(2)->setVisible(true);
+        ui->customPlot->graph(0)->setSelectable(QCP::stDataRange);
+        ui->customPlot->graph(1)->setSelectable(QCP::stDataRange);
+        ui->customPlot->graph(2)->setSelectable(QCP::stDataRange);
+        ui->customPlot->replot();
+    }
+}
+
+void MainWindow::toggleHide()
+{
+    hideGraphAct->toggle();
+}
+
 void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
 {
     QPoint globalPos = ui->customPlot->mapToGlobal(pos);
@@ -878,6 +961,10 @@ void MainWindow::showRightClickMenu(const QPoint& pos) // this is a slot
         {
             emit rescaleView();
         }
+        else if (selectedItem->text().contains("Hide X, Y, Z Graphs"))
+        {
+            emit hideXYZGraphs();
+        }
     }
     else
     {
@@ -935,7 +1022,15 @@ void MainWindow::updatePhaseTracer(QMouseEvent *event)
     qDebug() << "PhaseTracerValuePos" << phaseTracerValuePos;
 
     phaseTracerItemText->setText(QString("Time: %1\nG: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
-    phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+0.8);
+    double scale = ui->customPlot->yAxis->range().size()*0.133;
+    if (phaseTracerValuePos+scale < ui->customPlot->yAxis->range().upper)
+    {
+        phaseTracerItemText->position->setCoords(phaseTracerKeyPos, phaseTracerValuePos+scale);
+    }
+    else
+    {
+        phaseTracerItemText->position->setCoords(phaseTracerKeyPos, ui->customPlot->yAxis->range().upper);
+    }
 
     //ui->customPlot->setStatusTip(QString("Time: %1, G: %2").arg(phaseTracerKeyPos).arg(phaseTracerValuePos));
     ui->customPlot->replot();
