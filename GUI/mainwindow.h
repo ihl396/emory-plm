@@ -9,6 +9,7 @@
 #include <vector>
 #include <QMainWindow>
 #include <QCloseEvent>
+#include "setupwindow.h"
 #include "graphviewer.h"
 #include "datastructure.h"
 #include <iostream>
@@ -28,9 +29,11 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    void setGraphRanges();
 
 private slots:
     void open();
+    void openSetupWindow();
     void saveMarkers();
     void saveSelections();
     void loadMarkers();
@@ -46,20 +49,29 @@ private slots:
     void addMarkerR();
     void addMarkerK();
     void addMarkerI();
-    void markerDelete();
-    void selectionDelete();
+    void deleteMS();
+    //void deleteSelection();
     void viewSelection();
     void labelSelection();
     void rescaleView();
+    void hideXYZGraphs();
+    void toggleHide();
+    void updatePhaseTracer(QMouseEvent *event);
+    void createRuler(QMouseEvent *event);
+    void horzScrollBarChanged(int);
+    void xAxisChanged(QCPRange);
+    bool eventFilter(QObject *watched, QEvent *event);
+    void focusChanged();
 
 protected:
 
 private:
-    GraphViewer graphViewer(Ui::MainWindow);
+    //GraphViewer graphViewer(Ui::MainWindow, Ui::SetupWindow);
+    class SetupWindow *sWindow;
+    class GraphViewer *graphViewer;
     void createActions();
     void createMenus();
     void createMarkerPixmaps();
-    void createRuler(); // Temporary
     void closeEvent(QCloseEvent *event);
     bool fileExists(QString);
     Ui::MainWindow *ui;
@@ -68,6 +80,9 @@ private:
     QMenu *fileMenu;
     QAction *openAct;
     QAction *saveAct;
+    QMenu *editMenu;
+    QAction *graphViewPreferencesAct;
+    QAction *labelPreferencesAct;
     markerStructure marker_structure;
     selectionStructure selection_structure;
     QString file;
@@ -83,28 +98,28 @@ private:
     QMenu *rightClickMenu;
     double xKeyPos;
 
-    void placeMarker(double ID);
+    void createMarker(double ID);
     bool addMarkerClicked;
     double markerID;
     QMenu *addMarkerMenu;
-    QAction *addUpMarker;
-    QShortcut *addUpMarkerShortcut;
-    QAction *addDownMarker;
-    QShortcut *addDownMarkerShortcut;
+    QAction *addUpMarkerAct;
+    QShortcut *addUpMarkerActShortcut;
+    QAction *addDownMarkerAct;
+    QShortcut *addDownMarkerActShortcut;
     //QAction *addButtonMarker;
     //QAction *addManual;
-    QAction *addPMarker;
-    QShortcut *addPMarkerShortcut;
-    QAction *addRMarker;
-    QShortcut *addRMarkerShortcut;
-    QAction *addKMarker;
-    QShortcut *addKMarkerShortcut;
-    QAction *addIMarker;
-    QShortcut *addIMarkerShortcut;
-    QAction *deleteMarker;
-    QShortcut *deleteMarkerShortcut;
-    QAction *deleteSelection;
-    QShortcut *deleteSelectionShortcut;
+    QAction *addPMarkerAct;
+    QShortcut *addPMarkerActShortcut;
+    QAction *addRMarkerAct;
+    QShortcut *addRMarkerActShortcut;
+    QAction *addKMarkerAct;
+    QShortcut *addKMarkerActShortcut;
+    QAction *addIMarkerAct;
+    QShortcut *addIMarkerActShortcut;
+    QAction *deleteAct;
+    QShortcut *deleteActShortcut;
+    //QAction *deleteSelectionAct;
+    //QShortcut *deleteSelectionActShortcut;
     int itemsSelected;
 
     QCPItemPixmap *markerUP;
@@ -135,12 +150,19 @@ private:
     QCPItemRect *rect;
     QAction *rescaleViewAct;
     QShortcut *rescaleViewShortcut;
-    QAction *cancelAct;
+    QAction *hideGraphAct;
+    QShortcut *hideGraphShortcut;
     QCPDataSelection xGraphSelection;
     QCPDataSelection yGraphSelection;
     QCPDataSelection zGraphSelection;
     QCPDataSelection nGraphSelection;
     QAction *selectedItem;
+
+    int scaledMovement;
+    double phaseTracerKeyPos;
+    double phaseTracerValuePos;
+    QCPItemTracer *phaseTracer;
+    QCPItemText *phaseTracerItemText;
 };
 
 #endif // MAINWINDOW_h
