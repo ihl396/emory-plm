@@ -1,9 +1,11 @@
 #include "graphviewer.h"
+#include "setupwindow.h"
+#include "mainwindow.h"
 
-GraphViewer::GraphViewer(Ui::MainWindow *input) {
+GraphViewer::GraphViewer(Ui::MainWindow *input, SetupWindow *sWin) {
     first_time = true;
     main_window_ui = input;
-    axis_graphs = true;
+    setupWindow_ui = sWin;
 }
 
 void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
@@ -32,8 +34,21 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
 
-    main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20);
-    main_window_ui->customPlot->yAxis->setRange(-2, 8);
+
+    graphKeyScale = setupWindow_ui->getSliderKeyScale();
+    qDebug() << "graphKeyScale = " << graphKeyScale;
+    graphKeyMin = 0;
+    //qDebug() << "time_values.back() = " << time_values.back();
+    graphKeyMax = time_values.back();
+    //graphKeyUpper = graphKeyMax*(graphKeyScale/10.0) + (graphKeyMax*(graphKeyScale/10.0))/20;
+    //qDebug() << graphKeyMax;
+    //main_window_ui->customPlot->xAxis->setRange(graphKeyMin, graphKeyUpper);
+
+    /// Magnitude of (+/-)4 has an approximate max/min of (+/-)7
+    //graphValueMin =  // Maybe just get the normalized min and max?
+    //graphValueMax =
+    //main_window_ui->customPlot->yAxis->setRange(graphValueMin, graphValueMax);
+    setGraphRanges(graphKeyScale, setupWindow_ui->getSliderValueMin(), setupWindow_ui->getSliderValueMax());
 
     // Show Legend
     main_window_ui->customPlot->legend->setVisible(true);
@@ -50,33 +65,86 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
 
     // Setup right click context menu
     main_window_ui->customPlot->setContextMenuPolicy(Qt::ActionsContextMenu); /// correct placement?
-
-    // Add Connections
-    /*connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_clicked()));//this clicks the button to disable functions when another toolbutton is being pressed
-    //connect(this, SIGNAL(toolbutton3_trig()), this, SLOT(on_toolButton_clicked()));
-
-    connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_2_clicked()));
-    //connect(this, SIGNAL(toolbutton3_trig()), this, SLOT(on_toolButton_2_clicked()));
-
-    //connect(this, SIGNAL(toolbutton_trig()), this, SLOT(on_toolButton_3_clicked()));
-    //connect(this, SIGNAL(toolbutton2_trig()), this, SLOT(on_toolButton_3_clicked()));*/
-
     main_window_ui->customPlot->replot();
 }
 
-void GraphViewer::axisGraphs() {
-    if (axis_graphs) {
-        main_window_ui->customPlot->graph(0)->setVisible(false);
-        main_window_ui->customPlot->graph(1)->setVisible(false);
-        main_window_ui->customPlot->graph(2)->setVisible(false);
-        axis_graphs = false;
-    } else {
-        main_window_ui->customPlot->graph(0)->setVisible(true);
-        main_window_ui->customPlot->graph(1)->setVisible(true);
-        main_window_ui->customPlot->graph(2)->setVisible(true);
-        axis_graphs = true;
+/// Getter Methods
+double GraphViewer::getGraphKeyMin()
+{
+    return graphKeyMin;
+}
+
+double GraphViewer::getGraphKeyMax()
+{
+    return graphKeyMax;
+}
+
+double GraphViewer::getGraphKeyUpper()
+{
+    return graphKeyUpper;
+}
+
+void GraphViewer::setGraphRanges(int keyScale, int valueMin, int valueMax)
+{
+    graphKeyUpper = graphKeyMax*(keyScale/10.0) + (graphKeyMax*(keyScale/10.0))/20;
+    graphValueMin = valueMin;
+    graphValueMax = valueMax;
+    main_window_ui->customPlot->xAxis->setRange(graphKeyMin, graphKeyUpper);
+    main_window_ui->customPlot->yAxis->setRange(graphValueMin, graphValueMax);
+    main_window_ui->customPlot->replot();
+}
+
+
+/*void GraphViewer::setLabelPreferences(QString lText, QString cText)
+{
+
+}*/
+
+double GraphViewer::getGraphValueMin()
+{
+    return graphValueMin;
+}
+
+double GraphViewer::getGraphValueMax()
+{
+    return graphValueMax;
+}
+
+/// Setter Methods
+void GraphViewer::setGraphKeyMin(double min)
+{
+    graphKeyMin = min;
+}
+
+void GraphViewer::setGraphKeyMax(double max)
+{
+    graphKeyMax = max;
+}
+
+void GraphViewer::setGraphValueMin(double min)
+{
+    graphValueMin = min;
+}
+
+void GraphViewer::setGraphValueMax(double max)
+{
+    graphValueMax = max;
+}
+
+/*void GraphViewer::horzScrollBarChanged(int value)
+{
+    if (qAbs(main_window_ui->customPlot->xAxis->range().center()-value/100.0) > 0.01) // if user is dragging plot, we don't want to replot twice
+    {
+        main_window_ui->customPlot->xAxis->setRange(0, time_values.back() + time_values.back()/20, Qt::AlignCenter);
+        main_window_ui->customPlot->replot();
     }
 }
+
+void GraphViewer::xAxisChanged(QCPRange range)
+{
+    main_window_ui->horizontalScrollBar->setValue(qRound(range.center()*100.0)); // adjust position of scroll bar slider
+    main_window_ui->horizontalScrollBar->setPageStep(qRound(range.size()*100.0)); // adjust size of scroll bar slider
+}*/
 
 void GraphViewer::setFirstTime(bool input) {
     first_time = input;

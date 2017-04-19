@@ -18,7 +18,8 @@ SOURCES += main.cpp\
     graphviewer.cpp \
     graph.cpp \
     markup.cpp \
-    octaveinvoker.cpp
+    octaveinvoker.cpp \
+    setupwindow.cpp
 
 HEADERS  += \
     qcustomplot.h \
@@ -28,10 +29,15 @@ HEADERS  += \
     graphviewer.h \
     graph.h \
     markup.h \
+<<<<<<< v1.0_dev_kev
     octaveinvoker.h
+=======
+    setupwindow.h
+>>>>>>> v1.0_dev
 
 FORMS    += \
-    mainwindow.ui
+    mainwindow.ui \
+    setupwindow.ui
 
 RESOURCES += \
     myresources.qrc
