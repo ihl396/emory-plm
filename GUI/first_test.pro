@@ -18,7 +18,6 @@ SOURCES += main.cpp\
     graphviewer.cpp \
     graph.cpp \
     markup.cpp \
-
     octaveinvoker.cpp \
     setupwindow.cpp \
     bluetoothwindow.cpp
