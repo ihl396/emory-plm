@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = first_test
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
     qcustomplot.cpp \
     mainwindow.cpp \
@@ -19,6 +18,7 @@ SOURCES += main.cpp\
     graphviewer.cpp \
     graph.cpp \
     markup.cpp \
+    octaveinvoker.cpp \
     setupwindow.cpp
 
 HEADERS  += \
@@ -29,7 +29,11 @@ HEADERS  += \
     graphviewer.h \
     graph.h \
     markup.h \
+<<<<<<< v1.0_dev_kev
+    octaveinvoker.h
+=======
     setupwindow.h
+>>>>>>> v1.0_dev
 
 FORMS    += \
     mainwindow.ui \
@@ -41,3 +45,6 @@ RESOURCES += \
 DISTFILES += \
     plm_analyzer_model.qmodel \
     resources/toolbar/handTool.png
+
+INCLUDEPATH += C:/Octave/Octave-4.2.0/include/octave-4.2.0/ # MAKE SURE THIS PATH EXISTS or change it to your system.
+LIBS += -L"C:/Octave/Octave-4.2.0/lib/octave/4.2.0" -loctinterp

@@ -24,6 +24,7 @@ MainWindow::MainWindow(QWidget *parent) :
     firstRun = true;
     addMarkerClicked = false;
 
+
     createActions();
     createMenus();
     createMarkerPixmaps();
@@ -45,6 +46,9 @@ void MainWindow::createActions() {
     saveAct->setStatusTip(tr("Save a file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     /// connect(saveAct, &QAction::triggered, this, &MainWindow::save);
+    graphAct = new QAction(this);
+    graphAct->setShortcut(Qt::Key_G | Qt::CTRL);
+    connect(graphAct, &QAction::triggered, this, &MainWindow::axisGraphs);
 
     // Edit Menu Actions
     graphViewPreferencesAct = new QAction(tr("Graph View Preferences"));
@@ -58,18 +62,23 @@ void MainWindow::createActions() {
     selectToolAct = new QAction(QIcon(":/resources/toolbar/selectTool.png"), tr("Select Tool"), this);
     //labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
     rulerToolAct = new QAction(QIcon(":/resources/toolbar/rulerTool.png"), tr("Ruler Tool"), this);
+    bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Bluetooth Tool"), this);
     handToolAct->setCheckable(true);
     selectToolAct->setCheckable(true);
     //labelToolAct->setCheckable(true);
     rulerToolAct->setCheckable(true);
+    bluetoothToolAct->setCheckable(true);
     handToolAct->setShortcut(QKeySequence("H"));
     selectToolAct->setShortcut(QKeySequence("S"));
     //labelToolAct->setShortcut(QKeySequence("L"));
     rulerToolAct->setShortcut(QKeySequence("R"));
+    bluetoothToolAct->setShortcut(QKeySequence("B"));
     handToolAct->setStatusTip(tr("Hand Tool"));
     selectToolAct->setStatusTip(tr("Marker Tool"));
     //labelToolAct->setStatusTip(tr("Label Tool"));
     rulerToolAct->setStatusTip(tr("Ruler Tool"));
+    bluetoothToolAct->setStatusTip(tr("Bluetooth Tool"));
+    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -183,9 +192,11 @@ void MainWindow::createMenus() {
     ui->toolBar->addAction(selectToolAct);//, "Select Tool");
     //ui->toolBar->addAction(labelToolAct);//, "Label Tool");
     ui->toolBar->addAction(rulerToolAct);
+    ui->toolBar->addAction(bluetoothToolAct);
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
+    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -306,6 +317,7 @@ void MainWindow::open()
         csvReader.importCSV(file);
         data_structure = csvReader.exportData(data_structure);
 
+
         sWindow = new SetupWindow(ui->customPlot); //, graphViewer);
         graphViewer = new GraphViewer(ui, sWindow);
 
@@ -321,6 +333,7 @@ void MainWindow::open()
         qDebug() << sWindow->getSliderScaledMovement();
         scaledMovement = sWindow->getSliderScaledMovement();
         sWindow->getGraphViewer(graphViewer);
+
         firstRun = false;
         // Defaults to Hand Tool when file is opened
         emit enableToolBar();
@@ -410,6 +423,10 @@ void MainWindow::saveMarkers()
     //qDebug() << path;
 }
 
+void MainWindow::axisGraphs() {
+   // graphViewer.axisGraphs();
+}
+
 void MainWindow::saveSelections()
 {
     if (!file.isEmpty()) {
@@ -459,7 +476,7 @@ void MainWindow::loadSelections() {
         labelText->setObjectName("lText");
         labelText->setText("Leg Up");
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, 1.9);
+        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, selection_structure.xAxisValueMax[i]);
         ui->customPlot->replot();
     }
     ui->customPlot->replot();
@@ -483,6 +500,7 @@ void MainWindow::enableToolBar()
     selectToolAct->setEnabled(true);
     //labelToolAct->setEnabled(true);
     rulerToolAct->setEnabled(true);
+    bluetoothToolAct->setEnabled(true);
     viewSelectionShortcut->setEnabled(true);
     labelSelectionShortcut->setEnabled(true);
     rescaleViewShortcut->setEnabled(true);
@@ -645,7 +663,7 @@ void MainWindow::labelSelection()
         labelText->setObjectName("lText");
         labelText->setText(sWindow->getLabelText());
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, 1.9);
+        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, xAxisValueMax);
         /// DO WE NEED TO LABEL THESE SECTIONS?
         ui->customPlot->replot();
         xGraphSelection.clear();
@@ -661,7 +679,7 @@ void MainWindow::rescaleView()
     /// This is auto rescaling based on plottables
     ui->customPlot->rescaleAxes(true);
     /// Hard coded y range
-    ui->customPlot->yAxis->setRange(3,-3);
+    ui->customPlot->yAxis->setRange(8,-2);
     ui->customPlot->replot();
     xGraphSelection.clear();
     yGraphSelection.clear();
@@ -978,8 +996,10 @@ void MainWindow::handToolTriggered()
     if (handToolAct->isChecked() == true){
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+        bluetoothToolAct->setChecked(false);
         emit markerToolTriggered();
         emit rulerToolTriggered();
+        emit bluetoothToolTriggered();
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -992,8 +1012,10 @@ void MainWindow::markerToolTriggered()
     if (selectToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+        bluetoothToolAct->setChecked(false);
         emit handToolTriggered();
         emit rulerToolTriggered();
+        emit bluetoothToolTriggered();
         qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
@@ -1068,6 +1090,29 @@ void MainWindow::rulerToolTriggered()
         ui->customPlot->replot();
         disconnect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
         disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
+    }
+}
+
+void MainWindow::bluetoothToolTriggered() {
+    if (bluetoothToolAct->isChecked() == true){
+        handToolAct->setChecked(false);
+        selectToolAct->setChecked(false);
+        rulerToolAct->setChecked(false);
+        qDebug() << "Bluetooth Tool: toggled";
+
+        QProcess p;
+        p.setProcessChannelMode(QProcess::MergedChannels);
+        QStringList params;
+        QString exe = "python C:/Users/Asussy/Desktop/EmoryPLM/bluetooth/test.py";
+        p.start(exe);
+        p.waitForReadyRead();
+
+        QString p_stdout = p.readAllStandardOutput();
+        qDebug() << p_stdout << endl;
+
+    }
+    else{
+        qDebug() << "Bluetooth tool: un-toggled";
     }
 }
 

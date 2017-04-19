@@ -1,0 +1,12 @@
+INPUT(
+./release\main.o
+./release\qcustomplot.o
+./release\mainwindow.o
+./release\csvreader.o
+./release\graphviewer.o
+./release\graph.o
+./release\markup.o
+./release\qrc_myresources.o
+./release\moc_qcustomplot.o
+./release\moc_mainwindow.o
+);
