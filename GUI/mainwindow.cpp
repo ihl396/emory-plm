@@ -3,6 +3,7 @@
 #include "csvreader.h"
 #include "graphviewer.h"
 #include "setupwindow.h"
+#include "bluetoothwindow.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     firstRun = true;
     addMarkerClicked = false;
 
+    bTWindow = new BluetoothWindow(ui->customPlot);
 
     createActions();
     createMenus();
@@ -55,6 +57,10 @@ void MainWindow::createActions() {
     labelPreferencesAct = new QAction(tr("Label Preferences"));
     connect(graphViewPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
     connect(labelPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
+
+    // Bluetooth Menu Actions
+    setupBluetoothAct = new QAction(tr("Setup Bluetooth"));
+    connect(setupBluetoothAct, SIGNAL(triggered(bool)), this, &MainWindow::openBluetoothWindow);
 
 
     // Tool Button Actions
@@ -167,8 +173,8 @@ void MainWindow::createActions() {
     hideGraphAct->setShortcut(QKeySequence("CTRL+H"));
     hideGraphAct->setStatusTip(tr("Hide X, Y, Z Graphs"));
     hideGraphShortcut = new QShortcut(QKeySequence("CTRL+H"), this);
-    connect(hideGraphAct, &QAction::changed, this, &MainWindow::hideXYZGraphs);
-    connect(hideGraphShortcut, &QShortcut::activated, this, &MainWindow::toggleHide);
+    //connect(hideGraphAct, &QAction::changed, this, &MainWindow::hideXYZGraphs);
+    connect(hideGraphShortcut, &QShortcut::activated, this, &MainWindow::hideXYZGraphs);
 
     /// Connects Scrollbar to Customplot
     connect(ui->horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(horzScrollBarChanged(int)));
@@ -183,6 +189,10 @@ void MainWindow::createMenus() {
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(graphViewPreferencesAct);
     editMenu->addAction(labelPreferencesAct);
+
+    bluetoothMenu = menuBar()->addMenu(tr("&Bluetooth"));
+    bluetoothMenu->addAction(setupBluetoothAct);
+
 
     // Toolbar Menu
     ui->toolBar->addAction(openAct);
@@ -310,7 +320,7 @@ void MainWindow::open()
     ui->tableView->setModel(model);
     file = QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(),"CSV files, txt files (*.csv *.txt);;all files (*.*)");
 
-    struct DataStructure data_structure;
+    //struct DataStructure data_structure;
 
     if (!file.isEmpty()) {
         CsvReader csvReader(model);
@@ -389,6 +399,11 @@ void MainWindow::openSetupWindow()
         sWindow->setCurrentTabIndex(1);
     }
     sWindow->exec();
+}
+
+void MainWindow::openBluetoothWindow()
+{
+    bTWindow->exec();
 }
 
 /*void MainWindow::setCustomPlotChanges()
@@ -677,9 +692,12 @@ void MainWindow::rescaleView()
 {
     //ui->customPlot->axisRect()->setMargins(QMargins(0,50,0,0));
     /// This is auto rescaling based on plottables
-    ui->customPlot->rescaleAxes(true);
+    //ui->customPlot->rescaleAxes(true);
     /// Hard coded y range
-    ui->customPlot->yAxis->setRange(8,-2);
+    //ui->customPlot->yAxis->setRange(8,-2);
+    //ui->customPlot->yAxis->setRange(3,-3);
+    graphViewer->setGraphRanges(sWindow->getSliderKeyScale(), sWindow->getSliderValueMin(), sWindow->getSliderValueMax());
+
     ui->customPlot->replot();
     xGraphSelection.clear();
     yGraphSelection.clear();
@@ -883,6 +901,9 @@ void MainWindow::hideXYZGraphs()
         ui->customPlot->graph(0)->setVisible(false);
         ui->customPlot->graph(1)->setVisible(false);
         ui->customPlot->graph(2)->setVisible(false);
+        ui->customPlot->graph(0)->removeFromLegend();
+        ui->customPlot->graph(1)->removeFromLegend();
+        ui->customPlot->graph(2)->removeFromLegend();
         ui->customPlot->graph(0)->setSelectable(QCP::stNone);
         ui->customPlot->graph(1)->setSelectable(QCP::stNone);
         ui->customPlot->graph(2)->setSelectable(QCP::stNone);
@@ -890,6 +911,9 @@ void MainWindow::hideXYZGraphs()
     }
     else
     {
+        ui->customPlot->graph(0)->addToLegend();
+        ui->customPlot->graph(1)->addToLegend();
+        ui->customPlot->graph(2)->addToLegend();
         ui->customPlot->graph(0)->setVisible(true);
         ui->customPlot->graph(1)->setVisible(true);
         ui->customPlot->graph(2)->setVisible(true);

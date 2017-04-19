@@ -9,6 +9,7 @@
 #include <vector>
 #include <QMainWindow>
 #include <QCloseEvent>
+#include "bluetoothwindow.h"
 #include "setupwindow.h"
 #include "graphviewer.h"
 #include "datastructure.h"
@@ -34,6 +35,7 @@ public:
 private slots:
     void open();
     void openSetupWindow();
+    void openBluetoothWindow();
     void saveMarkers();
     void saveSelections();
     void loadMarkers();
@@ -68,6 +70,7 @@ protected:
 
 private:
     //GraphViewer graphViewer(Ui::MainWindow, Ui::SetupWindow);
+    class BluetoothWindow *bTWindow;
     class SetupWindow *sWindow;
     class GraphViewer *graphViewer;
     void createActions();
@@ -77,6 +80,7 @@ private:
     bool fileExists(QString);
     Ui::MainWindow *ui;
     QStandardItemModel *model;
+    struct DataStructure data_structure;
     bool firstRun;
     QMenu *fileMenu;
     QAction *openAct;
@@ -84,6 +88,8 @@ private:
     QMenu *editMenu;
     QAction *graphViewPreferencesAct;
     QAction *labelPreferencesAct;
+    QMenu *bluetoothMenu;
+    QAction *setupBluetoothAct;
     markerStructure marker_structure;
     selectionStructure selection_structure;
     QString file;
