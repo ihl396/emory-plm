@@ -76,6 +76,7 @@ private:
     bool fileExists(QString);
     Ui::MainWindow *ui;
     QStandardItemModel *model;
+    struct DataStructure data_structure;
     bool firstRun;
     QMenu *fileMenu;
     QAction *openAct;

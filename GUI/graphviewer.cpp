@@ -33,6 +33,14 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
     main_window_ui->customPlot->graph(3)->setPen(QPen(Qt::black, 2));
     main_window_ui->customPlot->graph(3)->setName("Magnitude Acceleration");
 
+    // This just puts the Magnitude
+    main_window_ui->customPlot->graph(0)->removeFromLegend();
+    main_window_ui->customPlot->graph(1)->removeFromLegend();
+    main_window_ui->customPlot->graph(2)->removeFromLegend();
+    main_window_ui->customPlot->graph(0)->addToLegend();
+    main_window_ui->customPlot->graph(1)->addToLegend();
+    main_window_ui->customPlot->graph(2)->addToLegend();
+
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
 
