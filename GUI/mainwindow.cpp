@@ -55,18 +55,23 @@ void MainWindow::createActions() {
     selectToolAct = new QAction(QIcon(":/resources/toolbar/selectTool.png"), tr("Select Tool"), this);
     //labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
     rulerToolAct = new QAction(QIcon(":/resources/toolbar/rulerTool.png"), tr("Ruler Tool"), this);
+    bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Bluetooth Tool"), this);
     handToolAct->setCheckable(true);
     selectToolAct->setCheckable(true);
     //labelToolAct->setCheckable(true);
     rulerToolAct->setCheckable(true);
+    bluetoothToolAct->setCheckable(true);
     handToolAct->setShortcut(QKeySequence("H"));
     selectToolAct->setShortcut(QKeySequence("S"));
     //labelToolAct->setShortcut(QKeySequence("L"));
     rulerToolAct->setShortcut(QKeySequence("R"));
+    bluetoothToolAct->setShortcut(QKeySequence("B"));
     handToolAct->setStatusTip(tr("Hand Tool"));
     selectToolAct->setStatusTip(tr("Marker Tool"));
     //labelToolAct->setStatusTip(tr("Label Tool"));
     rulerToolAct->setStatusTip(tr("Ruler Tool"));
+    bluetoothToolAct->setStatusTip(tr("Bluetooth Tool"));
+    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -167,9 +172,11 @@ void MainWindow::createMenus() {
     ui->toolBar->addAction(selectToolAct);//, "Select Tool");
     //ui->toolBar->addAction(labelToolAct);//, "Label Tool");
     ui->toolBar->addAction(rulerToolAct);
+    ui->toolBar->addAction(bluetoothToolAct);
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
+    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -358,6 +365,7 @@ void MainWindow::enableToolBar()
     selectToolAct->setEnabled(true);
     //labelToolAct->setEnabled(true);
     rulerToolAct->setEnabled(true);
+    bluetoothToolAct->setEnabled(true);
     viewSelectionShortcut->setEnabled(true);
     labelSelectionShortcut->setEnabled(true);
     rescaleViewShortcut->setEnabled(true);
@@ -834,8 +842,10 @@ void MainWindow::handToolTriggered()
     if (handToolAct->isChecked() == true){
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+        bluetoothToolAct->setChecked(false);
         emit markerToolTriggered();
         emit rulerToolTriggered();
+        emit bluetoothToolTriggered();
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -848,8 +858,10 @@ void MainWindow::markerToolTriggered()
     if (selectToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+        bluetoothToolAct->setChecked(false);
         emit handToolTriggered();
         emit rulerToolTriggered();
+        emit bluetoothToolTriggered();
         qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
@@ -880,6 +892,29 @@ void MainWindow::rulerToolTriggered()
     }
     else{
         qDebug() << "Ruler Tool: un-toggled";
+    }
+}
+
+void MainWindow::bluetoothToolTriggered() {
+    if (bluetoothToolAct->isChecked() == true){
+        handToolAct->setChecked(false);
+        selectToolAct->setChecked(false);
+        rulerToolAct->setChecked(false);
+        qDebug() << "Bluetooth Tool: toggled";
+
+        QProcess p;
+        p.setProcessChannelMode(QProcess::MergedChannels);
+        QStringList params;
+        QString exe = "python C:/Users/Asussy/Desktop/EmoryPLM/bluetooth/test.py";
+        p.start(exe);
+        p.waitForReadyRead();
+
+        QString p_stdout = p.readAllStandardOutput();
+        qDebug() << p_stdout << endl;
+
+    }
+    else{
+        qDebug() << "Bluetooth tool: un-toggled";
     }
 }
 

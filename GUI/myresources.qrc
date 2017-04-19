@@ -11,5 +11,6 @@
         <file>resources/toolbar/UPMarker.png</file>
         <file>resources/toolbar/rulerTool.png</file>
         <file>resources/toolbar/selectTool.png</file>
+        <file>resources/toolbar/bluetooth.png</file>
     </qresource>
 </RCC>

@@ -141,17 +141,23 @@ DataStructure CsvReader::exportData(DataStructure structure) {
 
 
         QString path = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude.txt";
+        QString path2 = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude_times.txt";
         QFile outputFile(path);
+        QFile outputFile2(path2);
         outputFile.resize(0);
+        outputFile2.resize(0);
 
-        if (outputFile.open(QIODevice::ReadWrite)) {
+        if (outputFile.open(QIODevice::ReadWrite) && outputFile2.open(QIODevice::ReadWrite)) {
 
             QTextStream stream( &outputFile );
+            QTextStream stream2( &outputFile2);
             for (int i = 0; i < structure.magnitude_values.length()-1; i++) {
                 stream << structure.magnitude_values.at(i) << ",";
+                stream2 << structure.time_values.at(i) << ",";
             }
 
             stream << structure.magnitude_values.at(structure.magnitude_values.length()-1);
+            stream2 << structure.time_values.at(structure.time_values.length()-1);
         }
 
     return structure;

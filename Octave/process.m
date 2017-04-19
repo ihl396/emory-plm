@@ -16,12 +16,12 @@ PLM_start = 5
 PLM_end = 90
 
 %% Get raw data file under the filepath
-rawdatapath = strcat(filepath,'/rawdata.csv'); %%complete raw data file path
-[startTime,rawdata,endTime] = getRawdata(rawdatapath);
+%rawdatapath = strcat(filepath,'/rawdata.csv'); %%complete raw data file path
+%[startTime,rawdata,endTime] = getRawdata(rawdatapath);
 
 %% create all the time stamp for raw data based on 10 Hz
-[row,columns] = size(rawdata);
-[convertTime,off] = convertTime(startTime,endTime,row);
+%[row,columns] = size(rawdata);
+%[convertTime,off] = convertTime(startTime,endTime,row);
 
 %% convert raw acceleroemter date to unit in g
 #rawAccx = rawdata(:,2); rawAccy = rawdata(:,3); rawAccz = rawdata(:,4);
