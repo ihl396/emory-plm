@@ -3,6 +3,7 @@
 #include "csvreader.h"
 #include "graphviewer.h"
 #include "setupwindow.h"
+#include "bluetoothwindow.h"
 
 #include <QDir>
 #include <QFileDialog>
@@ -24,6 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     firstRun = true;
     addMarkerClicked = false;
 
+    bTWindow = new BluetoothWindow(ui->customPlot);
     createActions();
     createMenus();
     createMarkerPixmaps();
@@ -51,6 +53,10 @@ void MainWindow::createActions() {
     labelPreferencesAct = new QAction(tr("Label Preferences"));
     connect(graphViewPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
     connect(labelPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
+
+    // Bluetooth Menu Actions
+    setupBluetoothAct = new QAction(tr("Setup Bluetooth"));
+    connect(setupBluetoothAct, SIGNAL(triggered(bool)), this, &MainWindow::openBluetoothWindow);
 
 
     // Tool Button Actions
@@ -174,6 +180,10 @@ void MainWindow::createMenus() {
     editMenu = menuBar()->addMenu(tr("&Edit"));
     editMenu->addAction(graphViewPreferencesAct);
     editMenu->addAction(labelPreferencesAct);
+
+    bluetoothMenu = menuBar()->addMenu(tr("&Bluetooth"));
+    bluetoothMenu->addAction(setupBluetoothAct);
+
 
     // Toolbar Menu
     ui->toolBar->addAction(openAct);
@@ -376,6 +386,11 @@ void MainWindow::openSetupWindow()
         sWindow->setCurrentTabIndex(1);
     }
     sWindow->exec();
+}
+
+void MainWindow::openBluetoothWindow()
+{
+    bTWindow->exec();
 }
 
 /*void MainWindow::setCustomPlotChanges()

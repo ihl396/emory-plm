@@ -19,7 +19,8 @@ SOURCES += main.cpp\
     graphviewer.cpp \
     graph.cpp \
     markup.cpp \
-    setupwindow.cpp
+    setupwindow.cpp \
+    bluetoothwindow.cpp
 
 HEADERS  += \
     qcustomplot.h \
@@ -29,11 +30,13 @@ HEADERS  += \
     graphviewer.h \
     graph.h \
     markup.h \
-    setupwindow.h
+    setupwindow.h \
+    bluetoothwindow.h
 
 FORMS    += \
     mainwindow.ui \
-    setupwindow.ui
+    setupwindow.ui \
+    bluetoothwindow.ui
 
 RESOURCES += \
     myresources.qrc
