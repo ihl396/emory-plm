@@ -46,9 +46,6 @@ void MainWindow::createActions() {
     saveAct->setStatusTip(tr("Save a file"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
     /// connect(saveAct, &QAction::triggered, this, &MainWindow::save);
-    graphAct = new QAction(this);
-    graphAct->setShortcut(Qt::Key_G | Qt::CTRL);
-    connect(graphAct, &QAction::triggered, this, &MainWindow::axisGraphs);
 
     // Edit Menu Actions
     graphViewPreferencesAct = new QAction(tr("Graph View Preferences"));
@@ -171,6 +168,7 @@ void MainWindow::createActions() {
     connect(hideGraphShortcut, &QShortcut::activated, this, &MainWindow::toggleHide);
 
     /// Connects Scrollbar to Customplot
+
     connect(ui->horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(horzScrollBarChanged(int)));
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisChanged(QCPRange)));
 }
@@ -421,10 +419,6 @@ void MainWindow::saveMarkers()
         }
     }
     //qDebug() << path;
-}
-
-void MainWindow::axisGraphs() {
-   // graphViewer.axisGraphs();
 }
 
 void MainWindow::saveSelections()

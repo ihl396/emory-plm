@@ -29,11 +29,8 @@ HEADERS  += \
     graphviewer.h \
     graph.h \
     markup.h \
-<<<<<<< v1.0_dev_kev
-    octaveinvoker.h
-=======
+    octaveinvoker.h \
     setupwindow.h
->>>>>>> v1.0_dev
 
 FORMS    += \
     mainwindow.ui \
