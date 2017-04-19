@@ -17,7 +17,6 @@ public:
     GraphViewer(Ui::MainWindow *ui = 0, SetupWindow *sWin = 0);
     void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>, QVector<double>);
     void setFirstTime(bool);
-
     double getGraphKeyMin();
     double getGraphKeyMax();
     double getGraphKeyUpper();
