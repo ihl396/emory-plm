@@ -18,7 +18,6 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
         first_time = false;
     }
 
-    main_window_ui->customPlot->legend->setVisible(true);
     main_window_ui->customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
     main_window_ui->customPlot->graph(0)->setData(time_values, x_acc_values);
     main_window_ui->customPlot->graph(0)->setPen(QPen(Qt::blue, 1, Qt::DotLine));
@@ -43,6 +42,7 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
 
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
     main_window_ui->customPlot->yAxis->setLabel("acceleration (g's)");
+
 
     graphKeyScale = setupWindow_ui->getSliderKeyScale();
     qDebug() << "graphKeyScale = " << graphKeyScale;
@@ -102,6 +102,7 @@ void GraphViewer::setGraphRanges(int keyScale, int valueMin, int valueMax)
     main_window_ui->customPlot->yAxis->setRange(graphValueMin, graphValueMax);
     main_window_ui->customPlot->replot();
 }
+
 
 /*void GraphViewer::setLabelPreferences(QString lText, QString cText)
 {
