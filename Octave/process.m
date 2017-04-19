@@ -37,14 +37,14 @@ LM = isLM(LM_start, LM_end, Acc_mag, convertTime, onset, decay);
 
 % calls the isPLM function to determine if the LM_series contains any
 % periodic leg movements (start indicies, end indicies, Periodic Index)
-[PLM,PI] = isPLM( LM, PLM_start, PLM_end, convertTime);
+PLM = isPLM( LM, PLM_start, PLM_end, convertTime);
 
 %% calls the convertRotation function to compute the actual rotation of leg
-%[heading,pitch,roll] = convertRotation(AccX, AccY, AccZ);
+[heading,pitch,roll] = convertRotation(AccX, AccY, AccZ);
 
 % calls the isStand function to determine if pateint is standing or not
 % 1 for standing, 0 for not standing
-%Stand = isStand(heading,pitch,roll);
+Stand = isStand(heading,pitch,roll);
 
 % calls the LMandPLM to represent the leg movement and PLM in 1 or 0
 % 1 is standing, 0 is not standing
