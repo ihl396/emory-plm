@@ -43,6 +43,7 @@ private slots:
     void handToolTriggered();
     void markerToolTriggered();
     void rulerToolTriggered();
+    void bluetoothToolTriggered();
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
     void addMarkerUp();
@@ -101,6 +102,7 @@ private:
     QAction *selectToolAct;
     QAction *labelToolAct;
     QAction *rulerToolAct;
+    QAction *bluetoothToolAct;
     QMenu *rightClickMenu;
     double xKeyPos;
 
