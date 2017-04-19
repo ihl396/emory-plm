@@ -1,10 +1,8 @@
 % charactrize PLM
 
-function [PLM, PI] = isPLM(LM)
+function [PLM, PI] = isPLM( LM, PLM_start, PLM_end, date)
 
 PLM = [];
-PLM_start = 5
-PLM_end = 90
 
 %determines if it is a PLM series with the specified parameters
 if isempty(LM) == 1 || length(LM)<4
