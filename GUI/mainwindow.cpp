@@ -56,7 +56,7 @@ void MainWindow::createActions() {
     connect(labelPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
 
     // Bluetooth Menu Actions
-    setupBluetoothAct = new QAction(tr("Setup Bluetooth"));
+    setupBluetoothAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Setup Bluetooth"));
     connect(setupBluetoothAct, &QAction::triggered, this, &MainWindow::openBluetoothWindow);
 
 
@@ -70,7 +70,7 @@ void MainWindow::createActions() {
     selectToolAct->setCheckable(true);
     //labelToolAct->setCheckable(true);
     rulerToolAct->setCheckable(true);
-    bluetoothToolAct->setCheckable(true);
+    bluetoothToolAct->setCheckable(false);
     handToolAct->setShortcut(QKeySequence("H"));
     selectToolAct->setShortcut(QKeySequence("S"));
     //labelToolAct->setShortcut(QKeySequence("L"));
@@ -80,8 +80,8 @@ void MainWindow::createActions() {
     selectToolAct->setStatusTip(tr("Marker Tool"));
     //labelToolAct->setStatusTip(tr("Label Tool"));
     rulerToolAct->setStatusTip(tr("Ruler Tool"));
-    bluetoothToolAct->setStatusTip(tr("Bluetooth Tool"));
-    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
+    bluetoothToolAct->setStatusTip(tr("Setup Bluetooth"));
+    //connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::openBluetoothWindow);
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -199,11 +199,12 @@ void MainWindow::createMenus() {
     ui->toolBar->addAction(selectToolAct);//, "Select Tool");
     //ui->toolBar->addAction(labelToolAct);//, "Label Tool");
     ui->toolBar->addAction(rulerToolAct);
+    ui->toolBar->addSeparator();
     ui->toolBar->addAction(bluetoothToolAct);
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
-    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
+    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::openBluetoothWindow);
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -1013,10 +1014,10 @@ void MainWindow::handToolTriggered()
     if (handToolAct->isChecked() == true){
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
-        bluetoothToolAct->setChecked(false);
+        //bluetoothToolAct->setChecked(false);
         emit markerToolTriggered();
         emit rulerToolTriggered();
-        emit bluetoothToolTriggered();
+        //emit bluetoothToolTriggered();
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -1029,10 +1030,10 @@ void MainWindow::markerToolTriggered()
     if (selectToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
-        bluetoothToolAct->setChecked(false);
+        //bluetoothToolAct->setChecked(false);
         emit handToolTriggered();
         emit rulerToolTriggered();
-        emit bluetoothToolTriggered();
+        //emit bluetoothToolTriggered();
         qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
@@ -1110,7 +1111,7 @@ void MainWindow::rulerToolTriggered()
     }
 }
 
-void MainWindow::bluetoothToolTriggered() {
+/*void MainWindow::bluetoothToolTriggered() {
     if (bluetoothToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         selectToolAct->setChecked(false);
@@ -1131,7 +1132,7 @@ void MainWindow::bluetoothToolTriggered() {
     else{
         qDebug() << "Bluetooth tool: un-toggled";
     }
-}
+}*/
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
