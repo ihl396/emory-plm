@@ -1,5 +1,5 @@
 #include "octaveinvoker.h"
-
+/*
 octaveinvoker::octaveinvoker()
 {
 
@@ -22,4 +22,4 @@ selectionStructure octaveinvoker::callOctave(QVector<double> magnitudes, QVector
     selectionStructure returnStructure;
     return returnStructure;
 
-}
+}*/
