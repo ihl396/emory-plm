@@ -78,14 +78,15 @@ void BluetoothWindow::connectButtonClicked()
     process->setProcessChannelMode(QProcess::MergedChannels);
     QString exe = QCoreApplication::applicationDirPath() + "/bluetooth_code.py";
     QString test = QCoreApplication::applicationDirPath() + "/test.py";
-    QString pyserial = "pip install pyserial";
-    QString progress = "pip install progress";
-    QStringList pyserialCommand = QStringList() << "-m" << pyserial;
-    QStringList progressCommand = QStringList() << "-m" << progress;
+    QString pyserial = "-mpip install pyserial";
+    QString progress = "-mpip install progress";
+    QStringList pyserialCommand = QStringList() << pyserial;
+    QStringList progressCommand = QStringList() << progress;
     QStringList params = QStringList() << exe;
-    //qDebug() << "params = " << params;
+    qDebug() << "params = " << params;
     //QString temp = QString("C://Users//Michael Son//Desktop//test.py");
-    process->start("python", pyserialCommand, QProcess::ReadWrite);
+    qDebug() << pyserialCommand;
+    process->start("python -mpip install pyserial"); //, pyserialCommand, QProcess::ReadWrite);
     process->waitForReadyRead();
     qDebug() << process->readAllStandardOutput();
     if (process->waitForFinished() == false)
@@ -122,6 +123,12 @@ void BluetoothWindow::connectButtonClicked()
     qDebug() << "p_stdout = " << p_stdout << endl;*/
 
 
+    //QStringList tempL = QStringList() << exePath;
+    //QProcess CommandPrompt;
+    //QStringList Arguments;
+    //Arguments << "/K" << "echo" << "hello";
+    //CommandPrompt.startDetached("C://Windows//System32//cmd.exe", Arguments);
+    //p->waitForStarted();
     /*QStringList tList = QStringList() << test;
     const char* cmd = test.toLocal8Bit().constData();
     //qDebug() << cmd;

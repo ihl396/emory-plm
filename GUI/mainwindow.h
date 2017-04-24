@@ -36,6 +36,7 @@ private slots:
     void open();
     void openSetupWindow();
     void openBluetoothWindow();
+    void save();
     void saveMarkers();
     void saveSelections();
     void loadMarkers();
@@ -146,6 +147,7 @@ private:
     void getSelectionValues();//QCPDataSelection selection, int graphNum);
     void setMinMax(QList<double> keys, QList<double> values);
     bool firstSelectionCheck;
+    bool newMarkerLabelCreated = false;
     double xAxisKeyMin;
     double xAxisKeyMax;
     double xAxisValueMin;

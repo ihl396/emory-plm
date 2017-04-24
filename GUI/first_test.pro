@@ -32,7 +32,10 @@ HEADERS  += \
     markup.h \
     octaveinvoker.h \
     setupwindow.h \
-    bluetoothwindow.h
+    bluetoothwindow.h \
+    ui_bluetoothwindow.h \
+    ui_mainwindow.h \
+    ui_setupwindow.h
 
 FORMS    += \
     mainwindow.ui \
