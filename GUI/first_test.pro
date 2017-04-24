@@ -32,7 +32,10 @@ HEADERS  += \
     markup.h \
     octaveinvoker.h \
     setupwindow.h \
-    bluetoothwindow.h
+    bluetoothwindow.h \
+    ui_bluetoothwindow.h \
+    ui_mainwindow.h \
+    ui_setupwindow.h
 
 FORMS    += \
     mainwindow.ui \
@@ -46,5 +49,5 @@ DISTFILES += \
     plm_analyzer_model.qmodel \
     resources/toolbar/handTool.png
 
-INCLUDEPATH += C:/Octave/Octave-4.2.0/include/octave-4.2.0/ # MAKE SURE THIS PATH EXISTS or change it to your system.
-LIBS += -L"C:/Octave/Octave-4.2.0/lib/octave/4.2.0" -loctinterp
+#INCLUDEPATH += C:/Octave/Octave-4.2.0/include/octave-4.2.0/ # MAKE SURE THIS PATH EXISTS or change it to your system.
+#LIBS += -L"C:/Octave/Octave-4.2.0/lib/octave/4.2.0" -loctinterp

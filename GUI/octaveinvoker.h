@@ -3,7 +3,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <iostream>
-#include <octave/oct.h>
+/*#include <octave/oct.h>
 #include <octave/octave.h>
 #include <octave/parse.h>
 #include <octave/interpreter.h>
@@ -21,5 +21,5 @@ class octaveinvoker
         void setOctaveFileLocation(QString);
         selectionStructure callOctave(QVector<double>, QVector<double>);
 };
-
+*/
 #endif // OCTAVEINVOKER_H
