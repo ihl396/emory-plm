@@ -12,7 +12,7 @@ SetupWindow::SetupWindow(QWidget *parent) : //, GraphViewer *gViewer) ://Ui::Mai
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
-
+    //graphViewer = gViewer;
     setupGraphViewPreferencesTab();
 
     setupLabelPreferencesTab();

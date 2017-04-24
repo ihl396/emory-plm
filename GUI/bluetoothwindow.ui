@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Bluetooth</string>
+   <string>Dialog</string>
   </property>
   <widget class="QPushButton" name="connectBluetoothButton">
    <property name="geometry">

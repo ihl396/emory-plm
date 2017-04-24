@@ -43,7 +43,7 @@ private slots:
     void handToolTriggered();
     void markerToolTriggered();
     void rulerToolTriggered();
-    //void bluetoothToolTriggered();
+    void bluetoothToolTriggered();
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
     void addMarkerUp();

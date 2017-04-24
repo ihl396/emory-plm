@@ -3,10 +3,10 @@
 
 #include <QtCore/QCoreApplication>
 #include <iostream>
-//#include <octave/oct.h>
-//#include <octave/octave.h>
-//#include <octave/parse.h>
-//#include <octave/interpreter.h>
+#include <octave/oct.h>
+#include <octave/octave.h>
+#include <octave/parse.h>
+#include <octave/interpreter.h>
 #include "datastructure.h"
 #include <QProcess>
 
