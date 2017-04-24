@@ -12,6 +12,7 @@
 #include "setupwindow.h"
 #include "graphviewer.h"
 #include "datastructure.h"
+#include "octaveinvoker.h"
 #include <iostream>
 #include <fstream>
 #include <QFileInfo>

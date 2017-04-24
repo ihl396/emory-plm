@@ -13,6 +13,7 @@ using namespace std;
 
 class CsvReader {
 
+    QVector<QString> timeArray;
     QVector<QVector<double>> dataArray;
     QVector<QVector<double>> markerArray;
     QVector<QVector<double>> selectionArray;

@@ -2,22 +2,19 @@
 
 octaveinvoker::octaveinvoker()
 {
-
+    octaveFileLocation = "";
 }
 
 void octaveinvoker::setOctaveFileLocation(QString) {
 
 }
 
-selectionStructure octaveinvoker::callOctave(QVector<double> magnitudes, QVector<double> times) {
+selectionStructure octaveinvoker::callOctave() {
 
-    QObject *parent;
-    QString program = "C:/Users/Asussy/Documents/GitHub/emory-plm/Octave/isLM.m";
-    QStringList arguments;
-
-    QProcess *myProcess = new QProcess(parent);
-    myProcess->start(program, arguments);
-    QByteArray s = myProcess->readAll();
+//    QProcess *myProcess = new QProcess(this);
+//    myProcess->start(QString("C:/Program Files/MATLAB/R2016b/bin/matlab.exe"), QStringList() << QString("-r C:/Users/Asussy/Documents/GitHub/emory-plm/Octave/isLM.m") << QString("-nosplash") << QString("nodesktop"));
+//    QByteArray s = myProcess->readAllStandardOutput();
+//    QByteArray b = myProcess->readAllStandardError();
 
     selectionStructure returnStructure;
     return returnStructure;

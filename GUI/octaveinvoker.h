@@ -19,7 +19,7 @@ class octaveinvoker
     public:
         octaveinvoker();
         void setOctaveFileLocation(QString);
-        selectionStructure callOctave(QVector<double>, QVector<double>);
+        selectionStructure callOctave();
 };
 
 #endif // OCTAVEINVOKER_H

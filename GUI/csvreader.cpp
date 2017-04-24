@@ -1,6 +1,7 @@
 #include "csvreader.h"
 
 CsvReader::CsvReader(QStandardItemModel *model) {
+    QVector<QString> timeArray;
     QVector<QVector<double>> dataArray;
     QList<QStandardItem*> standardItemList;
     this->model = model;
@@ -13,11 +14,12 @@ void CsvReader::importCSV(QString input) {
     if (file.open(QIODevice::ReadOnly)) {
         QString data = file.readAll();
         data.remove( QRegExp("\r") ); //remove all ocurrences of CR (Carriage Return)
-        QString temp;
+        QString temp = "";
         QChar character;
         QTextStream textStream(&data);
         QVector<double> row;
         int count = 0;
+        bool timeStamp = true;
 
         // If the input file is a csv file.
         if (input.right(3) == "csv") {
@@ -42,18 +44,29 @@ void CsvReader::importCSV(QString input) {
 
         // If the input file is a txt file.
         if (input.right(3) == "txt") {
+            bool first = true;
             while (!textStream.atEnd()) {
+                while (character != '\n' && first) {
+                    textStream >> character;
+                }
+
+                first = false;
                 textStream >> character;
-                if ((character == ',') & (count != 6)) {
-                    row.push_back(temp.toDouble());
+
+                if ((character == '\n' || textStream.atEnd())) {
+                        row.push_back(temp.toDouble());
+                        dataArray.push_back(row);
+                        row.clear();
+                        timeStamp = true;
+                        checkString(temp, character);
+                } else if ((character == ',')) {
+                    if (timeStamp) {
+                        timeArray.push_back(temp);
+                        timeStamp = false;
+                    } else {
+                        row.push_back(temp.toDouble());
+                    }
                     checkString(temp, character);
-                    count++;
-                } else if ((character == ',') & (count == 6)) {
-                    row.push_back(temp.toDouble());
-                    dataArray.push_back(row);
-                    row.clear();
-                    checkString(temp, character);
-                    count = 0;
                 } else if (textStream.atEnd()) {
                     temp.append(character);
                     checkString(temp);
@@ -95,12 +108,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
     for (int i = 0; i < dataArray.size(); i++) {
         //QDebug deb = qDebug();
         for (int j = 0; j < dataArray[0].size(); j++) {
-           //deb << dataArray[i][j];
-           if (j == 0) {
-               structure.time_values.append(dataArray[i][j]);
-               //deb << dataArray[i][j];
-           }
-           else if (j == 5) {
+           if (j == 4) {
                z_msb = (long) dataArray[i][j];
                z_lsb = (long) dataArray[i][j+1];
 
@@ -108,8 +116,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
                if (zAccel > 2047) zAccel += (~4096 + 1);
                double zAccelToAdd = ((double)zAccel)/512;
                structure.z_acc_values.append((zAccelToAdd));
-           }
-           else if (j == 3) {
+           } else if (j == 2) {
                y_msb = (long) dataArray[i][j];
                y_lsb = (long) dataArray[i][j+1];
 
@@ -117,8 +124,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
                if (yAccel > 2047) yAccel += (~4096 + 1);
                double yAccelToAdd = ((double)yAccel)/512;
                structure.y_acc_values.append((yAccelToAdd));
-           }
-           else if (j == 1) {
+           } else if (j == 0) {
                x_msb = (long) dataArray[i][j];
                x_lsb = (long) dataArray[i][j+1];
 
@@ -131,7 +137,7 @@ DataStructure CsvReader::exportData(DataStructure structure) {
       //qDebug() << "------------";
     }
 
-
+    structure.time_values = timeArray;
 
     for (int i = 0; i < structure.x_acc_values.size(); i++) {
         double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
@@ -140,25 +146,25 @@ DataStructure CsvReader::exportData(DataStructure structure) {
     }
 
 
-        QString path = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude.txt";
-        QString path2 = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude_times.txt";
-        QFile outputFile(path);
-        QFile outputFile2(path2);
-        outputFile.resize(0);
-        outputFile2.resize(0);
+//        QString path = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude.txt";
+//        QString path2 = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude_times.txt";
+//        QFile outputFile(path);
+//        QFile outputFile2(path2);
+//        outputFile.resize(0);
+//        outputFile2.resize(0);
 
-        if (outputFile.open(QIODevice::ReadWrite) && outputFile2.open(QIODevice::ReadWrite)) {
+//        if (outputFile.open(QIODevice::ReadWrite) && outputFile2.open(QIODevice::ReadWrite)) {
 
-            QTextStream stream( &outputFile );
-            QTextStream stream2( &outputFile2);
-            for (int i = 0; i < structure.magnitude_values.length()-1; i++) {
-                stream << structure.magnitude_values.at(i) << ",";
-                stream2 << structure.time_values.at(i) << ",";
-            }
+//            QTextStream stream( &outputFile );
+//            QTextStream stream2( &outputFile2);
+//            for (int i = 0; i < structure.magnitude_values.length()-1; i++) {
+//                stream << structure.magnitude_values.at(i) << ",";
+//                stream2 << structure.time_values.at(i) << ",";
+//            }
 
-            stream << structure.magnitude_values.at(structure.magnitude_values.length()-1);
-            stream2 << structure.time_values.at(structure.time_values.length()-1);
-        }
+//            stream << structure.magnitude_values.at(structure.magnitude_values.length()-1);
+//            stream2 << structure.time_values.at(structure.time_values.length()-1);
+//        }
 
     return structure;
 }

@@ -8,7 +8,7 @@ GraphViewer::GraphViewer(Ui::MainWindow *input, SetupWindow *sWin) {
     setupWindow_ui = sWin;
 }
 
-void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
+void GraphViewer::createGraph(QVector<QString> fixThis, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
 
     if (first_time) {
         main_window_ui->customPlot->addGraph();
@@ -17,18 +17,41 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
         main_window_ui->customPlot->addGraph();
         first_time = false;
     }
+    QVector<double> time_values;
 
+    const QString sformat="hh:mm:ss:zzz"; //Generate Date
+
+    for (int i = 0; i < fixThis.length(); i++) {
+        QString singleTime = fixThis.at(i);
+        singleTime = singleTime.right(singleTime.length()-3);
+        int ind = singleTime.lastIndexOf(":");
+        double ticks = (255 - (singleTime.right(singleTime.length()-ind-1).toDouble()))/255;
+        QString manipulated = singleTime.left(ind);
+        manipulated.append(":");
+        manipulated.append(QString::number(ticks).mid(2, 3));
+
+        double timeSeconds = QCPAxisTickerDateTime::dateTimeToKey(QDateTime(QDate::fromString("20170421", "yyyyMMdd"),QTime::fromString(manipulated, sformat)));
+        time_values.append(timeSeconds);
+    }
+
+    QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);
+    dateTicker->setDateTimeFormat("d. MMMM yyyy\nhh:mm:ss:zzz");
+    main_window_ui->customPlot->xAxis->setTicker(dateTicker);
     main_window_ui->customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
     main_window_ui->customPlot->graph(0)->setData(time_values, x_acc_values);
+    //main_window_ui->customPlot->graph(0)->data()->set(time_v_xAccValues);
     main_window_ui->customPlot->graph(0)->setPen(QPen(Qt::blue, 1, Qt::DotLine));
     main_window_ui->customPlot->graph(0)->setName("X Acceleration");
     main_window_ui->customPlot->graph(1)->setData(time_values, y_acc_values);
+    //main_window_ui->customPlot->graph(1)->data()->set(time_v_yAccValues);
     main_window_ui->customPlot->graph(1)->setPen(QPen(Qt::red, 1, Qt::DotLine));
     main_window_ui->customPlot->graph(1)->setName("Y Acceleration");
     main_window_ui->customPlot->graph(2)->setData(time_values, z_acc_values);
+    //main_window_ui->customPlot->graph(2)->data()->set(time_v_zAccValues);
     main_window_ui->customPlot->graph(2)->setPen(QPen(Qt::green, 1, Qt::DotLine));
     main_window_ui->customPlot->graph(2)->setName("Z Acceleration");
     main_window_ui->customPlot->graph(3)->setData(time_values, normalized_values);
+    //main_window_ui->customPlot->graph(3)->data()->set(time_v_magnitude);
     main_window_ui->customPlot->graph(3)->setPen(QPen(Qt::black, 2));
     main_window_ui->customPlot->graph(3)->setName("Magnitude Acceleration");
     main_window_ui->customPlot->xAxis->setLabel("time (milliseconds)");
@@ -37,7 +60,7 @@ void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc
 
     graphKeyScale = setupWindow_ui->getSliderKeyScale();
     qDebug() << "graphKeyScale = " << graphKeyScale;
-    graphKeyMin = 0;
+    graphKeyMin = time_values.at(0);
     //qDebug() << "time_values.back() = " << time_values.back();
     graphKeyMax = time_values.back();
     //graphKeyUpper = graphKeyMax*(graphKeyScale/10.0) + (graphKeyMax*(graphKeyScale/10.0))/20;
@@ -86,10 +109,11 @@ double GraphViewer::getGraphKeyUpper()
 
 void GraphViewer::setGraphRanges(int keyScale, int valueMin, int valueMax)
 {
-    graphKeyUpper = graphKeyMax*(keyScale/10.0) + (graphKeyMax*(keyScale/10.0))/20;
+    graphKeyUpper = graphKeyMin + ((graphKeyMax - graphKeyMin)*(keyScale/10.0) + ((graphKeyMax - graphKeyMin)*(keyScale/10.0))/20);
     graphValueMin = valueMin;
     graphValueMax = valueMax;
     main_window_ui->customPlot->xAxis->setRange(graphKeyMin, graphKeyUpper);
+    //main_window_ui->customPlot->xAxis->setRange(QCPAxisTickerDateTime::dateTimeToKey(QDate(2017, 04, 20)), QCPAxisTickerDateTime::dateTimeToKey(QDate(2017, 4, 21)));
     main_window_ui->customPlot->yAxis->setRange(graphValueMin, graphValueMax);
     main_window_ui->customPlot->replot();
 }

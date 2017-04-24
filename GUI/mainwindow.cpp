@@ -334,6 +334,9 @@ void MainWindow::open()
 
         firstRun = false;
         // Defaults to Hand Tool when file is opened
+
+        phaseTracerItemText = new QCPItemText(ui->customPlot);
+
         emit enableToolBar();
         emit handToolAct->trigger();
 
@@ -357,7 +360,6 @@ void MainWindow::open()
         phaseTracer->setBrush(Qt::red);
         phaseTracer->setSize(7);
 
-        phaseTracerItemText = new QCPItemText(ui->customPlot);
         phaseTracerItemText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
         phaseTracer->setVisible(false);
@@ -1019,8 +1021,6 @@ void MainWindow::markerToolTriggered()
         ui->customPlot->graph(3)->setSelectable(QCP::stDataRange);//QCP::SelectionType(QCP::stDataRange)
     }
     else{
-        qDebug() << "Select Tool: un-toggled";
-
         ui->customPlot->setSelectionRectMode(QCP::srmNone);
         ui->customPlot->graph(0)->setSelectable(QCP::stNone);
         ui->customPlot->graph(1)->setSelectable(QCP::stNone);
@@ -1072,7 +1072,6 @@ void MainWindow::rulerToolTriggered()
         phaseTracer->setVisible(true);
         phaseTracerItemText->setVisible(true);
 
-
         ui->customPlot->replot();
         connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
         connect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
@@ -1080,10 +1079,15 @@ void MainWindow::rulerToolTriggered()
     else{
         qDebug() << "Ruler Tool: un-toggled";
         phaseTracer->setVisible(false);
+        qDebug() << "a";
         phaseTracerItemText->setVisible(false);
+        qDebug() << "b";
         ui->customPlot->replot();
+        qDebug() << "c";
         disconnect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
+        qDebug() << "d";
         disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
+        qDebug() << "e";
     }
 }
 
@@ -1103,6 +1107,14 @@ void MainWindow::bluetoothToolTriggered() {
 
         QString p_stdout = p.readAllStandardOutput();
         qDebug() << p_stdout << endl;
+
+        QProcess myProcess;
+        myProcess.start(QString("C:/Program Files/MATLAB/R2016b/bin/matlab.exe"), QStringList() << QString("-r C:/Users/Asussy/Documents/GitHub/emory-plm/Octave/isLM.m") << QString("-nosplash") << QString("nodesktop"));
+        QByteArray s = myProcess.readAllStandardOutput();
+        QByteArray b = myProcess.readAllStandardError();
+
+//        octaveinvoker *octave = new octaveinvoker();
+//        selectionStructure yay = octave->callOctave();
 
     }
     else{
