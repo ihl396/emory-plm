@@ -43,11 +43,11 @@ void MainWindow::createActions() {
     openAct = new QAction(QIcon(":/resources/toolbar/openRawDataFile.png"), tr("&Open Raw Data File"), this);
     openAct->setShortcuts(QKeySequence::Open);
     openAct->setStatusTip(tr("Open a file"));
-    saveAct = new QAction(QIcon(":/resources/toolbar/saveFile.png"), tr("&Save File"), this);
+    saveAct = new QAction(QIcon(":/resources/toolbar/saveFile.png"), tr("&Save Markers"), this);
     saveAct->setShortcuts(QKeySequence::Save);
-    saveAct->setStatusTip(tr("Save a file"));
+    saveAct->setStatusTip(tr("Save Markers"));
     connect(openAct, &QAction::triggered, this, &MainWindow::open);
-    /// connect(saveAct, &QAction::triggered, this, &MainWindow::save);
+    connect(saveAct, &QAction::triggered, this, &MainWindow::save);
 
     // Edit Menu Actions
     graphViewPreferencesAct = new QAction(tr("Graph View Preferences"));
@@ -56,7 +56,7 @@ void MainWindow::createActions() {
     connect(labelPreferencesAct, &QAction::triggered, this, &MainWindow::openSetupWindow);
 
     // Bluetooth Menu Actions
-    setupBluetoothAct = new QAction(tr("Setup Bluetooth"));
+    setupBluetoothAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Setup Bluetooth"));
     connect(setupBluetoothAct, &QAction::triggered, this, &MainWindow::openBluetoothWindow);
 
 
@@ -65,14 +65,22 @@ void MainWindow::createActions() {
     selectToolAct = new QAction(QIcon(":/resources/toolbar/selectTool.png"), tr("Select Tool"), this);
     //labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
     rulerToolAct = new QAction(QIcon(":/resources/toolbar/rulerTool.png"), tr("Ruler Tool"), this);
+<<<<<<< HEAD
     bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Bluetooth Tool"), this);
     algorithmToolAct = new QAction(QIcon(":/resources/toolbar/play.png"), tr("Algorithm Tool"), this);
+=======
+    bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Setup Bluetooth"), this);
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     handToolAct->setCheckable(true);
     selectToolAct->setCheckable(true);
     //labelToolAct->setCheckable(true);
     rulerToolAct->setCheckable(true);
+<<<<<<< HEAD
     bluetoothToolAct->setCheckable(true);
     algorithmToolAct->setCheckable(true);
+=======
+    bluetoothToolAct->setCheckable(false);
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     handToolAct->setShortcut(QKeySequence("H"));
     selectToolAct->setShortcut(QKeySequence("S"));
     //labelToolAct->setShortcut(QKeySequence("L"));
@@ -83,8 +91,12 @@ void MainWindow::createActions() {
     //labelToolAct->setStatusTip(tr("Label Tool"));
     rulerToolAct->setStatusTip(tr("Ruler Tool"));
     bluetoothToolAct->setStatusTip(tr("Bluetooth Tool"));
+<<<<<<< HEAD
     algorithmToolAct->setStatusTip(tr("Algorithm Tool"));
     connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
+=======
+    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::openBluetoothWindow);
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -208,8 +220,12 @@ void MainWindow::createMenus() {
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
+<<<<<<< HEAD
     connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
     connect(algorithmToolAct, &QAction::triggered, this, &MainWindow::algorithmToolTriggered);
+=======
+    //connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -345,7 +361,6 @@ void MainWindow::open()
         scaledMovement = sWindow->getSliderScaledMovement();
         sWindow->getGraphViewer(graphViewer);
 
-        firstRun = false;
         // Defaults to Hand Tool when file is opened
 
         phaseTracerItemText = new QCPItemText(ui->customPlot);
@@ -364,6 +379,8 @@ void MainWindow::open()
             selection_structure = csvReader.exportSelections(selection_structure);
             emit loadSelections();
         }
+
+        firstRun = false;
 
         phaseTracer = new QCPItemTracer(ui->customPlot);
         phaseTracer->setGraph(ui->customPlot->graph(3));
@@ -409,6 +426,24 @@ void MainWindow::openBluetoothWindow()
     bTWindow->exec();
 }
 
+void MainWindow::save()
+{
+    QMessageBox::StandardButton reply = QMessageBox::No;
+    if (newMarkerLabelCreated)
+    {
+        reply = QMessageBox::question(this, "Confirm", "Do you want to save changes? All unsaved changes will be lost.", QMessageBox::Yes|QMessageBox::No);
+    }
+
+    if (reply == QMessageBox::Yes)
+    {
+        newMarkerLabelCreated = false;
+        saveAct->setEnabled(false);
+
+        emit saveMarkers();
+        emit saveSelections();
+    }
+}
+
 /*void MainWindow::setCustomPlotChanges()
 {
     scaledMovement = sWindow->getSliderScaledMovement();
@@ -452,12 +487,12 @@ void MainWindow::saveSelections()
 
             QTextStream stream( &outputFile );
             for (int i = 0; i < selection_structure.xAxisKeyMin.length()-1; i++) {
-                stream << selection_structure.xAxisKeyMin[i] << "," << selection_structure.xAxisKeyMax[i] << "," << selection_structure.xAxisValueMin[i] << "," << selection_structure.xAxisValueMax[i] << ",";
+                stream << selection_structure.xAxisKeyMin[i] << "," << selection_structure.xAxisKeyMax[i] << "," << selection_structure.xAxisValueMin[i] << "," << selection_structure.xAxisValueMax[i] << "," << selection_structure.colorIndex[i] << "," << selection_structure.labelText[i] << ",";
                 //qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
             }
 
             if (!selection_structure.xAxisKeyMax.isEmpty()) {
-                stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1];
+                stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.colorIndex[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.labelText[selection_structure.xAxisKeyMin.length()-1];
             }
         }
     }
@@ -475,11 +510,30 @@ void MainWindow::loadMarkers() {
 void MainWindow::loadSelections() {
     for (int i = 0; i < selection_structure.xAxisKeyMax.length(); i++) {
         rect = new QCPItemRect(ui->customPlot);
-        rect->setBrush(QColor(225, 0, 0, 30));
-        rect->setPen(QColor(225, 0, 0, 30));
+        qDebug() << "color index = " << selection_structure.colorIndex[i];
+        rect->setBrush(sWindow->getLabelColor(selection_structure.colorIndex[i]));
+        rect->setPen(sWindow->getLabelColor(selection_structure.colorIndex[i]));
         rect->setSelected(false);
-        rect->topLeft->setCoords(selection_structure.xAxisKeyMin[i], floor(selection_structure.xAxisValueMin[i]));
-        rect->bottomRight->setCoords(selection_structure.xAxisKeyMax[i], ceil(selection_structure.xAxisValueMax[i]));
+        double valueMaxScale;//= ceil(xAxisValueMax)+1;
+        if (ceil(selection_structure.xAxisValueMax[i]) + 1 >= sWindow->getSliderValueMax())
+        {
+            valueMaxScale = 0;
+        }
+        else
+        {
+            valueMaxScale = 1;
+        }
+        double valueMinScale = floor(xAxisValueMin)-1;
+        if (floor(selection_structure.xAxisValueMin[i]) - 1 <= sWindow->getSliderValueMin())
+        {
+            valueMinScale = 0;
+        }
+        else
+        {
+            valueMinScale = -1;
+        }
+        rect->topLeft->setCoords(selection_structure.xAxisKeyMin[i], ceil(selection_structure.xAxisValueMax[i]) + valueMaxScale);
+        rect->bottomRight->setCoords(selection_structure.xAxisKeyMax[i], floor(selection_structure.xAxisValueMin[i]) + valueMinScale);
         rect->setXKeyMin(selection_structure.xAxisKeyMin[i]);
         rect->setXKeyMax(selection_structure.xAxisKeyMax[i]);
         rect->setXValueMin(selection_structure.xAxisValueMin[i]);
@@ -488,9 +542,9 @@ void MainWindow::loadSelections() {
         labelText->setParent(rect);
         labelText->setSelectable(false);
         labelText->setObjectName("lText");
-        labelText->setText("Leg Up");
+        labelText->setText(selection_structure.labelText[i]);
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, selection_structure.xAxisValueMax[i]);
+        labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, selection_structure.xAxisValueMax[i] + valueMaxScale);
         ui->customPlot->replot();
     }
     ui->customPlot->replot();
@@ -537,8 +591,12 @@ void MainWindow::disableToolBar()
     selectToolAct->setEnabled(false);
     //labelToolAct->setEnabled(false);
     rulerToolAct->setEnabled(false);
+<<<<<<< HEAD
     bluetoothToolAct->setEnabled(false);
     algorithmToolAct->setEnabled(false);
+=======
+    saveAct->setEnabled(false);
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     viewSelectionShortcut->setEnabled(false);
     labelSelectionShortcut->setEnabled(false);
     rescaleViewShortcut->setEnabled(false);
@@ -654,6 +712,8 @@ void MainWindow::labelSelection()
             || zGraphSelection.dataPointCount() !=0 || nGraphSelection.dataPointCount() !=0)
     {
         emit getSelectionValues();
+        newMarkerLabelCreated = true;
+        saveAct->setEnabled(true);
         rect = new QCPItemRect(ui->customPlot);
         //QString redstr = popupData[0];QString greenstr = popupData[1];QString bluestr = popupData[2];
         //int red = redstr.toInt();int green = greenstr.toInt();int blue = bluestr.toInt();
@@ -663,12 +723,32 @@ void MainWindow::labelSelection()
         rect->setPen(sWindow->getLabelColor());
         rect->setSelected(false);
         /// NEED TO SAVE THESE COORDINATES SOMEWHERE TO SAVE
-        rect->topLeft->setCoords(xAxisKeyMin, floor(xAxisValueMin));
-        rect->bottomRight->setCoords(xAxisKeyMax, ceil(xAxisValueMax));
+        double valueMaxScale;//= ceil(xAxisValueMax)+1;
+        if (valueMaxScale >= sWindow->getSliderValueMax())
+        {
+            valueMaxScale = 0;
+        }
+        else
+        {
+            valueMaxScale = 1;
+        }
+        double valueMinScale = floor(xAxisValueMin)-1;
+        if (valueMinScale <= sWindow->getSliderValueMin())
+        {
+            valueMinScale = 0;
+        }
+        else
+        {
+            valueMinScale = -1;
+        }
+        rect->topLeft->setCoords(xAxisKeyMin, ceil(xAxisValueMax) + valueMaxScale);
+        rect->bottomRight->setCoords(xAxisKeyMax, floor(xAxisValueMin) + valueMinScale);
         selection_structure.xAxisKeyMin.append(xAxisKeyMin);
         selection_structure.xAxisKeyMax.append(xAxisKeyMax);
         selection_structure.xAxisValueMin.append(xAxisValueMin);
         selection_structure.xAxisValueMax.append(xAxisValueMax);
+        selection_structure.colorIndex.append(sWindow->getLabelColorIndex());
+        selection_structure.labelText.append(sWindow->getLabelText());
         rect->setXKeyMin(xAxisKeyMin);
         rect->setXKeyMax(xAxisKeyMax);
         rect->setXValueMin(xAxisValueMin);
@@ -680,7 +760,7 @@ void MainWindow::labelSelection()
         labelText->setObjectName("lText");
         labelText->setText(sWindow->getLabelText());
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
-        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, xAxisValueMax);
+        labelText->position->setCoords((xAxisKeyMin+xAxisKeyMax)/2, xAxisValueMax + valueMaxScale);
         /// DO WE NEED TO LABEL THESE SECTIONS?
         ui->customPlot->replot();
         xGraphSelection.clear();
@@ -728,6 +808,11 @@ void MainWindow::clickedGraph(QMouseEvent *event)
 /// COULD CHANGE markerID TO BE AN ENUM
 void MainWindow::createMarker(double ID)
 {
+    if (!firstRun)
+    {
+        newMarkerLabelCreated = true;
+        saveAct->setEnabled(true);
+    }
     switch((int)ID)
     {
         case 0: markerUP = new QCPItemPixmap(ui->customPlot);
@@ -1022,12 +1107,19 @@ void MainWindow::handToolTriggered()
     if (handToolAct->isChecked() == true){
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+<<<<<<< HEAD
         bluetoothToolAct->setChecked(false);
         algorithmToolAct->setChecked(false);
         emit markerToolTriggered();
         emit rulerToolTriggered();
         emit bluetoothToolTriggered();
         emit algorithmToolTriggered();
+=======
+        //bluetoothToolAct->setChecked(false);
+        emit markerToolTriggered();
+        emit rulerToolTriggered();
+        //emit bluetoothToolTriggered();
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -1040,12 +1132,19 @@ void MainWindow::markerToolTriggered()
     if (selectToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+<<<<<<< HEAD
         bluetoothToolAct->setChecked(false);
         algorithmToolAct->setChecked(false);
         emit handToolTriggered();
         emit rulerToolTriggered();
         emit bluetoothToolTriggered();
         emit algorithmToolTriggered();
+=======
+        //bluetoothToolAct->setChecked(false);
+        emit handToolTriggered();
+        emit rulerToolTriggered();
+        //emit bluetoothToolTriggered();
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
         qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
@@ -1129,7 +1228,7 @@ void MainWindow::rulerToolTriggered()
     }
 }
 
-void MainWindow::bluetoothToolTriggered() {
+/*void MainWindow::bluetoothToolTriggered() {
     if (bluetoothToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         selectToolAct->setChecked(false);
@@ -1163,7 +1262,7 @@ void MainWindow::bluetoothToolTriggered() {
     else{
         qDebug() << "Bluetooth tool: un-toggled";
     }
-}
+}*/
 
 void MainWindow::algorithmToolTriggered()
 {
@@ -1194,7 +1293,16 @@ void MainWindow::algorithmToolTriggered()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     qDebug() << "CLOSING";
-    QMainWindow::closeEvent(event);
-    emit saveMarkers();
-    emit saveSelections();
+    //QMainWindow::closeEvent(event);
+    QMessageBox::StandardButton reply = QMessageBox::No;
+    if (newMarkerLabelCreated)
+    {
+        reply = QMessageBox::question(this, "Confirm", "Do you want to save changes? All unsaved changes will be lost.", QMessageBox::Yes|QMessageBox::No);
+    }
+
+    if (reply == QMessageBox::Yes)
+    {
+        emit saveMarkers();
+        emit saveSelections();
+    }
 }

@@ -37,6 +37,8 @@ public:
     // Label Getter Methods
     QString getLabelText();
     QColor getLabelColor();
+    QColor getLabelColor(int index);
+    int getLabelColorIndex();
 
     int initArrowMovementValue;
     int initKeyScalingValue;

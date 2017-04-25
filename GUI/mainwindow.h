@@ -37,6 +37,7 @@ private slots:
     void open();
     void openSetupWindow();
     void openBluetoothWindow();
+    void save();
     void saveMarkers();
     void saveSelections();
     void loadMarkers();
@@ -44,8 +45,12 @@ private slots:
     void handToolTriggered();
     void markerToolTriggered();
     void rulerToolTriggered();
+<<<<<<< HEAD
     void bluetoothToolTriggered();
     void algorithmToolTriggered();
+=======
+    //void bluetoothToolTriggered();
+>>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
     void addMarkerUp();
@@ -150,6 +155,7 @@ private:
     void getSelectionValues();//QCPDataSelection selection, int graphNum);
     void setMinMax(QList<double> keys, QList<double> values);
     bool firstSelectionCheck;
+    bool newMarkerLabelCreated = false;
     double xAxisKeyMin;
     double xAxisKeyMax;
     double xAxisValueMin;

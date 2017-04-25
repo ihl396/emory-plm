@@ -229,24 +229,40 @@ void CsvReader::importSelections(QString input) {
         QChar character;
         QTextStream textStream(&data);
         QVector<double> row;
+        QVector<int> intRow;
+        QVector<QString> qStringRow;
         int count = 0;
 
         while (!textStream.atEnd()) {
             textStream >> character;
-            if ((character == ',') & (count != 3)) {
+            if ((character == ',') & (count == 4)) {
+                intRow.push_back(temp.toInt());
+                selectionIntArray.push_back(intRow);
+                intRow.clear();
+                checkString(temp, character);
+                count++;
+            } else if ((character == ',') & (count == 5)) {
+                qStringRow.push_back(QString(temp));
+                selectionQStringArray.push_back(qStringRow);
+                qStringRow.clear();
+                checkString(temp, character);
+                count = 0;
+            } else if ((character == ',') & (count != 3)) {
                 row.push_back(temp.toDouble());
                 checkString(temp, character);
                 count++;
             } else if ((character == ',') & (count == 3)) {
                 row.push_back(temp.toDouble());
-                selectionArray.push_back(row);
+                selectionDoubleArray.push_back(row);
                 row.clear();
                 checkString(temp, character);
-                count = 0;
-            } else if (textStream.atEnd()) {
+                count++;
+            }
+            else if (textStream.atEnd()) {
                 temp.append(character);
-                row.push_back(temp.toDouble());
-                selectionArray.push_back(row);
+                qStringRow.push_back(QString(temp));
+                selectionQStringArray.push_back(qStringRow);
+                qStringRow.clear();
                 checkString(temp);
             } else {
                 temp.append(character);
@@ -257,21 +273,27 @@ void CsvReader::importSelections(QString input) {
 }
 
 selectionStructure CsvReader::exportSelections(selectionStructure structure) {
-    for (int i = 0; i < selectionArray.size(); i++) {
-        for (int j = 0; j < selectionArray[0].size(); j++) {
+    for (int i = 0; i < selectionDoubleArray.size(); i++) {
+        for (int j = 0; j < selectionDoubleArray[0].size() + 2; j++) {
            //deb << dataArray[i][j];
            if (j == 0) {
-               structure.xAxisKeyMin.append(selectionArray[i][j]);
+               structure.xAxisKeyMin.append(selectionDoubleArray[i][j]);
                //deb << dataArray[i][j];
            }
            else if (j == 3) {
-               structure.xAxisValueMax.append((selectionArray[i][j]));
+               structure.xAxisValueMax.append((selectionDoubleArray[i][j]));
            }
            else if (j == 2) {
-               structure.xAxisValueMin.append((selectionArray[i][j]));
+               structure.xAxisValueMin.append((selectionDoubleArray[i][j]));
            }
            else if (j == 1) {
-               structure.xAxisKeyMax.append((selectionArray[i][j]));
+               structure.xAxisKeyMax.append((selectionDoubleArray[i][j]));
+           }
+           else if (j == 4) {
+               structure.colorIndex.append((selectionIntArray[i][0]));
+           }
+           else if (j == 5) {
+               structure.labelText.append((selectionQStringArray[i][0]));
            }
         }
       //qDebug() << "------------";
