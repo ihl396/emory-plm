@@ -42,6 +42,7 @@ private slots:
     void saveSelections();
     void loadMarkers();
     void loadSelections();
+    void algorithmSelections(selectionStructure);
     void handToolTriggered();
     void markerToolTriggered();
     void rulerToolTriggered();
@@ -75,6 +76,7 @@ private:
     //GraphViewer graphViewer(Ui::MainWindow, Ui::SetupWindow);
     class BluetoothWindow *bTWindow;
     struct DataStructure data_structure;
+    struct selectionStructure algorithm_structure;
     class SetupWindow *sWindow;
     class GraphViewer *graphViewer;
     void createActions();

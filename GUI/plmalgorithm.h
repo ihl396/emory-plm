@@ -17,7 +17,7 @@ class plmalgorithm
         void setOctaveFileLocation(QString);
         selectionStructure generateSelections();
         QVector<QVector<double>> isLM();
-        QVector<QVector<double>> isPLM(QVector<QVector<double>>);
+        selectionStructure isPLM(QVector<QVector<double>>);
     private:
         double onset;
         double decay;
