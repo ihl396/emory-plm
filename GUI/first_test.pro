@@ -32,14 +32,8 @@ HEADERS  += \
     markup.h \
     bluetoothwindow.h \
     setupwindow.h \
-<<<<<<< HEAD
-    plmalgorithm.h
-=======
-    bluetoothwindow.h \
-    ui_bluetoothwindow.h \
-    ui_mainwindow.h \
-    ui_setupwindow.h
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
+    plmalgorithm.h \
+    bluetoothwindow.h
 
 FORMS    += \
     mainwindow.ui \

@@ -45,12 +45,8 @@ private slots:
     void handToolTriggered();
     void markerToolTriggered();
     void rulerToolTriggered();
-<<<<<<< HEAD
     void bluetoothToolTriggered();
     void algorithmToolTriggered();
-=======
-    //void bluetoothToolTriggered();
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
     void addMarkerUp();
@@ -88,7 +84,6 @@ private:
     bool fileExists(QString);
     Ui::MainWindow *ui;
     QStandardItemModel *model;
-    struct DataStructure data_structure;
     bool firstRun;
     QMenu *fileMenu;
     QAction *openAct;

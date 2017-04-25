@@ -65,22 +65,14 @@ void MainWindow::createActions() {
     selectToolAct = new QAction(QIcon(":/resources/toolbar/selectTool.png"), tr("Select Tool"), this);
     //labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
     rulerToolAct = new QAction(QIcon(":/resources/toolbar/rulerTool.png"), tr("Ruler Tool"), this);
-<<<<<<< HEAD
     bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Bluetooth Tool"), this);
     algorithmToolAct = new QAction(QIcon(":/resources/toolbar/play.png"), tr("Algorithm Tool"), this);
-=======
-    bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Setup Bluetooth"), this);
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     handToolAct->setCheckable(true);
     selectToolAct->setCheckable(true);
     //labelToolAct->setCheckable(true);
     rulerToolAct->setCheckable(true);
-<<<<<<< HEAD
     bluetoothToolAct->setCheckable(true);
     algorithmToolAct->setCheckable(true);
-=======
-    bluetoothToolAct->setCheckable(false);
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     handToolAct->setShortcut(QKeySequence("H"));
     selectToolAct->setShortcut(QKeySequence("S"));
     //labelToolAct->setShortcut(QKeySequence("L"));
@@ -91,12 +83,8 @@ void MainWindow::createActions() {
     //labelToolAct->setStatusTip(tr("Label Tool"));
     rulerToolAct->setStatusTip(tr("Ruler Tool"));
     bluetoothToolAct->setStatusTip(tr("Bluetooth Tool"));
-<<<<<<< HEAD
     algorithmToolAct->setStatusTip(tr("Algorithm Tool"));
     connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
-=======
-    connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::openBluetoothWindow);
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
 
     // Right Click Actions
     viewSelectionAct = new QAction(tr("&View Selection"), this);
@@ -220,12 +208,9 @@ void MainWindow::createMenus() {
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
-<<<<<<< HEAD
     connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
     connect(algorithmToolAct, &QAction::triggered, this, &MainWindow::algorithmToolTriggered);
-=======
-    //connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
+
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -591,12 +576,9 @@ void MainWindow::disableToolBar()
     selectToolAct->setEnabled(false);
     //labelToolAct->setEnabled(false);
     rulerToolAct->setEnabled(false);
-<<<<<<< HEAD
     bluetoothToolAct->setEnabled(false);
     algorithmToolAct->setEnabled(false);
-=======
     saveAct->setEnabled(false);
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
     viewSelectionShortcut->setEnabled(false);
     labelSelectionShortcut->setEnabled(false);
     rescaleViewShortcut->setEnabled(false);
@@ -1107,19 +1089,12 @@ void MainWindow::handToolTriggered()
     if (handToolAct->isChecked() == true){
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
-<<<<<<< HEAD
         bluetoothToolAct->setChecked(false);
         algorithmToolAct->setChecked(false);
         emit markerToolTriggered();
         emit rulerToolTriggered();
         emit bluetoothToolTriggered();
         emit algorithmToolTriggered();
-=======
-        //bluetoothToolAct->setChecked(false);
-        emit markerToolTriggered();
-        emit rulerToolTriggered();
-        //emit bluetoothToolTriggered();
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -1132,19 +1107,12 @@ void MainWindow::markerToolTriggered()
     if (selectToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
-<<<<<<< HEAD
         bluetoothToolAct->setChecked(false);
         algorithmToolAct->setChecked(false);
         emit handToolTriggered();
         emit rulerToolTriggered();
         emit bluetoothToolTriggered();
         emit algorithmToolTriggered();
-=======
-        //bluetoothToolAct->setChecked(false);
-        emit handToolTriggered();
-        emit rulerToolTriggered();
-        //emit bluetoothToolTriggered();
->>>>>>> 16bc736148aa61690765f3a6b416a91b714aaca4
         qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
@@ -1228,41 +1196,41 @@ void MainWindow::rulerToolTriggered()
     }
 }
 
-/*void MainWindow::bluetoothToolTriggered() {
-    if (bluetoothToolAct->isChecked() == true){
-        handToolAct->setChecked(false);
-        selectToolAct->setChecked(false);
-        rulerToolAct->setChecked(false);
-        algorithmToolAct->setChecked(false);
-        emit handToolTriggered();
-        emit markerToolTriggered();
-        emit rulerToolTriggered();
-        emit algorithmToolTriggered();
-        qDebug() << "Bluetooth Tool: toggled";
+void MainWindow::bluetoothToolTriggered() {
+//    if (bluetoothToolAct->isChecked() == true){
+//        handToolAct->setChecked(false);
+//        selectToolAct->setChecked(false);
+//        rulerToolAct->setChecked(false);
+//        algorithmToolAct->setChecked(false);
+//        emit handToolTriggered();
+//        emit markerToolTriggered();
+//        emit rulerToolTriggered();
+//        emit algorithmToolTriggered();
+//        qDebug() << "Bluetooth Tool: toggled";
 
-        QProcess p;
-        p.setProcessChannelMode(QProcess::MergedChannels);
-        QStringList params;
-        QString exe = "python C:/Users/Asussy/Desktop/EmoryPLM/bluetooth/test.py";
-        p.start(exe);
-        p.waitForReadyRead();
+//        QProcess p;
+//        p.setProcessChannelMode(QProcess::MergedChannels);
+//        QStringList params;
+//        QString exe = "python C:/Users/Asussy/Desktop/EmoryPLM/bluetooth/test.py";
+//        p.start(exe);
+//        p.waitForReadyRead();
 
-        QString p_stdout = p.readAllStandardOutput();
-        qDebug() << p_stdout << endl;
+//        QString p_stdout = p.readAllStandardOutput();
+//        qDebug() << p_stdout << endl;
 
-        QProcess myProcess;
-        myProcess.start(QString("C:/Program Files/MATLAB/R2016b/bin/matlab.exe"), QStringList() << QString("-r C:/Users/Asussy/Documents/GitHub/emory-plm/Octave/isLM.m") << QString("-nosplash") << QString("nodesktop"));
-        QByteArray s = myProcess.readAllStandardOutput();
-        QByteArray b = myProcess.readAllStandardError();
+//        QProcess myProcess;
+//        myProcess.start(QString("C:/Program Files/MATLAB/R2016b/bin/matlab.exe"), QStringList() << QString("-r C:/Users/Asussy/Documents/GitHub/emory-plm/Octave/isLM.m") << QString("-nosplash") << QString("nodesktop"));
+//        QByteArray s = myProcess.readAllStandardOutput();
+//        QByteArray b = myProcess.readAllStandardError();
 
-//        octaveinvoker *octave = new octaveinvoker();
-//        selectionStructure yay = octave->callOctave();
+////        octaveinvoker *octave = new octaveinvoker();
+////        selectionStructure yay = octave->callOctave();
 
-    }
-    else{
-        qDebug() << "Bluetooth tool: un-toggled";
-    }
-}*/
+//    }
+//    else{
+//        qDebug() << "Bluetooth tool: un-toggled";
+//    }
+}
 
 void MainWindow::algorithmToolTriggered()
 {
