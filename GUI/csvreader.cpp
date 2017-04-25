@@ -137,7 +137,24 @@ DataStructure CsvReader::exportData(DataStructure structure) {
       //qDebug() << "------------";
     }
 
-    structure.time_values = timeArray;
+    QVector<double> time_values;
+
+    const QString sformat="hh:mm:ss:zzz"; //Generate Date
+
+    for (int i = 0; i < timeArray.length(); i++) {
+        QString singleTime = timeArray.at(i);
+        singleTime = singleTime.right(singleTime.length()-3);
+        int ind = singleTime.lastIndexOf(":");
+        double ticks = (255 - (singleTime.right(singleTime.length()-ind-1).toDouble()))/255;
+        QString manipulated = singleTime.left(ind);
+        manipulated.append(":");
+        manipulated.append(QString::number(ticks).mid(2, 3));
+
+        double timeSeconds = QCPAxisTickerDateTime::dateTimeToKey(QDateTime(QDate::fromString("20170421", "yyyyMMdd"),QTime::fromString(manipulated, sformat)));
+        time_values.append(timeSeconds);
+    }
+
+    structure.time_values = time_values;
 
     for (int i = 0; i < structure.x_acc_values.size(); i++) {
         double magnitude = sqrt(pow(structure.x_acc_values[i],2) + pow(structure.y_acc_values[i],2) + pow(structure.z_acc_values[i],2));
@@ -145,26 +162,6 @@ DataStructure CsvReader::exportData(DataStructure structure) {
         //qDebug() << magnitude;
     }
 
-
-//        QString path = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude.txt";
-//        QString path2 = "C:/Users/Asussy/Documents/GitHub/emory-plm/Test Data/log_magnitude_times.txt";
-//        QFile outputFile(path);
-//        QFile outputFile2(path2);
-//        outputFile.resize(0);
-//        outputFile2.resize(0);
-
-//        if (outputFile.open(QIODevice::ReadWrite) && outputFile2.open(QIODevice::ReadWrite)) {
-
-//            QTextStream stream( &outputFile );
-//            QTextStream stream2( &outputFile2);
-//            for (int i = 0; i < structure.magnitude_values.length()-1; i++) {
-//                stream << structure.magnitude_values.at(i) << ",";
-//                stream2 << structure.time_values.at(i) << ",";
-//            }
-
-//            stream << structure.magnitude_values.at(structure.magnitude_values.length()-1);
-//            stream2 << structure.time_values.at(structure.time_values.length()-1);
-//        }
 
     return structure;
 }

@@ -8,6 +8,9 @@
 #include <QList>
 #include "datastructure.h"
 #include <QDebug>
+#include <QTime>
+#include <QDateTime>
+#include "qcustomplot.h"
 
 using namespace std;
 

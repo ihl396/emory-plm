@@ -15,7 +15,7 @@ class GraphViewer {
     bool first_time;
 public:
     GraphViewer(Ui::MainWindow *ui = 0, SetupWindow *sWin = 0);
-    void createGraph(QVector<QString>, QVector<double>, QVector<double>, QVector<double>, QVector<double>);
+    void createGraph(QVector<double>, QVector<double>, QVector<double>, QVector<double>, QVector<double>);
     void setFirstTime(bool);
 
     double getGraphKeyMin();

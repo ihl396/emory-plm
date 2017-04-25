@@ -8,7 +8,7 @@ GraphViewer::GraphViewer(Ui::MainWindow *input, SetupWindow *sWin) {
     setupWindow_ui = sWin;
 }
 
-void GraphViewer::createGraph(QVector<QString> fixThis, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
+void GraphViewer::createGraph(QVector<double> time_values, QVector<double> x_acc_values, QVector<double> y_acc_values, QVector<double> z_acc_values, QVector<double> normalized_values) {
 
     if (first_time) {
         main_window_ui->customPlot->addGraph();
@@ -16,22 +16,6 @@ void GraphViewer::createGraph(QVector<QString> fixThis, QVector<double> x_acc_va
         main_window_ui->customPlot->addGraph();
         main_window_ui->customPlot->addGraph();
         first_time = false;
-    }
-    QVector<double> time_values;
-
-    const QString sformat="hh:mm:ss:zzz"; //Generate Date
-
-    for (int i = 0; i < fixThis.length(); i++) {
-        QString singleTime = fixThis.at(i);
-        singleTime = singleTime.right(singleTime.length()-3);
-        int ind = singleTime.lastIndexOf(":");
-        double ticks = (255 - (singleTime.right(singleTime.length()-ind-1).toDouble()))/255;
-        QString manipulated = singleTime.left(ind);
-        manipulated.append(":");
-        manipulated.append(QString::number(ticks).mid(2, 3));
-
-        double timeSeconds = QCPAxisTickerDateTime::dateTimeToKey(QDateTime(QDate::fromString("20170421", "yyyyMMdd"),QTime::fromString(manipulated, sformat)));
-        time_values.append(timeSeconds);
     }
 
     QSharedPointer<QCPAxisTickerDateTime> dateTicker(new QCPAxisTickerDateTime);

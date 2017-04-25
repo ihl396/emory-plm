@@ -12,7 +12,7 @@
 #include "setupwindow.h"
 #include "graphviewer.h"
 #include "datastructure.h"
-#include "octaveinvoker.h"
+#include "plmalgorithm.h"
 #include <iostream>
 #include <fstream>
 #include <QFileInfo>
@@ -43,6 +43,7 @@ private slots:
     void markerToolTriggered();
     void rulerToolTriggered();
     void bluetoothToolTriggered();
+    void algorithmToolTriggered();
     void rightMousePress();
     void clickedGraph(QMouseEvent*);
     void addMarkerUp();
@@ -69,6 +70,7 @@ protected:
 
 private:
     //GraphViewer graphViewer(Ui::MainWindow, Ui::SetupWindow);
+    struct DataStructure data_structure;
     class SetupWindow *sWindow;
     class GraphViewer *graphViewer;
     void createActions();
@@ -98,6 +100,7 @@ private:
     QAction *labelToolAct;
     QAction *rulerToolAct;
     QAction *bluetoothToolAct;
+    QAction *algorithmToolAct;
     QMenu *rightClickMenu;
     double xKeyPos;
 

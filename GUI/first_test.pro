@@ -18,8 +18,8 @@ SOURCES += main.cpp\
     graphviewer.cpp \
     graph.cpp \
     markup.cpp \
-    octaveinvoker.cpp \
-    setupwindow.cpp
+    setupwindow.cpp \
+    plmalgorithm.cpp
 
 HEADERS  += \
     qcustomplot.h \
@@ -29,8 +29,8 @@ HEADERS  += \
     graphviewer.h \
     graph.h \
     markup.h \
-    octaveinvoker.h \
-    setupwindow.h
+    setupwindow.h \
+    plmalgorithm.h
 
 FORMS    += \
     mainwindow.ui \
