@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="graphViewPreferenceTab">
     <property name="font">
@@ -583,7 +583,7 @@
         </font>
        </property>
        <property name="editable">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
        <property name="currentText">
         <string/>

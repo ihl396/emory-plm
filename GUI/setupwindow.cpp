@@ -441,6 +441,37 @@ QColor SetupWindow::getLabelColor()
    return labelColor;
 }
 
+QColor SetupWindow::getLabelColor(int index)
+{
+   switch (index)
+   {
+   case RED:
+       labelColor = QColor(225, 0, 0, 30);
+       break;
+   case ORANGE:
+       labelColor = QColor(225, 153, 51, 30);
+       break;
+   case YELLOW:
+       labelColor = QColor(225, 255, 0, 30);
+       break;
+   case GREEN:
+       labelColor = QColor(0, 255, 0, 30);
+       break;
+   case BLUE:
+       labelColor = QColor(0, 0, 255, 30);
+       break;
+   case VIOLET:
+       labelColor = QColor(153, 51, 255, 30);
+       break;
+   }
+   return labelColor;
+}
+
+int SetupWindow::getLabelColorIndex()
+{
+    return ui->labelColorComboBox->currentIndex();
+}
+
 void SetupWindow::setCurrentTabIndex(int index)
 {
     ui->preferencesTabWidget->setCurrentIndex(index);

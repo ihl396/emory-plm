@@ -22,6 +22,8 @@ struct selectionStructure {
     QVector<double> xAxisKeyMax;
     QVector<double> xAxisValueMin;
     QVector<double> xAxisValueMax;
+    QVector<int> colorIndex;
+    QVector<QString> labelText;
 };
 
 #endif // DATASTRUCTURE_H
