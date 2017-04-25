@@ -15,7 +15,9 @@ class CsvReader {
 
     QVector<QVector<double>> dataArray;
     QVector<QVector<double>> markerArray;
-    QVector<QVector<double>> selectionArray;
+    QVector<QVector<double>> selectionDoubleArray;
+    QVector<QVector<int>> selectionIntArray;
+    QVector<QVector<QString>> selectionQStringArray;
     QList<QStandardItem*> standardItemList;
     QStandardItemModel *model;
 

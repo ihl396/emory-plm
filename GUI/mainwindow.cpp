@@ -465,12 +465,12 @@ void MainWindow::saveSelections()
 
             QTextStream stream( &outputFile );
             for (int i = 0; i < selection_structure.xAxisKeyMin.length()-1; i++) {
-                stream << selection_structure.xAxisKeyMin[i] << "," << selection_structure.xAxisKeyMax[i] << "," << selection_structure.xAxisValueMin[i] << "," << selection_structure.xAxisValueMax[i] << ",";
+                stream << selection_structure.xAxisKeyMin[i] << "," << selection_structure.xAxisKeyMax[i] << "," << selection_structure.xAxisValueMin[i] << "," << selection_structure.xAxisValueMax[i] << "," << selection_structure.colorIndex[i] << "," << selection_structure.labelText[i] << ",";
                 //qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
             }
 
             if (!selection_structure.xAxisKeyMax.isEmpty()) {
-                stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1];
+                stream << selection_structure.xAxisKeyMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisKeyMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMin[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.xAxisValueMax[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.colorIndex[selection_structure.xAxisKeyMin.length()-1] << "," << selection_structure.labelText[selection_structure.xAxisKeyMin.length()-1];
             }
         }
     }
@@ -488,8 +488,9 @@ void MainWindow::loadMarkers() {
 void MainWindow::loadSelections() {
     for (int i = 0; i < selection_structure.xAxisKeyMax.length(); i++) {
         rect = new QCPItemRect(ui->customPlot);
-        rect->setBrush(QColor(225, 0, 0, 30));
-        rect->setPen(QColor(225, 0, 0, 30));
+        qDebug() << "color index = " << selection_structure.colorIndex[i];
+        rect->setBrush(sWindow->getLabelColor(selection_structure.colorIndex[i]));
+        rect->setPen(sWindow->getLabelColor(selection_structure.colorIndex[i]));
         rect->setSelected(false);
         double valueMaxScale;//= ceil(xAxisValueMax)+1;
         if (ceil(selection_structure.xAxisValueMax[i]) + 1 >= sWindow->getSliderValueMax())
@@ -519,7 +520,7 @@ void MainWindow::loadSelections() {
         labelText->setParent(rect);
         labelText->setSelectable(false);
         labelText->setObjectName("lText");
-        labelText->setText("Leg Up");
+        labelText->setText(selection_structure.labelText[i]);
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, selection_structure.xAxisValueMax[i] + valueMaxScale);
         ui->customPlot->replot();
@@ -718,6 +719,8 @@ void MainWindow::labelSelection()
         selection_structure.xAxisKeyMax.append(xAxisKeyMax);
         selection_structure.xAxisValueMin.append(xAxisValueMin);
         selection_structure.xAxisValueMax.append(xAxisValueMax);
+        selection_structure.colorIndex.append(sWindow->getLabelColorIndex());
+        selection_structure.labelText.append(sWindow->getLabelText());
         rect->setXKeyMin(xAxisKeyMin);
         rect->setXKeyMax(xAxisKeyMax);
         rect->setXValueMin(xAxisValueMin);
