@@ -448,6 +448,7 @@ void MainWindow::saveMarkers()
         if (outputFile.open(QIODevice::ReadWrite)) {
 
             QTextStream stream( &outputFile );
+            stream.setRealNumberPrecision(16);
             for (int i = 0; i < marker_structure.keyPosition.length()-1; i++) {
                 stream << marker_structure.keyPosition[i] << "," << marker_structure.id[i] << ",";
                 qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
@@ -471,6 +472,8 @@ void MainWindow::saveSelections()
         if (outputFile.open(QIODevice::ReadWrite)) {
 
             QTextStream stream( &outputFile );
+            stream.setRealNumberPrecision(16);
+
             for (int i = 0; i < selection_structure.xAxisKeyMin.length()-1; i++) {
                 stream << selection_structure.xAxisKeyMin[i] << "," << selection_structure.xAxisKeyMax[i] << "," << selection_structure.xAxisValueMin[i] << "," << selection_structure.xAxisValueMax[i] << "," << selection_structure.colorIndex[i] << "," << selection_structure.labelText[i] << ",";
                 //qDebug() << marker_structure.keyPosition[i] << "," << marker_structure.id[i];
@@ -517,12 +520,12 @@ void MainWindow::loadSelections() {
         {
             valueMinScale = -1;
         }
-        rect->topLeft->setCoords(selection_structure.xAxisKeyMin[i], ceil(selection_structure.xAxisValueMax[i]) + valueMaxScale);
-        rect->bottomRight->setCoords(selection_structure.xAxisKeyMax[i], floor(selection_structure.xAxisValueMin[i]) + valueMinScale);
+        rect->topLeft->setCoords(selection_structure.xAxisKeyMin[i], sWindow->getSliderValueMax());
+        rect->bottomRight->setCoords(selection_structure.xAxisKeyMax[i], sWindow->getSliderValueMin());
         rect->setXKeyMin(selection_structure.xAxisKeyMin[i]);
         rect->setXKeyMax(selection_structure.xAxisKeyMax[i]);
-        rect->setXValueMin(selection_structure.xAxisValueMin[i]);
-        rect->setXValueMax(selection_structure.xAxisValueMax[i]);
+        rect->setXValueMin(sWindow->getSliderValueMin());
+        rect->setXValueMax(sWindow->getSliderValueMax());
         labelText = new QCPItemText(ui->customPlot);
         labelText->setParent(rect);
         labelText->setSelectable(false);
@@ -530,6 +533,32 @@ void MainWindow::loadSelections() {
         labelText->setText(selection_structure.labelText[i]);
         labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
         labelText->position->setCoords((selection_structure.xAxisKeyMin[i]+selection_structure.xAxisKeyMax[i])/2, selection_structure.xAxisValueMax[i] + valueMaxScale);
+        ui->customPlot->replot();
+    }
+    ui->customPlot->replot();
+}
+
+void MainWindow::algorithmSelections(selectionStructure algorithmStruct) {
+    for (int i = 0; i < algorithmStruct.xAxisKeyMin.length(); i++) {
+        rect = new QCPItemRect(ui->customPlot);
+        qDebug() << "color index = " << algorithmStruct.colorIndex[i];
+        rect->setBrush(sWindow->getLabelColor(algorithmStruct.colorIndex[i]));
+        rect->setPen(sWindow->getLabelColor(algorithmStruct.colorIndex[i]));
+        rect->setSelected(false);
+        double valueMaxScale;//= ceil(xAxisValueMax)+1;
+        rect->topLeft->setCoords(algorithmStruct.xAxisKeyMin[i], sWindow->getSliderValueMax());
+        rect->bottomRight->setCoords(algorithmStruct.xAxisKeyMax[i], sWindow->getSliderValueMin());
+        rect->setXKeyMin(algorithmStruct.xAxisKeyMin[i]);
+        rect->setXKeyMax(algorithmStruct.xAxisKeyMax[i]);
+        rect->setXValueMin(sWindow->getSliderValueMin());
+        rect->setXValueMax(sWindow->getSliderValueMax());
+        labelText = new QCPItemText(ui->customPlot);
+        labelText->setParent(rect);
+        labelText->setSelectable(false);
+        labelText->setObjectName("lText");
+        labelText->setText(algorithmStruct.labelText[i]);
+        labelText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
+        labelText->position->setCoords((algorithmStruct.xAxisKeyMin[i]+algorithmStruct.xAxisKeyMax[i])/2, sWindow->getSliderValueMax());
         ui->customPlot->replot();
     }
     ui->customPlot->replot();
@@ -723,18 +752,18 @@ void MainWindow::labelSelection()
         {
             valueMinScale = -1;
         }
-        rect->topLeft->setCoords(xAxisKeyMin, ceil(xAxisValueMax) + valueMaxScale);
-        rect->bottomRight->setCoords(xAxisKeyMax, floor(xAxisValueMin) + valueMinScale);
+        rect->topLeft->setCoords(xAxisKeyMin, sWindow->getSliderValueMax());
+        rect->bottomRight->setCoords(xAxisKeyMax, sWindow->getSliderValueMin());
         selection_structure.xAxisKeyMin.append(xAxisKeyMin);
         selection_structure.xAxisKeyMax.append(xAxisKeyMax);
-        selection_structure.xAxisValueMin.append(xAxisValueMin);
-        selection_structure.xAxisValueMax.append(xAxisValueMax);
+        selection_structure.xAxisValueMin.append(sWindow->getSliderValueMin());
+        selection_structure.xAxisValueMax.append(sWindow->getSliderValueMax());
         selection_structure.colorIndex.append(sWindow->getLabelColorIndex());
         selection_structure.labelText.append(sWindow->getLabelText());
         rect->setXKeyMin(xAxisKeyMin);
         rect->setXKeyMax(xAxisKeyMax);
-        rect->setXValueMin(xAxisValueMin);
-        rect->setXValueMax(xAxisValueMax);
+        rect->setXValueMin(sWindow->getSliderValueMin());
+        rect->setXValueMax(sWindow->getSliderValueMax());
         labelText = new QCPItemText(ui->customPlot);
         /// Allows deletion of label when rect is deleted. But causes Segmentation Fault. Fix.
         labelText->setParent(rect);
@@ -1247,7 +1276,8 @@ void MainWindow::algorithmToolTriggered()
 
 
         plmalgorithm algorithm(data_structure, 1, 0.7, 0.5, 10, 5, 90);
-        selectionStructure structPLM = algorithm.generateSelections();
+        algorithm_structure = algorithm.generateSelections();
+        emit algorithmSelections(algorithm_structure);
         //sWindow->getSliderValueMin(); - ymin
         //sWindow->getSliderValueMax(); - ymax
         qDebug() << "as";

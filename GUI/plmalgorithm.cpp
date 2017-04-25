@@ -83,7 +83,7 @@ QVector<QVector<double>> plmalgorithm::isLM() {
 
 }
 
-QVector<QVector<double>> plmalgorithm::isPLM(QVector<QVector<double>> LM) {
+selectionStructure plmalgorithm::isPLM(QVector<QVector<double>> LM) {
     QVector<double> timeStart = LM.at(0);
     QVector<double> timeEnd = LM.at(1);
     QVector<double> magStart = LM.at(2);
@@ -95,6 +95,8 @@ QVector<QVector<double>> plmalgorithm::isPLM(QVector<QVector<double>> LM) {
     QVector<double> returnTimeEnd;
     QVector<double> returnMagStart;
     QVector<double> returnMagEnd;
+    QVector<int> returnColorIndex;
+    QVector<QString> returnLabelText;
 
     for (int i = 0; i < timeStart.length()-1; i++) {
         double firstLMEnd = timeEnd.at(i);
@@ -110,6 +112,8 @@ QVector<QVector<double>> plmalgorithm::isPLM(QVector<QVector<double>> LM) {
                     returnTimeEnd.append(timeEnd.at(setIndex.at(setIndex.length()-1)));
                     returnMagStart.append(magStart.at(setIndex.at(0)));
                     returnMagEnd.append(magEnd.at(setIndex.at(setIndex.length()-1)));
+                    returnColorIndex.append(5);
+                    returnLabelText.append("PLM");
                     setIndex.clear();
             } else {
                 setIndex.clear();
@@ -117,13 +121,15 @@ QVector<QVector<double>> plmalgorithm::isPLM(QVector<QVector<double>> LM) {
         }
     }
 
-    QVector<QVector<double>> returnVector;
-    returnVector.append(returnTimeStart);
-    returnVector.append(returnTimeEnd);
-    returnVector.append(returnMagStart);
-    returnVector.append(returnMagEnd);
+    selectionStructure returnStructure;
+    returnStructure.xAxisKeyMin = returnTimeStart;
+    returnStructure.xAxisKeyMax = returnTimeEnd;
+    returnStructure.xAxisValueMin = returnMagStart;
+    returnStructure.xAxisValueMax = returnMagEnd;
+    returnStructure.colorIndex = returnColorIndex;
+    returnStructure.labelText = returnLabelText;
 
-    return returnVector;
+    return returnStructure;
 }
 
 selectionStructure plmalgorithm::generateSelections() {
@@ -133,11 +139,6 @@ selectionStructure plmalgorithm::generateSelections() {
 //    QByteArray s = myProcess->readAllStandardOutput();
 //    QByteArray b = myProcess->readAllStandardError();
     QVector<QVector<double>> LM = isLM();
-    QVector<QVector<double>> PLM = isPLM(LM);
-    selectionStructure returnStructure;
-    returnStructure.xAxisKeyMin = PLM.at(0);
-    returnStructure.xAxisKeyMin = PLM.at(1);
-    returnStructure.xAxisKeyMin = PLM.at(2);
-    returnStructure.xAxisKeyMin = PLM.at(3);
-    return returnStructure;
+    selectionStructure PLM = isPLM(LM);
+    return PLM;
 }
