@@ -8,11 +8,15 @@
 #include <QList>
 #include "datastructure.h"
 #include <QDebug>
+#include <QTime>
+#include <QDateTime>
+#include "qcustomplot.h"
 
 using namespace std;
 
 class CsvReader {
 
+    QVector<QString> timeArray;
     QVector<QVector<double>> dataArray;
     QVector<QVector<double>> markerArray;
     QVector<QVector<double>> selectionArray;

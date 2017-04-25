@@ -66,11 +66,13 @@ void MainWindow::createActions() {
     //labelToolAct = new QAction(QIcon(":/resources/toolbar/labelTool.png"), tr("Label Tool"), this);
     rulerToolAct = new QAction(QIcon(":/resources/toolbar/rulerTool.png"), tr("Ruler Tool"), this);
     bluetoothToolAct = new QAction(QIcon(":/resources/toolbar/bluetooth.png"), tr("Bluetooth Tool"), this);
+    algorithmToolAct = new QAction(QIcon(":/resources/toolbar/play.png"), tr("Algorithm Tool"), this);
     handToolAct->setCheckable(true);
     selectToolAct->setCheckable(true);
     //labelToolAct->setCheckable(true);
     rulerToolAct->setCheckable(true);
     bluetoothToolAct->setCheckable(true);
+    algorithmToolAct->setCheckable(true);
     handToolAct->setShortcut(QKeySequence("H"));
     selectToolAct->setShortcut(QKeySequence("S"));
     //labelToolAct->setShortcut(QKeySequence("L"));
@@ -81,6 +83,7 @@ void MainWindow::createActions() {
     //labelToolAct->setStatusTip(tr("Label Tool"));
     rulerToolAct->setStatusTip(tr("Ruler Tool"));
     bluetoothToolAct->setStatusTip(tr("Bluetooth Tool"));
+    algorithmToolAct->setStatusTip(tr("Algorithm Tool"));
     connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
 
     // Right Click Actions
@@ -174,6 +177,7 @@ void MainWindow::createActions() {
     connect(hideGraphShortcut, &QShortcut::activated, this, &MainWindow::hideXYZGraphs);
 
     /// Connects Scrollbar to Customplot
+
     connect(ui->horizontalScrollBar, SIGNAL(valueChanged(int)), this, SLOT(horzScrollBarChanged(int)));
     connect(ui->customPlot->xAxis, SIGNAL(rangeChanged(QCPRange)), this, SLOT(xAxisChanged(QCPRange)));
 }
@@ -200,10 +204,12 @@ void MainWindow::createMenus() {
     //ui->toolBar->addAction(labelToolAct);//, "Label Tool");
     ui->toolBar->addAction(rulerToolAct);
     ui->toolBar->addAction(bluetoothToolAct);
+    ui->toolBar->addAction(algorithmToolAct);
     connect(handToolAct, &QAction::triggered, this, &MainWindow::handToolTriggered);
     connect(selectToolAct, &QAction::triggered, this, &MainWindow::markerToolTriggered);
     connect(rulerToolAct, &QAction::triggered, this, &MainWindow::rulerToolTriggered);
     connect(bluetoothToolAct, &QAction::triggered, this, &MainWindow::bluetoothToolTriggered);
+    connect(algorithmToolAct, &QAction::triggered, this, &MainWindow::algorithmToolTriggered);
 
     // Right Click Menu
     connect(ui->customPlot, SIGNAL(rightMousePress(QMouseEvent*)), this, SLOT(rightMousePress())); /// might need to place this somewhere else
@@ -317,8 +323,6 @@ void MainWindow::open()
     ui->tableView->setModel(model);
     file = QFileDialog::getOpenFileName(this,tr("Open File"),QDir::currentPath(),"CSV files, txt files (*.csv *.txt);;all files (*.*)");
 
-    //struct DataStructure data_structure;
-
     if (!file.isEmpty()) {
         CsvReader csvReader(model);
         csvReader.importCSV(file);
@@ -343,6 +347,9 @@ void MainWindow::open()
 
         firstRun = false;
         // Defaults to Hand Tool when file is opened
+
+        phaseTracerItemText = new QCPItemText(ui->customPlot);
+
         emit enableToolBar();
         emit handToolAct->trigger();
 
@@ -366,7 +373,6 @@ void MainWindow::open()
         phaseTracer->setBrush(Qt::red);
         phaseTracer->setSize(7);
 
-        phaseTracerItemText = new QCPItemText(ui->customPlot);
         phaseTracerItemText->setPositionAlignment(Qt::AlignHCenter | Qt::AlignTop);
 
         phaseTracer->setVisible(false);
@@ -509,6 +515,7 @@ void MainWindow::enableToolBar()
     //labelToolAct->setEnabled(true);
     rulerToolAct->setEnabled(true);
     bluetoothToolAct->setEnabled(true);
+    algorithmToolAct->setEnabled(true);
     viewSelectionShortcut->setEnabled(true);
     labelSelectionShortcut->setEnabled(true);
     rescaleViewShortcut->setEnabled(true);
@@ -530,6 +537,8 @@ void MainWindow::disableToolBar()
     selectToolAct->setEnabled(false);
     //labelToolAct->setEnabled(false);
     rulerToolAct->setEnabled(false);
+    bluetoothToolAct->setEnabled(false);
+    algorithmToolAct->setEnabled(false);
     viewSelectionShortcut->setEnabled(false);
     labelSelectionShortcut->setEnabled(false);
     rescaleViewShortcut->setEnabled(false);
@@ -1014,9 +1023,11 @@ void MainWindow::handToolTriggered()
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
         bluetoothToolAct->setChecked(false);
+        algorithmToolAct->setChecked(false);
         emit markerToolTriggered();
         emit rulerToolTriggered();
         emit bluetoothToolTriggered();
+        emit algorithmToolTriggered();
         qDebug() << "HandTool: toggled";
     }
     else{
@@ -1030,9 +1041,11 @@ void MainWindow::markerToolTriggered()
         handToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
         bluetoothToolAct->setChecked(false);
+        algorithmToolAct->setChecked(false);
         emit handToolTriggered();
         emit rulerToolTriggered();
         emit bluetoothToolTriggered();
+        emit algorithmToolTriggered();
         qDebug() << "Select Tool: toggled";
 
         ui->customPlot->setSelectionRectMode(QCP::srmSelect);
@@ -1042,8 +1055,6 @@ void MainWindow::markerToolTriggered()
         ui->customPlot->graph(3)->setSelectable(QCP::stDataRange);//QCP::SelectionType(QCP::stDataRange)
     }
     else{
-        qDebug() << "Select Tool: un-toggled";
-
         ui->customPlot->setSelectionRectMode(QCP::srmNone);
         ui->customPlot->graph(0)->setSelectable(QCP::stNone);
         ui->customPlot->graph(1)->setSelectable(QCP::stNone);
@@ -1087,14 +1098,17 @@ void MainWindow::rulerToolTriggered()
     if (rulerToolAct->isChecked() == true){
         handToolAct->setChecked(false);
         selectToolAct->setChecked(false);
+        bluetoothToolAct->setChecked(false);
+        algorithmToolAct->setChecked(false);
         emit handToolTriggered();
         emit markerToolTriggered();
+        emit bluetoothToolTriggered();
+        emit algorithmToolTriggered();
         qDebug() << "Ruler Tool: toggled";
 
         // add the phase tracer (red circle) which sticks to the graph data (and gets updated in bracketDataSlot by timer event):
         phaseTracer->setVisible(true);
         phaseTracerItemText->setVisible(true);
-
 
         ui->customPlot->replot();
         connect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
@@ -1103,10 +1117,15 @@ void MainWindow::rulerToolTriggered()
     else{
         qDebug() << "Ruler Tool: un-toggled";
         phaseTracer->setVisible(false);
+        qDebug() << "a";
         phaseTracerItemText->setVisible(false);
+        qDebug() << "b";
         ui->customPlot->replot();
+        qDebug() << "c";
         disconnect(ui->customPlot, SIGNAL(mouseMove(QMouseEvent*)), this, SLOT(updatePhaseTracer(QMouseEvent*)));
+        qDebug() << "d";
         disconnect(ui->customPlot, SIGNAL(mousePress(QMouseEvent*)), this, SLOT(createRuler(QMouseEvent*)));
+        qDebug() << "e";
     }
 }
 
@@ -1115,6 +1134,11 @@ void MainWindow::bluetoothToolTriggered() {
         handToolAct->setChecked(false);
         selectToolAct->setChecked(false);
         rulerToolAct->setChecked(false);
+        algorithmToolAct->setChecked(false);
+        emit handToolTriggered();
+        emit markerToolTriggered();
+        emit rulerToolTriggered();
+        emit algorithmToolTriggered();
         qDebug() << "Bluetooth Tool: toggled";
 
         QProcess p;
@@ -1127,10 +1151,44 @@ void MainWindow::bluetoothToolTriggered() {
         QString p_stdout = p.readAllStandardOutput();
         qDebug() << p_stdout << endl;
 
+        QProcess myProcess;
+        myProcess.start(QString("C:/Program Files/MATLAB/R2016b/bin/matlab.exe"), QStringList() << QString("-r C:/Users/Asussy/Documents/GitHub/emory-plm/Octave/isLM.m") << QString("-nosplash") << QString("nodesktop"));
+        QByteArray s = myProcess.readAllStandardOutput();
+        QByteArray b = myProcess.readAllStandardError();
+
+//        octaveinvoker *octave = new octaveinvoker();
+//        selectionStructure yay = octave->callOctave();
+
     }
     else{
         qDebug() << "Bluetooth tool: un-toggled";
     }
+}
+
+void MainWindow::algorithmToolTriggered()
+{
+    if (algorithmToolAct->isChecked() == true){
+        handToolAct->setChecked(false);
+        selectToolAct->setChecked(false);
+        rulerToolAct->setChecked(false);
+        bluetoothToolAct->setChecked(false);
+        emit handToolTriggered();
+        emit markerToolTriggered();
+        emit rulerToolTriggered();
+        emit bluetoothToolTriggered();
+        qDebug() << "algorithmTool: toggled";
+
+
+        plmalgorithm algorithm(data_structure, 1, 0.7, 0.5, 10, 5, 90);
+        selectionStructure structPLM = algorithm.generateSelections();
+        //sWindow->getSliderValueMin(); - ymin
+        //sWindow->getSliderValueMax(); - ymax
+        qDebug() << "as";
+    }
+    else{
+        qDebug() << "algorithmTool: un-toggled";
+    }
+
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

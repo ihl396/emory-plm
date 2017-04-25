@@ -18,9 +18,9 @@ SOURCES += main.cpp\
     graphviewer.cpp \
     graph.cpp \
     markup.cpp \
-    octaveinvoker.cpp \
+    bluetoothwindow.cpp \
     setupwindow.cpp \
-    bluetoothwindow.cpp
+    plmalgorithm.cpp
 
 HEADERS  += \
     qcustomplot.h \
@@ -30,9 +30,9 @@ HEADERS  += \
     graphviewer.h \
     graph.h \
     markup.h \
-    octaveinvoker.h \
+    bluetoothwindow.h \
     setupwindow.h \
-    bluetoothwindow.h
+    plmalgorithm.h
 
 FORMS    += \
     mainwindow.ui \

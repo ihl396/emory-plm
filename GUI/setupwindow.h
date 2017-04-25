@@ -94,8 +94,8 @@ private:
 
     const int ARROW_MOVEMENT_DEFAULT_VALUE = 5;
     const int KEY_SCALING_DEFAULT_VALUE = 5;
-    const int VALUE_MIN_DEFAULT_VALUE = -7;
-    const int VALUE_MAX_DEFAULT_VALUE = 7;
+    const int VALUE_MIN_DEFAULT_VALUE = -4;
+    const int VALUE_MAX_DEFAULT_VALUE = 4;
     //bool graphViewPreferencesChanged = false;
     bool isOkButton = false;
     //bool isCancelButton = false;

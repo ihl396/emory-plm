@@ -37,7 +37,7 @@ if (length(onset_possible) > 0)
         onset_index = y;
         duration = (times(decay_mov(decay_index)) - times(onset_mov(onset_possible(onset_index))))/1000;
         if (LM_start <= duration) && (duration <= LM_end)
-            LM = [LM; onset_mov(onset_possible(onset_index)), decay_mov(decay_index), duration];
+            LM = [LM; onset_mov(onset_possible(onset_index)), decay_mov(decay_index), times(onset_mov(onset_possible(onset_index)))/1000,times(decay_mov(decay_index))/1000, duration];
             break;
         endif
       endfor
@@ -51,7 +51,7 @@ for x = 2:length(decay_mov)
         onset_index = y;
         duration = (times(decay_mov(decay_index)) - times(onset_mov(onset_possible(onset_index))))/1000;
         if (LM_start <= duration) && (duration <= LM_end)
-            LM = [LM; onset_mov(onset_possible(onset_index)), decay_mov(decay_index), duration];
+            LM = [LM; onset_mov(onset_possible(onset_index)), decay_mov(decay_index), times(onset_mov(onset_possible(onset_index)))/1000, times(decay_mov(decay_index))/1000, duration];
             break;
         endif
       endfor

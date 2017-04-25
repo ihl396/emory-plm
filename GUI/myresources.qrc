@@ -12,5 +12,6 @@
         <file>resources/toolbar/rulerTool.png</file>
         <file>resources/toolbar/selectTool.png</file>
         <file>resources/toolbar/bluetooth.png</file>
+        <file>resources/toolbar/play.png</file>
     </qresource>
 </RCC>
